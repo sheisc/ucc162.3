@@ -1,9 +1,0 @@
-function f
-	ret
-
-
-function main
-	return 0;
-	ret
-
-
