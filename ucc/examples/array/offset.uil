@@ -1,0 +1,52 @@
+function main
+	int index = 2;
+
+
+	index = 2;
+
+	//**arr = 5;
+	//printf("%d \n",arr[0][0]);
+
+	t0 :&arr;
+	arr[0] = 5;
+	t2 :&str0;
+	t3 : printf(t2, arr[0]);
+
+
+	//(*arr)[2] = 10;
+	//printf("%d \n",arr[0][2]);
+
+	arr[8] = 10;
+	t4 :&str1;
+	t5 : printf(t4, arr[8]);
+
+	//arr[index][2] = 20;
+	//printf("%d \n",arr[2][2]);
+
+	t6 : index << 4;
+	t7 : t6 + 8;
+	t8 : t0 + t7;
+	*t8 = 20;
+	t11 :&str2;
+	t12 : printf(t11, arr[40]);
+
+	//(*ptr)[2][2] = 30;
+	//printf("%d \n",arr[2][2]);
+
+	t13 : ptr + 40;
+	*t13 = 30;
+	t16 :&str3;
+	t17 : printf(t16, arr[40]);
+
+	//(**ptr2)[2][2] = 40;
+	//printf("%d \n",arr[2][2]);
+
+	t18 :*ptr2;
+	t19 : t18 + 40;
+	*t19 = 40;
+	t22 :&str4;
+	t23 : printf(t22, arr[40]);
+	return 0;
+	ret
+
+

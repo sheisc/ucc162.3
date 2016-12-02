@@ -1,0 +1,21 @@
+$2008-05-14
+(1) Fix double typedef name bug
+typedef int A;
+void f(A A);
+
+(2) Fix multi-dimensional array pointer access bug
+char *argv[];
+argv[0][0];
+
+(3) Fix an intermediate code generation bug, Start new basic block after goto
+
+$2008-05-16
+(1)ucl/lex.c: Fix the bug failed to recognize float constant such as 12e20
+
+(2)ucl/declchk.c: Fix the bug failed to initialize known-size array in struct
+
+$2008-06-16
+(1) Add comments
+
+(2) Fix struct/union memory layout
+

@@ -1,0 +1,133 @@
+				                   ucc使用手册
+
+1. 概览
+2. Linux平台安装
+3. Windows平台安装
+4. 错误报告
+5. 使用ucc
+
+
+1. 概览
+
+ucc是一个编译器驱动器，在运行过程中，它会首先调用预处理器对C文件进行预处理，
+然后依次调用编译器和汇编器生成目标文件，最后调用链接器将多个目标文件以及
+库文件链接在一起生成最终的应用程序。
+
+目前，ucc支持运行在Intel X86平台上的Linux和Windows操作系统。
+
+当解压下载的源码后，系统中会产生一个名为ucc的目录，该目录的组织如下：
+
+driver       驱动器实现
+ucl          C编译器实现
+doc          文档，中英文版本的ucc使用手册以及ucc内部实现
+LICENSE	     许可证文件
+Makefile     Linux平台下的Makefile
+Makefile.win Windows平台下的Makefile
+
+如果没有特别说明，下面两节中所提的命令皆在ucc目录下运行。
+
+2. Linux平台安装
+
+在Linux下编译运行，ucc需要使用gcc的头文件，库以及一些命令行工具。
+请检查在系统中是否存在/usr/bin/gcc和/usr/bin/as。
+
+(1) ucc缺省会安装到/usr/local/lib/ucc目录，可以修改Makefile中的UCCDIR
+    定义来指定其它目录。如果你修改了UCCDIR，请将driver/linux.c中的
+    UCCDIR改成同样的值
+
+(2) 运行make，将依次在driver和ucl目录下运行make, 生成ucc和ucl
+
+(3) 运行make install, 将新建目录$UCCDIR，ucc和ucl被复制到该目录下
+
+(4) 运行make test, 测试ucc是否能正确编译自身并成功运行。该命令完成如下操作：
+        1) 使用ucc生成ucl, 输出命名为ucl1
+        2) ucl改名为ucl.bak, ucl1改名为ucl
+        3) 再次使用ucc生成ucl, 输出命名为ucl2
+	4) 恢复ucl和ucl1
+        5) 运行cmp /b ucl1 ucl2比较ucl1 ucl2，比较结果是两个文件一致
+
+(5) 运行make clean来清除在driver和ucl目录下产生的目标文件和应用程序
+
+(6) 设置环境变量PATH包含目录$UCCDIR，运行ucc，将会看到ucc的帮助信息
+
+3. Windows平台安装
+
+在Windows下编译运行，系统中必需安装了Microsoft Visual Stduio 6或更高版本。 
+ucc需要使用VC的头文件，库以及一些命令行工具。
+
+如果安装了Visual Studio 6，下面用%VCDIR来代表VC的安装目录
+(缺省为C:\Program Files\Microsoft Visual Studio\VC98)，
+
+(1) 检查%VCDIR\Bin目录是否存在ml.exe，一些VC6 release没有包含这个汇编器程序，
+    如果不存在，你需要从VC6的安装包或者网上获取这个程序。
+
+(2) 确保环境变量PATH包含%VCDIR\Bin;%VCDIR\..\Common\MSDev98\Bin
+
+(3) 如果环境变量LIB和INCLUDE不存在，则分别创建LIB和INCLUDE
+
+(4) 确保环境变量LIB包含%VCDIR\Lib，INCLUDE包含%VCDIR\Include
+
+(5) 在开始菜单的运行对话框中键入cmd
+
+如果安装了Visual Studio 2003(2005或2008)，在开始菜单中的程序会有一项
+名为Microsoft Visual Studio 2003(2005或2008)，在其中找到名为
+Visual Studio 2003(2005或2008)命令提示的快捷方式, 直接点击该快捷方式。
+
+(1) ucc缺省会安装到C:\Program Files\ucc目录，可以修改Makefile.win中的UCCDIR
+    定义来指定其它目录
+
+(2) 运行nmake -f Makefile.win，将依次在driver和ucl目录下运行nmake, 生成ucc.exe和ucl.exe
+
+(3) 运行nmake -f Makefile.win install, 将新建目录$UCCDIR, ucc.exe和ucl.exe被复制到该目录下
+
+(4) 运行nmake -f Makefile.win test，所完成的操作与Linux平台类似，但比较的结果
+    会有一处不同，该不同是生成文件的时间戳
+
+(5) 运行nmake -f Makefile.win clean来清除在driver和ucl目录下产生的目标文件和应用程序
+
+(6) 设置环境变量PATH包含目录$UCCDIR，运行ucc，将会看到ucc的帮助信息
+
+注意：如果安装了Visual Studio 2003(2005或2008)，以后使用ucc时，必须在
+Visual Studio 2003(2005或2008)命令提示下运行。
+
+4. 错误报告
+
+程序的正确性完全取决于编译器的正确性，如果有发现错误，请及时和开发者联系。
+在报告错误之前:
+(1) 确保错误不是由您对ucc源码的修改造成的
+(2) 生成一个尽可能小的程序来重现这个错误，将预处理后的程序文件发送到wenjunw@yahoo.cn
+这会极大的帮助开发者定位错误，谢谢您的支持。
+
+5. 使用ucc
+
+ucc [options] (file | -xxx)...
+
+选项
+
+--dump-ast   打印语法树，语法树被打印到扩展名为.ast的文件中
+--dump-IR    打印中间代码，中间代码被打印到扩展名为.uil的文件中
+-E           只进行预处理操作
+-S           只运行预处理器和编译器，生成汇编码
+-c           只运行预处理器，编译器和汇编器，生成目标代码
+-o file      将最终输出的应用程序命名为'file'
+-Idir        将dir添加到包含文件搜索目录中
+-Dname=def   定义预处理宏，名为'name',值为'def'
+-Uname       取消与处理宏'name'的定义
+-h	     打印帮助信息
+-v           显示被调用的命令
+-Wa,options  将由逗号分隔的选项传给汇编器
+-Wl,options  将由逗号分隔的选项传给链接器
+
+ucc将所有其它以-开头的选项传给链接器, 剩下的识别为文件。
+
+下面以经典的hello,world为例，假定文件名为hello.c：
+#include <stdio.h>
+
+int main()
+{
+    printf("Hello, World\n");
+    return 0;
+}
+
+ucc -o hello hello.c 将生成应用程序hello。
+
