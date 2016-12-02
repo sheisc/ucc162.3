@@ -1,7 +1,0 @@
-function main
-	t0 : (int)(short)s;
-	c : (char)(int)t0;
-	return 0;
-	ret
-
-

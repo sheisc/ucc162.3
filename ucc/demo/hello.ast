@@ -1,9 +1,0 @@
-function f
-{
-}
-
-function main
-{
-  (ret 0)
-}
-
