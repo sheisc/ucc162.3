@@ -1,0 +1,9 @@
+
+void f(void){
+	static void k(void);
+}
+int main(int argc,char * argv[]){	
+
+	return 0;
+}
+

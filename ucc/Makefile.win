@@ -1,0 +1,26 @@
+#UCCDIR = "C:\Program Files\ucc"
+UCCDIR = "D:\bin\ucc"
+
+all:
+	chdir driver
+	nmake -f Makefile.win
+	chdir ..
+	chdir ucl
+	nmake -f Makefile.win
+
+clean:
+	chdir driver
+	nmake -f Makefile.win clean
+	chdir ..
+	chdir ucl
+	nmake -f Makefile.win clean
+
+install:
+	-mkdir $(UCCDIR)
+	copy /Y driver\ucc.exe $(UCCDIR)
+	copy /Y ucl\ucl.exe $(UCCDIR)
+
+test:
+	chdir ucl
+	nmake -f Makefile.win test
+

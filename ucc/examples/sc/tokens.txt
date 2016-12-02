@@ -1,0 +1,36 @@
+#ifndef TOKEN
+#error "You must define TOKEN macro before include this file"
+#endif
+
+// TK_NA,  Not Available,just place-holder
+TOKEN(TK_NA,"")
+TOKEN(TK_ADD,"+")
+TOKEN(TK_SUB,"-")
+TOKEN(TK_MUL,"*")
+TOKEN(TK_DIV,"/")
+TOKEN(TK_ID,"id")
+TOKEN(TK_COMMA,",")
+TOKEN(TK_NUM,"num")
+TOKEN(TK_INT,       "int")
+TOKEN(TK_LPAREN,	      "(")
+TOKEN(TK_RPAREN,        ")")
+TOKEN(TK_LBRACKET,      "[")
+TOKEN(TK_RBRACKET,      "]")
+TOKEN(TK_EOF,"EOF")
+TOKEN(TK_LBRACE,        "{")
+TOKEN(TK_RBRACE,        "}")
+TOKEN(TK_ASSIGN,        "=")
+TOKEN(TK_SEMICOLON,     ";")
+TOKEN(TK_IF,        "if")
+TOKEN(TK_ELSE,      "else")
+TOKEN(TK_WHILE,     "while")
+
+//	In fact, we need to define NodeKind for AstNode, not TokenKind here.
+//	But to keep it simple here. we do use TokenKind for AstNode->op.
+TOKEN(TK_ARRAY,			"[]")
+TOKEN(TK_FUNCTION,		"()")
+TOKEN(TK_POINTER,			"*")
+TOKEN(TK_COMPOUND,		"{}")
+TOKEN(TK_DECLARATION,		"decl")
+TOKEN(TK_LABEL,		"label")
+

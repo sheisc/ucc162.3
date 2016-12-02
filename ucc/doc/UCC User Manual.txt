@@ -1,0 +1,150 @@
+					ucc user manual
+
+1. Overview
+2. Installation on Linux
+3. Installation on Windows
+4. Reporting bugs
+5. Using ucc
+
+
+1. Overview
+
+ucc is a compiler driver, when running, at first it will invoke C preprocessor
+to preprocess C file, then invokethe compiler and assembler in turn to generate 
+object file, finally invoke the linker to put object and library files together 
+to produce the program. 
+
+Currently, ucc supports the Linux and Windows running on Intel X86 platform.
+
+After extracting the source code, there will be a directory named ucc. 
+The structure of this directory is:
+
+driver		compiler driver implementation
+ucl		C compiler implementation
+doc		documents, ucc user manual and ucc internal in Chinese and English version
+LICENCE		licence file
+Makefile	Makefile on Linux
+Makefile.win	Makefile on Windows
+
+If there is no particular notice, all the commands mentioned at the following 
+two sections run under ucc directory.
+
+2. Installation on Linux
+
+In order to compile and run under Linux, the gcc must be installed.
+ucc needs gcc's header files, library files and some command line tools.
+Please check if these two files /usr/bin/gcc and /usr/bin/as exist.
+
+(1) ucc will be installed to the default directory:/usr/local/lib/ucc, 
+    you can modify the UCCDIR definition in Makefile. If you modify it,
+    please modify the UCCDIR in drive/linux.c to the same value
+
+(2) run make, this will run make under ucc and ucl directory in turn,
+    produce ucc and ucl
+
+(3) run make install, this will make the directory $UCCDIR, ucc and ucl
+    will be copied to this directory
+
+(4) run make test, this will test if ucc can compile itself and run successfully. 
+    The command performs the following operations:
+    1) use ucc to build ucl, the output is named as ucl1
+    2) ucl is renamed as ucl.bak, ucl1 is renamed as ucl
+    3) use ucc to build ucl again, the output is named as ucl2
+    4) restore ucl and ucl1
+    5) run cmp /b ucl1 ucl2, these two files should be identical
+
+(5) run make clean, this will clean the object files and programs under dirver and ucl directory
+
+(6) Set environment variable PATH to contain $UCCDIR, run ucc, ucc will show the help message
+
+3. Installation on Windows
+
+In order to compile and run under Windows, the Microsoft Visual Studio 6 or higher must be installed.
+ucc needs VC's header files, library files and some command line tools.
+
+If Visual Studio 6 installed, we use %VCDIR to represent VC's installation directory
+(the default is C:\Program Files\Microsoft Visual Studio\VC98)
+
+(1) check if there is a file named ml.exe under %VCDIR\Bin directory, some VC6 release don't
+    provide the assembler program. If not, you need to get this program from VC6 installation
+    package or somewhere else.
+
+(2) Ensure that environment variable PATH contains the directory %VCDIR\Bin;%VCDIR\..\Common\MSDev98\Bin
+
+(3) If enviroment variable LIB and INCLUDE doesn't exist, create them
+
+(4) Ensure that environment variable LIB contains %VCDIR\Lib, INCLUDE contains %VCDIR\Include
+
+(5) type 'cmd' in the running dialog of start menu.
+
+
+If Visual Studio 2003(2005 or 2008) installed, there will be an item named 
+Microsoft Visual Studio 2003(2005 or 2008) in the programs of start menu,
+find the shortcut named Visual Studio 2003(2005 or 2008) command prompt and click it.
+
+Now you can see the command line window.
+
+(1) ucc will be installed to the default directory: C:\Program Files\ucc, 
+    you can modify the UCCDIR definition in Makefile.win
+
+(2) run nmake -f Makefile.win, this will run nmake under driver and ucl directory in turn,
+    produce ucc.exe and ucl.exe
+
+(3) run nmake -f Makefile.win install, this will make the directory $UCCDIR, 
+   ucc.exe and ucl.exe will be copied to this directy
+
+(4) run nmake -f Makefile.win test, the operations are similar as those on Linux, but there will
+    be a difference which is the timestamp when producing the program
+
+(5) run nmake -f Makefile.win clena, this will clean the object files and programs under driver 
+    and ucl directory
+
+(6) Set the enviornment variable PATH to contain $UCCDIR, run ucc, ucc will show
+    the help message
+
+Notice: If Microsoft Visual Studio 2003(2005 or 2008) installed, When using ucc later, 
+you must run ucc under Visual Studio 2003(2005 or 2008) command prompt. 
+
+4. Reporting Bugs
+
+The program's correctness totally depends on the correctness of compiler. If any bug found,
+please contact with the developer in time. 
+Before reporting bugs:
+(1) Ensure that the bug is not resulted by your modificaton to ucc source code
+(2) Produce a program as small as possible to recreate the bug, send the prepocessed files 
+    to wenjunw@yahoo.cn
+This will greatly help the developer to position errors, thanks for your support.
+
+5. Using ucc
+
+ucc [options] (file | -xxx)...
+
+Options
+
+--dump-ast   Dump syntax tree which is put into a file named xxx.ast
+--dump-IR    Dump intermediate code which is put into a file named xxx.uil
+-E           Preprocess only
+-S           Compile only
+-c           Compile and assemble only
+-o file      Place the output into 'file'
+-Idir        Add 'dir' to the include file search directories
+-Dname=def   Define preprocess macro 'name', its value is 'def'
+-Uname       Undefine the preprocess macro 'name'
+-h	     Show this help information
+-v           Verbose mode, show the commands invoked
+-Wa,options  Pass comma seperated 'options' to the assembler
+-Wl,options  Pass comma seperated 'options' to the linker
+
+ucc will pass other options beginning with '-' to the linker, the remain will be recognized as file.
+
+Taken the classic 'hello, world' for example, assume the file name is hello.c:
+
+#include <stdio.h>
+
+int main()
+{
+   printf("Hello, World\n");
+   return 0;
+}
+
+run ucc -o hello hello.c, this will produce hello.

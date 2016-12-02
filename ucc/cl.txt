@@ -1,0 +1,137 @@
+                         C/C++ 编译器选项
+
+
+                              -优化-
+
+/O1 最小化空间                          /O2 最大化速度
+/Ob<n> 内联扩展(默认 n=0)               /Od 禁用优化(默认)
+/Og 启用全局优化                        /Oi[-] 启用内部函数
+/Os 优选代码空间                        /Ot 优选代码速度
+/Ox 最大化优化                          /Oy[-] 启用帧指针省略 
+/favor:<blend|ATOM> 选择优化所针对的处理器，为以下值之一: 
+    blend - 针对几种不同 x86 处理器的优化组合
+    ATOM - Intel(R) Atom(TM) 处理器     
+
+                             -代码生成-
+
+/Gw[-] 分隔链接器的全局变量             /GF 启用只读字符串池
+/Gm[-] 启用最小重新生成                 /Gy[-] 分隔链接器函数
+/GS[-] 启用安全检查                     /GR[-] 启用 C++ RTTI
+/GX[-] 启用 C++ EH (与 /EHsc 相同)      /EHs 启用 C++ EH (没有 SEH 异常)
+/EHa 启用 C++ EH (w/ SEH 异常)          /EHc 外部“C”默认为 nothrow
+/fp:<except[-]|fast|precise|strict> 选择浮点模式: 
+    except[-] - 在生成代码时考虑浮点异常
+    fast -“fast”浮点模式；结果可预测性比较低
+    precise -“precise”浮点模式；结果可预测
+    strict -“strict” 浮点模式(意味着 /fp:except)
+即使使用 /fp:except，/Qfast_transcendentals 也生成内联内部 FP
+/Qpar[-] 启用并行代码生成               
+/Qpar-report:1 自动并行化诊断；指示已并行化循环
+/Qpar-report:2 自动并行化诊断；指示未并行化循环
+/Qvec-report:1 自动向量化诊断；指示已向量化循环
+/Qvec-report:2 自动向量化诊断；指示未向量化循环
+/GL[-] 启用链接时代码生成               /volatile:<iso|ms> 选择对可变模型: 
+    iso - Acquire/release 语义对可变访问不一定有效
+    ms  - Acquire/release 语义对可变访问一定有效
+/GA 为 Windows 应用程序进行优化         /Ge 对所有函数强制堆栈检查
+/Gs[num] 控制堆栈检查调用               /Gh 启用 _penter 函数调用
+/GH 启用 _pexit 函数调用                /GT 生成纤程安全 TLS 访问
+/RTC1 启用快速检查(/RTCsu)              /RTCc 转换为较小的类型检查
+/RTCs 堆栈帧运行时检查                  /RTCu 未初始化的局部用法检查
+/clr[:option] 为公共语言运行时编译，其中 option 是: 
+    pure - 生成只包含 IL 的输出文件(没有本机可执行代码)
+    safe - 生成只包含 IL 的可验证输出文件
+    oldSyntax - 接受 Visual C++ 2002/2003 的托管扩展语法
+    initialAppDomain - 启用 Visual C++ 2002 的初始 AppDomain 行为
+    noAssembly - 不产生程序集           nostdlib – 忽略默认的 \clr 目录
+/Gd __cdecl 调用约定                    /Gr __fastcall 调用约定
+/Gz __stdcall 调用约定                  /GZ 启用堆栈检查(/RTCs)
+/Gv __vectorcall 调用约定               /QIfist[-] 使用 FIST 而不是 ftol()
+/hotpatch 确保可热修补映像的函数填充    
+/arch:<IA32|SSE|SSE2|AVX> CPU 架构的最低要求，以下选项之一: 
+    IA32 - 不使用增强指令并将 x87 用于浮点
+    SSE - 启用支持 SSE 的 CPU 可用的指令
+    SSE2 - (默认)启用支持 SSE2 的 CPU 可用的指令
+   AVX - 启用 Intel(R) 高级矢量扩展指令 
+/Qimprecise_fwaits 仅在“try”边界而不是“try”内部生成 FWAITs
+/Qsafe_fp_loads 生成安全 FP 负载        
+
+                              -输出文件-
+
+/Fa[file] 命名程序集列表文件            /FA[scu] 配置程序集列表
+/Fd[file] 命名 .PDB 文件                /Fe<file> 命名可执行文件
+/Fm[file] 命名映射文件                  /Fo<file> 命名对象文件
+/Fp<file> 命名预编译头文件              /Fr[file] 命名源浏览器文件
+/FR[file] 命名扩展 .SBR 文件            /Fi[file] 命名预处理的文件
+/Fd: <file> 命名 .PDB 文件              /Fe: <file> 命名可执行文件
+/Fm: <file> 命名映射文件                /Fo: <file> 命名对象文件
+/Fp: <file> 命名 .PCH 文件              /FR: <file> 命名扩展 .SBR 文件
+/Fi: <file> 命名预处理的文件            
+/doc[file] 处理 XML 文档注释，并可选择命名 .xdc 文件
+
+                              -预处理器-
+
+/AI<dir> 添加到程序集搜索路径           /FU<file> 强制使用程序集/模块 
+/C 不抽出注释                           /D<name>{=|#}<text> 定义宏
+/E 预处理到 stdout                      /EP 预处理到 stdout，无行号
+/P 预处理到文件                         /Fx 将插入的代码合并到文件中
+/FI<file> 命名强制包含文件              /U<name> 移除预定义的宏
+/u 移除所有预定义的宏                   /I<dir> 添加到包含搜索路径
+/X 忽略“标准位置”                     
+
+                                -语言-
+
+/Zi 启用调试信息                        /Z7 启用旧式调试信息
+/Zp[n] 在 n 字节边界上包装结构          /Za 禁用扩展
+/Ze 启用扩展(默认)                      /Zl 省略 .OBJ 中的默认库名
+/Zg 生成函数原型                        /Zs 只进行语法检查
+/vd{0|1|2} 禁用/启用 vtordisp           /vm<x> 指向成员的指针类型
+/Zc:arg1[,arg2] C++ 语言合规性，这里的参数可以是: 
+    forScope[-] - 对范围规则强制使用标准 C++
+    wchar_t[-] - wchar_t 是本机类型，不是 typedef
+    auto[-] - 对 auto 强制使用新的标准 C++ 含义
+    trigraphs[-] - 启用三元祖(默认为关闭)
+    rvalueCast[-] - 强制实施标准 C++ 显式类型转换规则
+    strictStings[-] - 禁用从字符串文本到 [char|wchar_t]* 的转换(默认为关闭)
+/ZW 启用 WinRT 语言扩展                 /ZI 启用“编辑并继续”调试信息
+/openmp 启用 OpenMP 2.0 语言扩展        
+
+                              - 杂项 -
+
+@<file> 选项响应文件                    /?, /help 打印此帮助消息
+/bigobj 生成扩展的对象格式              /c 只编译，不链接
+/errorReport:option 将内部编译器错误报告给 Microsoft
+    none - 不发送报告                       prompt - 提示立即发送报告
+    queue - 在下一次管理员登录时，提示发送报告(默认)
+    send - 自动发送报告                 /FC 诊断中使用完整路径名
+/H<num> 最大外部名称长度                /J 默认 char 类型是 unsigned
+/MP[n] 最多使用“n”个进程进行编译      /nologo 取消显示版权信息
+/sdl 支持其他安全功能和警告             /showIncludes 显示包含文件名
+/Tc<source file> 将文件编译为 .c        /Tp<source file> 将文件编译为 .cpp
+/TC 将所有文件编译为 .c                 /TP 将所有文件编译为 .cpp
+/V<string> 设置版本字符串               /w 禁用所有警告
+/wd<n> 禁用警告 n                       /we<n> 将警告 n 视为错误
+/wo<n> 发出一次警告 n                   /w<l><n> 为 n 设置警告等级 1-4
+/W<n> 设置警告等级(默认 n=1)            /Wall 启用所有警告
+/WL 启用单行诊断                        /WX 将警告视为错误
+/Yc[file] 创建 .PCH 文件                /Yd 将调试信息放在每个 .OBJ 中
+/Yl[sym] 为调试库插入 .PCH 引用         /Yu[file] 使用 .PCH 文件
+/Y- 禁用所有 PCH 选项                   /Zm<n> 最大内存分配(默认为 %)
+/FS 强制使用 MSPDBSRV.EXE               /Wp64 启用 64 位端口定位警告
+
+                                -链接-
+
+/LD 创建 .DLL                           /LDd 创建 .DLL 调试库
+/LN 创建 .netmodule                     /F<num> 设置堆栈大小
+/link [链接器选项和库]                  /MD 与 MSVCRT.LIB 链接
+/MT 与 LIBCMT.LIB 链接                  /MDd 与 MSVCRTD.LIB 调试库链接
+/MTd 与 LIBCMTD.LIB 调试库链接          
+
+                              -代码分析-
+
+/analyze[-] 启用本机分析                /analyze:quiet[-] 没有对控制台的警告
+/analyze:log<name> 对文件的警告         /analyze:autolog Log to *.pftlog
+/analyze:autolog:ext<ext> Log to *.<ext>/analyze:autolog- 无日志文件
+/analyze:WX- 警告不严重                 /analyze:stacksize<num> 最大堆栈帧
+/analyze:max_paths<num> 最大路径        /analyze:only Analyze, no code gen
+
