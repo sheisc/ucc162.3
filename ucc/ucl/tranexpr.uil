@@ -1,0 +1,1532 @@
+function TranslatePrimaryExpression
+	t0 : expr + 28;
+	t1 :*t0;
+	t2 : t1 << 16;
+	t3 : t2 >> 16;
+	if (t3 != 49) goto BB2;
+
+BB1: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t4 : expr + 24;
+	t5 :*t4;
+	t6 : expr + 40;
+	t7 :*t6;
+	t8 : AddConstant(t5, t7);
+	return t8;
+	goto BB7;
+
+BB2: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t9 : expr + 28;
+	t10 :*t9;
+	t11 : t10 << 16;
+	t12 : t11 >> 16;
+	if (t12 == 50) goto BB5;
+
+BB3: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t13 : expr + 28;
+	t14 :*t13;
+	t15 : t14 << 15;
+	t16 : t15 >> 31;
+	if (t16) goto BB5;
+
+BB4: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t17 : expr + 28;
+	t18 :*t17;
+	t19 : t18 << 14;
+	t20 : t19 >> 31;
+	if (! t20) goto BB6;
+
+BB5: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 1 
+	t21 : expr + 40;
+	t23 :*t21;
+	t24 : AddressOf(t23);
+	return t24;
+	goto BB7;
+
+BB6: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t25 : expr + 40;
+	t27 :*t25;
+	return t27;
+
+BB7: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 0 
+	ret
+
+
+function ReadBitField
+	t0 : fld + 16;
+	t1 :*t0;
+	t2 : t1 + 4;
+	t3 :*t2;
+	t4 : 8 * t3;
+	size = t4;
+	t5 : fld + 8;
+	t6 :*t5;
+	t7 : fld + 12;
+	t8 :*t7;
+	t9 : t6 + t8;
+	t10 : size - t9;
+	lbits = t10;
+	t11 :*t5;
+	t12 : size - t11;
+	rbits = t12;
+	t13 :&Types;
+	t14 : t13 + 48;
+	t15 : IntConstant(lbits);
+	p : Simplify(t14, 3, p, t15);
+	t18 :*t0;
+	t19 :*t18;
+	t20 : t19 << 24;
+	t21 : t20 >> 24;
+	t22 : t21 & 1;
+	if (! t22) goto BB10;
+
+BB9: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t23 :&Types;
+	t24 : t23 + 60;
+	t17 = t24;
+	goto BB11;
+
+BB10: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t25 :&Types;
+	t26 : t25 + 48;
+	t17 = t26;
+
+BB11: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	t27 : IntConstant(rbits);
+	p : Simplify(t17, 4, p, t27);
+	return p;
+	ret
+
+
+function WriteBitField
+	t0 : fld + 8;
+	t1 :*t0;
+	t2 : 1 << t1;
+	t3 : t2 + -1;
+	fmask = t3;
+	t4 : fld + 12;
+	t5 :*t4;
+	t6 : fmask << t5;
+	mask = t6;
+	t7 :*src;
+	if (t7 != 3) goto BB15;
+
+BB13: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t8 : src + 32;
+	t11 :*t8;
+	if (t11 <= fmask) goto BB15;
+
+BB14: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t12 :&str0;
+	t13 :&str1;
+	fprintf(stderr, t12, t13, 120);
+	t15 : dst + 52;
+	t16 :*t15;
+	t17 :&str2;
+	Do_Warning(t16, t17);
+
+BB15: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 2 
+	t18 :*src;
+	if (t18 != 3) goto BB18;
+
+BB16: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t19 : src + 32;
+	t22 :*t19;
+	if (t22 != 0) goto BB18;
+
+BB17: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t23 :&Types;
+	t24 : t23 + 48;
+	t25 :~mask;
+	t26 : IntConstant(t25);
+	p : Simplify(t24, 2, dst, t26);
+	goto BB25;
+
+BB18: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t28 :*src;
+	if (t28 != 3) goto BB21;
+
+BB19: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t29 : src + 32;
+	t32 :*t29;
+	t33 : t32 & fmask;
+	if (t33 != fmask) goto BB21;
+
+BB20: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t34 :&Types;
+	t35 : t34 + 48;
+	t36 : IntConstant(mask);
+	p : Simplify(t35, 0, dst, t36);
+	goto BB25;
+
+BB21: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t38 :*src;
+	if (t38 != 3) goto BB23;
+
+BB22: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t39 : src + 32;
+	t42 :*t39;
+	t43 : fld + 12;
+	t44 :*t43;
+	t45 : t42 << t44;
+	t46 : t45 & mask;
+	src : IntConstant(t46);
+	goto BB24;
+
+BB23: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t48 :&Types;
+	t49 : t48 + 48;
+	t50 : fld + 12;
+	t51 :*t50;
+	t52 : IntConstant(t51);
+	src : Simplify(t49, 3, src, t52);
+	t54 : IntConstant(mask);
+	src : Simplify(t49, 2, src, t54);
+
+BB24: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	t56 :&Types;
+	t57 : t56 + 48;
+	t58 :~mask;
+	t59 : IntConstant(t58);
+	p : Simplify(t57, 2, dst, t59);
+	p : Simplify(t57, 0, p, src);
+
+BB25: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 2 
+	t62 :*dst;
+	if (t62 != 5) goto BB28;
+
+BB26: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t63 : dst + 60;
+	t64 :*t63;
+	t65 : t64 + 4;
+	t66 :*t65;
+	if (t66 != 25) goto BB28;
+
+BB27: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t67 : dst + 60;
+	t68 :*t67;
+	t69 : t68 + 8;
+	t70 :*t69;
+	addr = t70;
+	t71 : fld + 16;
+	t72 :*t71;
+	GenerateIndirectMove(t72, addr, p);
+	t73 :*t71;
+	dst : Deref(t73, addr);
+	goto BB29;
+
+BB28: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	t75 : fld + 16;
+	t76 :*t75;
+	GenerateMove(t76, dst, p);
+
+BB29: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	t77 : ReadBitField(fld, dst);
+	return t77;
+	ret
+
+
+function Offset
+	if (voff == 0) goto BB32;
+
+BB31: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t0 :&Types;
+	t1 : t0 + 168;
+	t2 : IntConstant(coff);
+	voff : Simplify(t1, 5, voff, t2);
+	addr : Simplify(t1, 5, addr, voff);
+	t5 : Deref(ty, addr);
+	return t5;
+	goto BB36;
+
+BB32: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t6 :*addr;
+	if (t6 != 5) goto BB35;
+
+BB33: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t7 : addr + 60;
+	t8 :*t7;
+	t9 : t8 + 4;
+	t10 :*t9;
+	if (t10 != 24) goto BB35;
+
+BB34: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t11 : addr + 60;
+	t12 :*t11;
+	t13 : t12 + 8;
+	t14 :*t13;
+	t15 : addr + 52;
+	t16 :*t15;
+	t17 : CreateOffset(ty, t14, coff, t16);
+	return t17;
+	goto BB36;
+
+BB35: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	t18 :&Types;
+	t19 : t18 + 168;
+	t20 : IntConstant(coff);
+	t21 : Simplify(t19, 5, addr, t20);
+	t22 : Deref(ty, t21);
+	return t22;
+
+BB36: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 0 
+	ret
+
+
+function TranslateBranchExpression
+	t0 : expr + 24;
+	t1 :*t0;
+	t : CreateTemp(t1);
+	nextBB : CreateBBlock();
+	trueBB : CreateBBlock();
+	falseBB : CreateBBlock();
+	TranslateBranch(expr, trueBB, falseBB);
+	StartBBlock(falseBB);
+	t6 :*t0;
+	t7 : IntConstant(0);
+	GenerateMove(t6, t, t7);
+	GenerateJump(nextBB);
+	StartBBlock(trueBB);
+	t8 :*t0;
+	t9 : IntConstant(1);
+	GenerateMove(t8, t, t9);
+	StartBBlock(nextBB);
+	return t;
+	ret
+
+
+function TranslateArrayIndex
+	voff = 0;
+	coff = 0;
+	p = expr;
+
+BB39: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t2 : p + 36;
+	t3 :*t2;
+	t4 : t3 + 28;
+	t5 :*t4;
+	t6 : t5 << 16;
+	t7 : t6 >> 16;
+	if (t7 != 49) goto BB41;
+
+BB40: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t10 : p + 36;
+	t11 :*t10;
+	t12 : t11 + 40;
+	t15 :*t12;
+	t16 : coff + t15;
+	coff = t16;
+	goto BB44;
+
+BB41: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (voff != 0) goto BB43;
+
+BB42: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t19 : p + 36;
+	t20 :*t19;
+	voff : TranslateExpression(t20);
+	goto BB44;
+
+BB43: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t22 : voff + 12;
+	t23 :*t22;
+	t26 : p + 36;
+	t27 :*t26;
+	t28 : TranslateExpression(t27);
+	voff : Simplify(t23, 5, voff, t28);
+
+BB44: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 2 
+	t30 : p + 32;
+	t32 :*t30;
+	p = t32;
+	t33 : p + 28;
+	t34 :*t33;
+	t35 : t34 << 16;
+	t36 : t35 >> 16;
+	if (t36 == 42) goto BB39;
+
+BB45: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	addr : TranslateExpression(p);
+	t38 : expr + 24;
+	t39 :*t38;
+	dst : Offset(t39, addr, voff, coff);
+	t42 : expr + 28;
+	t43 :*t42;
+	t44 : t43 << 15;
+	t45 : t44 >> 31;
+	if (! t45) goto BB47;
+
+BB46: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t41 : AddressOf(dst);
+	goto BB48;
+
+BB47: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t41 = dst;
+
+BB48: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	return t41;
+	ret
+
+
+function TranslateFunctionCall
+	args : CreateVector(4);
+	t1 : expr + 32;
+	t3 :*t1;
+	t4 : t3 + 28;
+	t5 :*t4;
+	t6 : t5 & -131073;
+	*t4 = t6;
+	t11 :*t1;
+	faddr : TranslateExpression(t11);
+	t14 : expr + 36;
+	t15 :*t14;
+	arg = t15;
+	goto BB53;
+
+BB50: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	ilarg : HeapAllocate(CurrentHeap, 8);
+	memset(ilarg, 0, 8);
+	t19 : TranslateExpression(arg);
+	*ilarg = t19;
+	t21 : ilarg + 4;
+	t23 : arg + 24;
+	t24 :*t23;
+	*t21 = t24;
+	t26 : args + 4;
+	t27 :*t26;
+	t28 : args + 8;
+	t29 :*t28;
+	if (t27 < t29) goto BB52;
+
+BB51: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	ExpandVector(args);
+
+BB52: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	t30 :*args;
+	t31 : args + 4;
+	t32 :*t31;
+	t33 : t32 << 2;
+	t34 : t30 + t33;
+	*t34 = ilarg;
+	t37 :*t31;
+	t38 : t37 + 1;
+	*t31 = t38;
+	t40 : arg + 4;
+	t41 :*t40;
+	arg = t41;
+
+BB53: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	if (arg) goto BB50;
+
+BB54: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	recv = 0;
+	t42 : expr + 24;
+	t43 :*t42;
+	t44 :*t43;
+	t45 : t44 << 24;
+	t46 : t45 >> 24;
+	if (t46 == 15) goto BB56;
+
+BB55: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t47 : expr + 24;
+	t48 :*t47;
+	recv : CreateTemp(t48);
+
+BB56: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	t50 : expr + 24;
+	t51 :*t50;
+	GenerateFunctionCall(t51, recv, faddr, args);
+	return recv;
+	ret
+
+
+function TranslateMemberAccess
+	coff = 0;
+	p = expr;
+	t0 : p + 28;
+	t1 :*t0;
+	t2 : t1 << 16;
+	t3 : t2 >> 16;
+	if (t3 != 45) goto BB61;
+
+BB58: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t4 : p + 40;
+	t6 :*t4;
+	fld = t6;
+	t7 :*fld;
+	coff = t7;
+	t8 : expr + 32;
+	t10 :*t8;
+	addr : TranslateExpression(t10);
+	goto BB63;
+	goto BB61;
+
+BB60: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t12 : p + 40;
+	t14 :*t12;
+	fld = t14;
+	t15 :*fld;
+	t16 : coff + t15;
+	coff = t16;
+	t17 : p + 32;
+	t19 :*t17;
+	p = t19;
+
+BB61: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 2 
+	t20 : p + 28;
+	t21 :*t20;
+	t22 : t21 << 16;
+	t23 : t22 >> 16;
+	if (t23 == 44) goto BB60;
+
+BB62: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t24 : TranslateExpression(p);
+	addr : AddressOf(t24);
+
+BB63: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t26 : expr + 24;
+	t27 :*t26;
+	dst : Offset(t27, addr, 0, coff);
+	t29 : dst + 32;
+	t32 : expr + 40;
+	t34 :*t32;
+	*t29 = t34;
+	t35 :*t29;
+	fld = t35;
+	t36 : fld + 8;
+	t37 :*t36;
+	if (t37 == 0) goto BB66;
+
+BB64: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t38 : expr + 28;
+	t39 :*t38;
+	t40 : t39 << 13;
+	t41 : t40 >> 31;
+	if (t41 != 0) goto BB66;
+
+BB65: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t42 : ReadBitField(fld, dst);
+	return t42;
+	goto BB70;
+
+BB66: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t44 : expr + 28;
+	t45 :*t44;
+	t46 : t45 << 15;
+	t47 : t46 >> 31;
+	if (! t47) goto BB68;
+
+BB67: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t43 : AddressOf(dst);
+	goto BB69;
+
+BB68: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t43 = dst;
+
+BB69: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	return t43;
+
+BB70: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	ret
+
+
+function TranslateIncrement
+	fld = 0;
+	t0 : expr + 32;
+	t2 :*t0;
+	casgn = t2;
+	t3 : casgn + 32;
+	t5 :*t3;
+	p : TranslateExpression(t5);
+	t8 :*t3;
+	t9 : t8 + 28;
+	t10 :*t9;
+	t11 : t10 & -65536;
+	t12 : t11 | 48;
+	*t9 = t12;
+	t17 :*t3;
+	t18 : t17 + 40;
+	*t18 = p;
+	t22 : p + 32;
+	t24 :*t22;
+	fld = t24;
+	t25 : expr + 28;
+	t26 :*t25;
+	t27 : t26 << 16;
+	t28 : t27 >> 16;
+	if (t28 == 46) goto BB73;
+
+BB72: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t29 : expr + 28;
+	t30 :*t29;
+	t31 : t30 << 16;
+	t32 : t31 >> 16;
+	if (t32 != 47) goto BB78;
+
+BB73: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	ret = p;
+	t33 : casgn + 32;
+	t35 :*t33;
+	t36 : t35 + 28;
+	t37 :*t36;
+	t38 : t37 << 12;
+	t39 : t38 >> 31;
+	if (! t39) goto BB75;
+
+BB74: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	ret : ReadBitField(fld, p);
+	goto BB77;
+
+BB75: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t41 :*p;
+	if (t41 == 5) goto BB77;
+
+BB76: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t42 : expr + 24;
+	t43 :*t42;
+	ret : CreateTemp(t43);
+	t45 :*t42;
+	GenerateMove(t45, ret, p);
+
+BB77: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 1 
+	TranslateExpression(casgn);
+	return ret;
+	goto BB79;
+
+BB78: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t47 : TranslateExpression(casgn);
+	return t47;
+
+BB79: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	ret
+
+
+function TranslatePostfixExpression
+	t0 : expr + 28;
+	t1 :*t0;
+	t2 : t1 << 16;
+	t3 : t2 >> 16;
+	if (t3 < 42) goto BB87;
+
+BB81: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (t3 > 47) goto BB87;
+
+BB82: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 4 
+	t4 : t3 - 42;
+	goto (BB83,BB84,BB85,BB85,BB86,BB86,)[t4];
+
+BB83: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t5 : TranslateArrayIndex(expr);
+	return t5;
+	goto BB91;
+
+BB84: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t6 : TranslateFunctionCall(expr);
+	return t6;
+	goto BB91;
+
+BB85: ref = 2, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t7 : TranslateMemberAccess(expr);
+	return t7;
+	goto BB91;
+
+BB86: ref = 2, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t8 : TranslateIncrement(expr);
+	return t8;
+	goto BB91;
+
+BB87: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t10 :&str3;
+	t11 :&str4;
+	t12 : _assert(t10, t11, 633);
+	if (t12) goto BB89;
+
+BB88: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t9 = 0;
+	goto BB90;
+
+BB89: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t9 = 1;
+
+BB90: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	return 0;
+
+BB91: ref = 4, sym->ref = 0 ,npred = 5 , nsucc = 0 
+	ret
+
+
+function TranslateCast
+	dcode : TypeCode(ty);
+	scode : TypeCode(sty);
+	if (scode >= 4) goto BB97;
+
+BB93: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode == 4) goto BB96;
+
+BB94: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t3 :&str5;
+	t4 :&str6;
+	t5 : _assert(t3, t4, 665);
+	if (t5) goto BB96;
+
+BB95: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t2 = 0;
+	goto BB97;
+
+BB96: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	t2 = 1;
+
+BB97: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 2 
+	if (scode != dcode) goto BB99;
+
+BB98: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	return src;
+	goto BB141;
+
+BB99: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode != 8) goto BB101;
+
+BB100: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	return 0;
+	goto BB141;
+
+BB101: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (scode < 0) goto BB136;
+
+BB102: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (scode > 7) goto BB136;
+
+BB103: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 8 
+	t6 : scode - 0;
+	goto (BB104,BB106,BB105,BB107,BB108,BB118,BB124,BB130,)[t6];
+
+BB104: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 26;
+	goto BB140;
+
+BB105: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 28;
+	goto BB140;
+
+BB106: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 27;
+	goto BB140;
+
+BB107: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 29;
+	goto BB140;
+
+BB108: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode > 1) goto BB110;
+
+BB109: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 30;
+	goto BB140;
+
+BB110: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode > 3) goto BB112;
+
+BB111: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 31;
+	goto BB117;
+
+BB112: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode != 6) goto BB114;
+
+BB113: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 32;
+	goto BB117;
+
+BB114: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode != 7) goto BB116;
+
+BB115: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 33;
+	goto BB117;
+
+BB116: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	temp : CreateTemp(ty);
+	GenerateMove(ty, temp, src);
+	return temp;
+	goto BB141;
+
+BB117: ref = 3, sym->ref = 0 ,npred = 3 , nsucc = 1 
+	goto BB140;
+
+BB118: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode != 6) goto BB120;
+
+BB119: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 34;
+	goto BB140;
+
+BB120: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode != 7) goto BB122;
+
+BB121: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 35;
+	goto BB123;
+
+BB122: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	temp : CreateTemp(ty);
+	GenerateMove(ty, temp, src);
+	return temp;
+	goto BB141;
+
+BB123: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	goto BB140;
+
+BB124: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode != 4) goto BB126;
+
+BB125: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 37;
+	goto BB140;
+
+BB126: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode != 5) goto BB128;
+
+BB127: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 38;
+	goto BB129;
+
+BB128: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 36;
+
+BB129: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	goto BB140;
+
+BB130: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode != 4) goto BB132;
+
+BB131: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 40;
+	goto BB140;
+
+BB132: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (dcode != 5) goto BB134;
+
+BB133: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 41;
+	goto BB135;
+
+BB134: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	opcode = 39;
+
+BB135: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	goto BB140;
+
+BB136: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t10 :&str7;
+	t11 :&str8;
+	t12 : _assert(t10, t11, 773);
+	if (t12) goto BB138;
+
+BB137: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t9 = 0;
+	goto BB139;
+
+BB138: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t9 = 1;
+
+BB139: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	return 0;
+	goto BB141;
+
+BB140: ref = 12, sym->ref = 0 ,npred = 12 , nsucc = 1 
+	dst : CreateTemp(ty);
+	GenerateAssign(ty, dst, opcode, src, 0);
+	return dst;
+
+BB141: ref = 5, sym->ref = 0 ,npred = 6 , nsucc = 0 
+	ret
+
+
+function TranslateUnaryExpression
+	t0 : expr + 28;
+	t1 :*t0;
+	t2 : t1 << 16;
+	t3 : t2 >> 16;
+	if (t3 != 40) goto BB150;
+
+BB143: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	count = 1;
+	parent = expr;
+	t4 : expr + 32;
+	t6 :*t4;
+	child = t6;
+	goto BB145;
+
+BB144: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	++count;
+	parent = child;
+	t9 : child + 32;
+	t11 :*t9;
+	child = t11;
+
+BB145: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t12 : child + 28;
+	t13 :*t12;
+	t14 : t13 << 16;
+	t15 : t14 >> 16;
+	if (t15 == 40) goto BB144;
+
+BB146: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t16 : count & 1;
+	if (t16 != 1) goto BB148;
+
+BB147: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	expr = parent;
+	goto BB149;
+
+BB148: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	expr = child;
+
+BB149: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	t17 : TranslateBranchExpression(expr);
+	return t17;
+	goto BB164;
+
+BB150: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t18 : expr + 28;
+	t19 :*t18;
+	t20 : t19 << 16;
+	t21 : t20 >> 16;
+	if (t21 == 33) goto BB152;
+
+BB151: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t22 : expr + 28;
+	t23 :*t22;
+	t24 : t23 << 16;
+	t25 : t24 >> 16;
+	if (t25 != 34) goto BB153;
+
+BB152: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	t26 : TranslateIncrement(expr);
+	return t26;
+	goto BB164;
+
+BB153: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t27 : expr + 32;
+	t29 :*t27;
+	src : TranslateExpression(t29);
+	t31 : expr + 28;
+	t32 :*t31;
+	t33 : t32 << 16;
+	t34 : t33 >> 16;
+	if (t34 < 32) goto BB160;
+
+BB154: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (t34 > 39) goto BB160;
+
+BB155: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 7 
+	t35 : t34 - 32;
+	goto (BB156,BB160,BB160,BB157,BB158,BB160,BB159,BB159,)[t35];
+
+BB156: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t36 : expr + 24;
+	t37 :*t36;
+	t38 : expr + 32;
+	t40 :*t38;
+	t41 : t40 + 24;
+	t42 :*t41;
+	t43 : TranslateCast(t37, t42, src);
+	return t43;
+	goto BB164;
+
+BB157: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t44 : AddressOf(src);
+	return t44;
+	goto BB164;
+
+BB158: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t45 : expr + 24;
+	t46 :*t45;
+	t47 : Deref(t46, src);
+	return t47;
+	goto BB164;
+
+BB159: ref = 2, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t48 : expr + 24;
+	t49 :*t48;
+	t50 : expr + 28;
+	t51 :*t50;
+	t52 : t51 << 16;
+	t53 : t52 >> 16;
+	t54 : t53 << 2;
+	t55 :&OPMap;
+	t56 : t55 + t54;
+	t57 :*t56;
+	t58 : Simplify(t49, t57, src, 0);
+	return t58;
+	goto BB164;
+
+BB160: ref = 5, sym->ref = 0 ,npred = 5 , nsucc = 2 
+	t60 :&str9;
+	t61 :&str10;
+	t62 : _assert(t60, t61, 849);
+	if (t62) goto BB162;
+
+BB161: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t59 = 0;
+	goto BB163;
+
+BB162: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t59 = 1;
+
+BB163: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	return 0;
+
+BB164: ref = 6, sym->ref = 0 ,npred = 7 , nsucc = 0 
+	ret
+
+
+function TranslateBinaryExpression
+	t0 : expr + 28;
+	t1 :*t0;
+	t2 : t1 << 16;
+	t3 : t2 >> 16;
+	if (t3 == 14) goto BB169;
+
+BB166: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t4 : expr + 28;
+	t5 :*t4;
+	t6 : t5 << 16;
+	t7 : t6 >> 16;
+	if (t7 == 15) goto BB169;
+
+BB167: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t8 : expr + 28;
+	t9 :*t8;
+	t10 : t9 << 16;
+	t11 : t10 >> 16;
+	if (t11 < 19) goto BB170;
+
+BB168: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t12 : expr + 28;
+	t13 :*t12;
+	t14 : t13 << 16;
+	t15 : t14 >> 16;
+	if (t15 > 24) goto BB170;
+
+BB169: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 1 
+	t16 : TranslateBranchExpression(expr);
+	return t16;
+	goto BB171;
+
+BB170: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	t17 : expr + 32;
+	t19 :*t17;
+	src1 : TranslateExpression(t19);
+	t22 : expr + 36;
+	t23 :*t22;
+	src2 : TranslateExpression(t23);
+	t25 : expr + 24;
+	t26 :*t25;
+	t27 : expr + 28;
+	t28 :*t27;
+	t29 : t28 << 16;
+	t30 : t29 >> 16;
+	t31 : t30 << 2;
+	t32 :&OPMap;
+	t33 : t32 + t31;
+	t34 :*t33;
+	t35 : Simplify(t26, t34, src1, src2);
+	return t35;
+
+BB171: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	ret
+
+
+function TranslateConditionalExpression
+	t = 0;
+	t0 : expr + 24;
+	t1 :*t0;
+	t2 :*t1;
+	t3 : t2 << 24;
+	t4 : t3 >> 24;
+	if (t4 == 15) goto BB174;
+
+BB173: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t5 : expr + 24;
+	t6 :*t5;
+	t : CreateTemp(t6);
+
+BB174: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	trueBB : CreateBBlock();
+	falseBB : CreateBBlock();
+	nextBB : CreateBBlock();
+	t11 : expr + 32;
+	t13 :*t11;
+	t14 : Not(t13);
+	TranslateBranch(t14, falseBB, trueBB);
+	StartBBlock(trueBB);
+	t16 : expr + 36;
+	t17 :*t16;
+	t18 : t17 + 32;
+	t20 :*t18;
+	t1 : TranslateExpression(t20);
+	if (t1 == 0) goto BB176;
+
+BB175: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t22 : expr + 24;
+	t23 :*t22;
+	GenerateMove(t23, t, t1);
+
+BB176: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	GenerateJump(nextBB);
+	StartBBlock(falseBB);
+	t26 : expr + 36;
+	t27 :*t26;
+	t30 : t27 + 36;
+	t31 :*t30;
+	t2 : TranslateExpression(t31);
+	if (t2 == 0) goto BB178;
+
+BB177: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t33 : expr + 24;
+	t34 :*t33;
+	GenerateMove(t34, t, t2);
+
+BB178: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	StartBBlock(nextBB);
+	return t;
+	ret
+
+
+function TranslateAssignmentExpression
+	fld = 0;
+	t0 : expr + 32;
+	t2 :*t0;
+	dst : TranslateExpression(t2);
+	t4 : dst + 32;
+	t6 :*t4;
+	fld = t6;
+	t7 : expr + 28;
+	t8 :*t7;
+	t9 : t8 << 16;
+	t10 : t9 >> 16;
+	if (t10 == 1) goto BB184;
+
+BB180: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t11 : expr + 32;
+	t13 :*t11;
+	t14 : t13 + 28;
+	t15 :*t14;
+	t16 : t15 & -65536;
+	t17 : t16 | 48;
+	*t14 = t17;
+	t22 :*t11;
+	t23 : t22 + 40;
+	t28 :*t11;
+	t29 : t28 + 28;
+	t30 :*t29;
+	t31 : t30 << 12;
+	t32 : t31 >> 31;
+	if (! t32) goto BB182;
+
+BB181: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t26 : ReadBitField(fld, dst);
+	goto BB183;
+
+BB182: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t26 = dst;
+
+BB183: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	*t23 = t26;
+
+BB184: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t35 : expr + 32;
+	t37 : expr + 36;
+	t38 :*t37;
+	src : TranslateExpression(t38);
+	t41 :*t35;
+	t42 : t41 + 28;
+	t43 :*t42;
+	t44 : t43 << 12;
+	t45 : t44 >> 31;
+	if (! t45) goto BB187;
+
+BB185: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t46 : WriteBitField(fld, dst, src);
+	return t46;
+	goto BB192;
+	goto BB191;
+
+BB187: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t47 :*dst;
+	if (t47 != 5) goto BB190;
+
+BB188: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t48 : dst + 60;
+	t49 :*t48;
+	t50 : t49 + 4;
+	t51 :*t50;
+	if (t51 != 25) goto BB190;
+
+BB189: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t52 : dst + 60;
+	t53 :*t52;
+	t54 : t53 + 8;
+	t55 :*t54;
+	addr = t55;
+	t56 : expr + 24;
+	t57 :*t56;
+	GenerateIndirectMove(t57, addr, src);
+	t58 :*t56;
+	dst : Deref(t58, addr);
+	goto BB191;
+
+BB190: ref = 2, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	t60 : expr + 24;
+	t61 :*t60;
+	GenerateMove(t61, dst, src);
+
+BB191: ref = 2, sym->ref = 0 ,npred = 3 , nsucc = 1 
+	return dst;
+
+BB192: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	ret
+
+
+function TranslateCommaExpression
+	t0 : expr + 32;
+	t2 :*t0;
+	TranslateExpression(t2);
+	t5 : expr + 36;
+	t6 :*t5;
+	t7 : TranslateExpression(t6);
+	return t7;
+	ret
+
+
+function TranslateErrorExpression
+	t1 :&str11;
+	t2 :&str12;
+	t3 : _assert(t1, t2, 1019);
+	if (t3) goto BB196;
+
+BB195: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t0 = 0;
+	goto BB197;
+
+BB196: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t0 = 1;
+
+BB197: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 0 
+	return 0;
+	ret
+
+
+function Not
+	t0 : expr + 28;
+	t1 :*t0;
+	t2 : t1 << 16;
+	t3 : t2 >> 16;
+	if (t3 < 14) goto BB207;
+
+BB199: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (t3 > 24) goto BB201;
+
+BB200: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 6 
+	t4 : t3 - 14;
+	goto (BB203,BB204,BB207,BB207,BB207,BB205,BB205,BB205,BB205,BB205,BB205,)[t4];
+
+BB201: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (t3 != 40) goto BB207;
+
+BB202: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	goto BB206;
+
+BB203: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t5 : expr + 28;
+	t6 :*t5;
+	t7 : t6 & -65536;
+	t8 : t7 | 15;
+	*t5 = t8;
+	t12 : expr + 32;
+	t16 :*t12;
+	t17 : Not(t16);
+	*t12 = t17;
+	t20 : expr + 36;
+	t23 :*t20;
+	t24 : Not(t23);
+	*t20 = t24;
+	return expr;
+	goto BB208;
+
+BB204: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t26 : expr + 28;
+	t27 :*t26;
+	t28 : t27 & -65536;
+	t29 : t28 | 14;
+	*t26 = t29;
+	t33 : expr + 32;
+	t37 :*t33;
+	t38 : Not(t37);
+	*t33 = t38;
+	t41 : expr + 36;
+	t44 :*t41;
+	t45 : Not(t44);
+	*t41 = t45;
+	return expr;
+	goto BB208;
+
+BB205: ref = 6, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t47 : expr + 28;
+	t48 :*t47;
+	t49 :*t47;
+	t50 : t49 << 16;
+	t51 : t50 >> 16;
+	t52 : t51 + -19;
+	t53 : t52 << 2;
+	t54 :&rops;
+	t55 : t54 + t53;
+	t56 :*t55;
+	t57 : t56 & 65535;
+	t58 : t48 & -65536;
+	t59 : t58 | t57;
+	*t47 = t59;
+	return expr;
+	goto BB208;
+
+BB206: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t63 : expr + 32;
+	t65 :*t63;
+	return t65;
+	goto BB208;
+
+BB207: ref = 5, sym->ref = 0 ,npred = 5 , nsucc = 1 
+	t : HeapAllocate(CurrentHeap, 48);
+	memset(t, 0, 48);
+	*t = 21;
+	t70 : t + 8;
+	*t70 = TokenCoord;
+	t74 : expr + 8;
+	t75 :*t74;
+	*t70 = t75;
+	t77 : t + 24;
+	t79 :&Types;
+	t80 : t79 + 48;
+	*t77 = t80;
+	t82 : t + 28;
+	t83 :*t82;
+	t84 : t83 & -65536;
+	t85 : t84 | 40;
+	*t82 = t85;
+	t89 : t + 32;
+	*t89 = expr;
+	t93 : FoldConstant(t);
+	return t93;
+
+BB208: ref = 4, sym->ref = 0 ,npred = 5 , nsucc = 0 
+	ret
+
+
+function TranslateBranch
+	t0 : expr + 28;
+	t1 :*t0;
+	t2 : t1 << 16;
+	t3 : t2 >> 16;
+	if (t3 < 40) goto BB212;
+
+BB210: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (t3 > 40) goto BB215;
+
+BB211: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	goto BB220;
+
+BB212: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (t3 < 14) goto BB231;
+
+BB213: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (t3 > 24) goto BB231;
+
+BB214: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 6 
+	t4 : t3 - 14;
+	goto (BB218,BB217,BB231,BB231,BB231,BB219,BB219,BB219,BB219,BB219,BB219,)[t4];
+
+BB215: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	if (t3 != 49) goto BB231;
+
+BB216: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	goto BB228;
+
+BB217: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	rtestBB : CreateBBlock();
+	t6 : expr + 32;
+	t8 :*t6;
+	t9 : Not(t8);
+	TranslateBranch(t9, falseBB, rtestBB);
+	StartBBlock(rtestBB);
+	t11 : expr + 36;
+	t12 :*t11;
+	TranslateBranch(t12, trueBB, falseBB);
+	goto BB241;
+
+BB218: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	rtestBB : CreateBBlock();
+	t14 : expr + 32;
+	t16 :*t14;
+	TranslateBranch(t16, trueBB, rtestBB);
+	StartBBlock(rtestBB);
+	t18 : expr + 36;
+	t19 :*t18;
+	TranslateBranch(t19, trueBB, falseBB);
+	goto BB241;
+
+BB219: ref = 6, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t20 : expr + 32;
+	t22 :*t20;
+	src1 : TranslateExpression(t22);
+	t25 : expr + 36;
+	t26 :*t25;
+	src2 : TranslateExpression(t26);
+	t29 :*t20;
+	t30 : t29 + 24;
+	t31 :*t30;
+	t32 : expr + 28;
+	t33 :*t32;
+	t34 : t33 << 16;
+	t35 : t34 >> 16;
+	t36 : t35 << 2;
+	t37 :&OPMap;
+	t38 : t37 + t36;
+	t39 :*t38;
+	GenerateBranch(t31, trueBB, t39, src1, src2);
+	goto BB241;
+
+BB220: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	count = 1;
+	parent = expr;
+	t40 : expr + 32;
+	t42 :*t40;
+	child = t42;
+	goto BB222;
+
+BB221: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	parent = child;
+	t43 : child + 32;
+	t45 :*t43;
+	child = t45;
+	++count;
+
+BB222: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t48 : child + 28;
+	t49 :*t48;
+	t50 : t49 << 16;
+	t51 : t50 >> 16;
+	if (t51 == 40) goto BB221;
+
+BB223: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t52 : parent + 32;
+	t54 :*t52;
+	src1 : TranslateExpression(t54);
+	t57 :*t52;
+	t58 : t57 + 24;
+	t59 :*t58;
+	ty = t59;
+	t60 :*ty;
+	t61 : t60 << 24;
+	t62 : t61 >> 24;
+	if (t62 >= 4) goto BB225;
+
+BB224: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t63 :&Types;
+	t64 : t63 + 48;
+	src1 : TranslateCast(t64, ty, src1);
+	ty = t64;
+
+BB225: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t66 : count & 1;
+	if (t66 != 1) goto BB227;
+
+BB226: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	GenerateBranch(ty, trueBB, 12, src1, 0);
+	goto BB241;
+
+BB227: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	GenerateBranch(ty, trueBB, 13, src1, 0);
+	goto BB241;
+
+BB228: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t67 : expr + 40;
+	t70 :*t67;
+	if (t70 != 0) goto BB230;
+
+BB229: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t74 : expr + 44;
+	t75 :*t74;
+	if (t75 == 0) goto BB241;
+
+BB230: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	GenerateJump(trueBB);
+	goto BB241;
+
+BB231: ref = 6, sym->ref = 0 ,npred = 6 , nsucc = 2 
+	src1 : TranslateExpression(expr);
+	t77 :*src1;
+	if (t77 != 3) goto BB238;
+
+BB232: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t79 :&str13;
+	t80 :&str14;
+	t81 : _assert(t79, t80, 1241);
+	if (t81) goto BB234;
+
+BB233: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t78 = 0;
+	goto BB235;
+
+BB234: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t78 = 1;
+
+BB235: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 2 
+	t82 : src1 + 32;
+	t85 :*t82;
+	if (t85 != 0) goto BB237;
+
+BB236: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t89 : src1 + 36;
+	t90 :*t89;
+	if (t90 == 0) goto BB241;
+
+BB237: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	GenerateJump(trueBB);
+	goto BB241;
+
+BB238: ref = 1, sym->ref = 0 ,npred = 1 , nsucc = 2 
+	t91 : expr + 24;
+	t92 :*t91;
+	ty = t92;
+	t93 :*ty;
+	t94 : t93 << 24;
+	t95 : t94 >> 24;
+	if (t95 >= 4) goto BB240;
+
+BB239: ref = 0, sym->ref = 0 ,npred = 1 , nsucc = 1 
+	t96 :&Types;
+	t97 : t96 + 48;
+	src1 : TranslateCast(t97, ty, src1);
+	ty = t97;
+
+BB240: ref = 1, sym->ref = 0 ,npred = 2 , nsucc = 1 
+	GenerateBranch(ty, trueBB, 13, src1, 0);
+
+BB241: ref = 9, sym->ref = 0 ,npred = 10 , nsucc = 0 
+	ret
+
+
+function TranslateExpression
+	t0 : expr + 28;
+	t1 :*t0;
+	t2 : t1 << 16;
+	t3 : t2 >> 16;
+	t4 : t3 << 2;
+	t5 :&ExprTrans;
+	t6 : t5 + t4;
+	t7 :*t6;
+	t8 : t7(expr);
+	return t8;
+	ret
+
+

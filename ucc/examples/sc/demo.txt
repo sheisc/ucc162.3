@@ -1,0 +1,44 @@
+ucc -o sc lex.c expr.c error.c decl.c stmt.c main.c
+cat demo.c
+{
+	int (*f(int,int,int))[4];
+	int (*(*fp2)(int,int,int))(int);
+	if(c)
+		a = f;
+	else{
+		b = k;
+	}
+
+	while(c){
+		while(d){
+			if(e){
+				d = d - 1;
+			}
+		}
+		c = c - 1;
+	}
+}
+
+./sc < demo.c
+f is:  function(int,int,int) which returns pointer to array[4] of int 
+fp2 is:  pointer to function(int,int,int) which returns pointer to function(int) which returns int 
+	if(!c) goto Label_0 
+	a = f 
+	goto Label_1 
+Label_0:
+	b = k 
+Label_1:
+Label_2:
+	if(!c) goto Label_6 
+Label_3:
+	if(!d) goto Label_5 
+	if(!e) goto Label_4 
+	t0 = d - 1 
+	d = t0 
+Label_4:
+	goto Label_3 
+Label_5:
+	t1 = c - 1 
+	c = t1 
+	goto Label_2 
+Label_6:

@@ -1,0 +1,9 @@
+CL          = cl
+CFLAGS      = -Zi -MTd /wd4996 /wd4267 /wd4244 /wd4311
+
+all: ucc.c win32.c
+	$(CL) $(CFLAGS) ucc.c win32.c
+
+clean:
+	del /q *.obj *.ilk *.pdb ucc.exe
+
