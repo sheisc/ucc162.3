@@ -1,2 +1,2 @@
 # ucc162.3
-A lightweight open-source C compiler. The original author is Wenjun Wang.
+UCC: A Lightweight Open-Source C Compiler for Research and Education.
