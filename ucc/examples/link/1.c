@@ -7,6 +7,7 @@ REAL_T add(REAL_T a , REAL_T b){
 extern int abc;
 REAL_T fpVal = 20.0f;
 /**
+
 	Undeclared fabs250()
 		is treated as 	int fabs250() 	----without prototype
 		in C Language
@@ -26,6 +27,7 @@ REAL_T fpVal = 20.0f;
 		float fabs250(float val) only fetch the first 4 byes in 
 		the stack ,that is , 0x00000000.
 		So after fabs250(...), %eax is still 0.
+		
 */
 int main(int argc,char *argv[]){
 	double fp = fpVal;
