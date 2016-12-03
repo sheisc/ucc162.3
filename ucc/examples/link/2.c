@@ -2,6 +2,7 @@
 //int abc = 200;
 int abc;
 int abc = 300;
+
 REAL_T fabs250(REAL_T a){
 #if 0
 	REAL_T value =  (REAL_T)fabs(a);
@@ -13,3 +14,5 @@ REAL_T fabs250(REAL_T a){
 	return value;
 #endif
 }
+
+

@@ -6,6 +6,8 @@ REAL_T add(REAL_T a , REAL_T b){
 }
 extern int abc;
 REAL_T fpVal = 20.0f;
+
+
 /**
 
 	Undeclared fabs250()
@@ -29,6 +31,7 @@ REAL_T fpVal = 20.0f;
 		So after fabs250(...), %eax is still 0.
 		
 */
+
 int main(int argc,char *argv[]){
 	double fp = fpVal;
 	int * ptr = (int *) &fp;
