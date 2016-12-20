@@ -8,7 +8,7 @@ typedef struct coord
 	int line;			// the line number in the original *.i
 	int col;			// column 
 } *Coord;
-// information abount input file
+// information about input file
 struct input
 {
 	char *filename;

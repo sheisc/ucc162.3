@@ -668,7 +668,7 @@ static int ScanCharLiteral(void)
 	CURSOR++;
 	if (count > 0)
 	{
-		Warning(&TokenCoord, "Two many characters");
+		Warning(&TokenCoord, "Too many characters");
 	}
 
 end_char:
@@ -788,7 +788,7 @@ static int ScanIdentifier(void)
 			return ScanStringLiteral();	// 	L"wide string"
 		}
 	}
-	// lettter(letter|digit)*
+	// letter(letter|digit)*
 	CURSOR++;
 	while (IsLetterOrDigit(*CURSOR))
 	{
