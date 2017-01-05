@@ -1191,12 +1191,15 @@ static void CheckDeclarationSpecifiers(AstSpecifiers specs)
 			ty = CheckEnumSpecifier((AstEnumSpecifier)p);
 			tyCnt++;
 		}
-		else if (p->kind == NK_TypedefName)
-		{
+		else if (p->kind == NK_TypedefName){
 			Symbol sym = LookupID(((AstTypedefName)p)->id);
-
-			assert(sym->kind == SK_TypedefName);
-			ty = sym->ty;
+			if(sym){
+				assert(sym->kind == SK_TypedefName);
+				ty = sym->ty;
+			}else{
+				Error(&specs->coord, "Unknown type name '%s'.",((AstTypedefName)p)->id);
+				ty = T(INT);
+			}
 			tyCnt++;
 		}
 		else 
