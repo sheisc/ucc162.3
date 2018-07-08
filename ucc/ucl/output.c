@@ -3,7 +3,9 @@
 #include "target.h"
 
 #include <stdarg.h>
+#ifdef _FORTIFY_SOURCE
 int vsnprintf(char *str, size_t size, const char *format, va_list ap);
+#endif
 
 #define BUF_LEN 4096
 

@@ -16,7 +16,7 @@
 */
 char *CPPProg[] = 
 { 
-	"/usr/bin/gcc", "-U__GNUC__", "-D_POSIX_SOURCE", "-D__STRICT_ANSI__",
+	"/usr/bin/gcc", "-m32", "-U__GNUC__", "-D_POSIX_SOURCE", "-D__STRICT_ANSI__",
 	"-Dunix", "-Di386", "-Dlinux", "-D__unix__", "-D__i386__", "-D__linux__", 
 	"-D__signed__=signed", "-D_UCC", "-I" UCCDIR "include", "$1", "-E", "$2", "-o", "$3", 0 
 };
@@ -37,12 +37,12 @@ char *CCProg[] =
 
 char *ASProg[] = 
 { 
-	"/usr/bin/as", "-o", "$3", "$1", "$2", 0 
+	"/usr/bin/gcc", "-m32", "-c", "-o", "$3", "$1", "$2", 0 
 };
 
 char *LDProg[] = 
 {
-	"/usr/bin/gcc", "-o", "$3", "$1", "$2", UCCDIR "assert.o", "-lc", "-lm", 0 
+	"/usr/bin/gcc", "-m32", "-o", "$3", "$1", "$2", UCCDIR "assert.o", "-lc", "-lm", 0 
 };
 
 

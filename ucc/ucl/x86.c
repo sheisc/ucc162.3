@@ -1036,7 +1036,7 @@ static void PushArgument(Symbol p, Type ty)
 	}
 	else if (tcode == B)
 	{
-		Symbol opds[2];
+		Symbol opds[3];
 
 		SpillReg(X86Regs[ESI]);
 		SpillReg(X86Regs[EDI]);

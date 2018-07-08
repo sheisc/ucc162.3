@@ -4,7 +4,7 @@ C_SRC       = alloc.c ast.c decl.c declchk.c dumpast.c emit.c \
               stmtchk.c str.c symbol.c tranexpr.c transtmt.c type.c \
               ucl.c uildasm.c vector.c x86.c x86linux.c
 OBJS        = $(C_SRC:.c=.o)
-CC          = gcc
+CC          = gcc -m32
 CFLAGS      = -g -D_UCC
 UCC         = ../driver/ucc
 

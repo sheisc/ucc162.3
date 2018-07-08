@@ -1,4 +1,4 @@
-CC          = gcc
+CC          = gcc -m32
 CFLAGS      = -g
 
 all: ucc.c linux.c
