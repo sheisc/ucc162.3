@@ -1,6 +1,6 @@
 # UCC
 
-## UCC: A Lightweight Open-Source C Compiler for Research and Education.
+## A Lightweight Open-Source C Compiler for Research and Education
 
 The original author is Wenjun Wang (Chief Architect of MIUI, Xiaomi Technology).
 
