@@ -1,6 +1,5 @@
 CC          = gcc -m32
-CFLAGS      = -g
-
+CFLAGS      = -g -DUCCDIR=\"$(shell pwd)/../bin/\"
 all: ucc.c linux.c
 	$(CC) -o ucc $(CFLAGS) $^
 

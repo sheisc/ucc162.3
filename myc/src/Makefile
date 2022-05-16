@@ -9,3 +9,4 @@ myc: expression.o program_body.o statement.o function_body.o var_declare.o \
 	$(CXX) -c $(OUTPUT_OPTION) $<
 clean:
 	rm -rf *.o myc
+

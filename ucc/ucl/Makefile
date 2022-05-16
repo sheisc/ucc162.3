@@ -1,3 +1,5 @@
+#cur_mkfile := $(abspath $(lastword $(MAKEFILE_LIST)))
+#CUR_DIR = $(patsubst %/, %, $(dir $(cur_mkfile)))/../bin
 C_SRC       = alloc.c ast.c decl.c declchk.c dumpast.c emit.c \
               error.c expr.c exprchk.c flow.c fold.c gen.c \
               input.c lex.c output.c reg.c simp.c stmt.c \
@@ -5,7 +7,7 @@ C_SRC       = alloc.c ast.c decl.c declchk.c dumpast.c emit.c \
               ucl.c uildasm.c vector.c x86.c x86linux.c
 OBJS        = $(C_SRC:.c=.o)
 CC          = gcc -m32
-CFLAGS      = -g -D_UCC
+CFLAGS      = -g -D_UCC 
 UCC         = ../driver/ucc
 
 all: $(OBJS) assert.o

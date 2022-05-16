@@ -3,19 +3,22 @@
 	.globl	f
 	.type	f, @function
 f:
-	pushl	%ebp
-	movl	%esp, %ebp
-	popl	%ebp
+	pushq	%rbp
+	movq	%rsp, %rbp
+	nop
+	popq	%rbp
 	ret
 	.size	f, .-f
 	.globl	main
 	.type	main, @function
 main:
-	pushl	%ebp
-	movl	%esp, %ebp
+	pushq	%rbp
+	movq	%rsp, %rbp
+	movl	%edi, -4(%rbp)
+	movq	%rsi, -16(%rbp)
 	movl	$0, %eax
-	popl	%ebp
+	popq	%rbp
 	ret
 	.size	main, .-main
-	.ident	"GCC: (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3"
+	.ident	"GCC: (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0"
 	.section	.note.GNU-stack,"",@progbits

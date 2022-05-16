@@ -4,8 +4,10 @@
 #include "ucc.h"
 
 #define _P_WAIT 0
-#define UCCDIR "/home/iron/bin/"
 
+#ifndef UCCDIR
+#define UCCDIR "/home/iron/bin/"
+#endif
 
 /**
 	ucc -E -v hello.c -I../ -DREAL=double -o hello.ii

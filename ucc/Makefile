@@ -1,5 +1,8 @@
-UCCDIR = /home/iron/bin
-export UCCDIR
+#UCCDIR = /home/iron/bin
+
+cur_mkfile := $(abspath $(lastword $(MAKEFILE_LIST)))
+UCCDIR = $(patsubst %/, %, $(dir $(cur_mkfile)))/bin
+
 
 all:
 	make -C driver
@@ -8,6 +11,7 @@ all:
 clean:
 	make -C driver clean
 	make -C ucl clean
+	rm -rf $(UCCDIR)
 	
 install:
 	mkdir -p $(UCCDIR)
@@ -18,5 +22,5 @@ install:
 uninstall:
 	cd $(UCCDIR);rm -f ucl assert.o ucc ucl.bak ucl1 ucl2;rm -rf $(UCCDIR)/include
 test:
-	make -C ucl test
+	make -C ucl test 
 
