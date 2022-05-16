@@ -3,7 +3,7 @@ all:
 	(ucl --dump-ast --dump-IR  hello.i) || exit
 	(ucc -o hello hello.s -lm) || exit
 	./hello	>	ucc.txt
-	gcc -S -o hi.s hello.c -fno-asynchronous-unwind-tables
+	ucc -S -o hi.s hello.c -fno-asynchronous-unwind-tables
 	((gcc -o hi hello.c -lm) && (./hi > gcc.txt)) || exit		
 	cat ucc.txt
 	diff ucc.txt gcc.txt

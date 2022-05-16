@@ -4,6 +4,9 @@ function f
 
 function main
 {
+  (call printf
+        str0)
+
   (ret 0)
 }
 

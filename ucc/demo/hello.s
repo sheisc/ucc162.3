@@ -2,6 +2,7 @@
 
 .data
 
+.str0:	.string	"Hello World.\012"
 
 
 
@@ -31,7 +32,12 @@ main:
 	pushl %esi
 	pushl %edi
 	movl %esp, %ebp
+	subl $4, %esp
 .BB1:
+	leal .str0, %eax
+	pushl %eax
+	call printf
+	addl $4, %esp
 	movl $0, %eax
 	movl %ebp, %esp
 	popl %edi

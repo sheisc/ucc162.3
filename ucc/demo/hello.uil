@@ -3,6 +3,8 @@ function f
 
 
 function main
+	t0 :&str0;
+	printf(t0);
 	return 0;
 	ret
 
