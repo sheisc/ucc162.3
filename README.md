@@ -111,6 +111,8 @@ iron@CSE:ucc$ which ucc
 
 /home/iron/github/ucc162.3/ucc/bin/ucc
 
+iron@CSE:ucc$ cd examples/sc
+
 iron@CSE:sc$ make
 
 ucc -o sc lex.c expr.c error.c decl.c stmt.c main.c
