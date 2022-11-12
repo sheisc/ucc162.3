@@ -92,6 +92,11 @@ iron@CSE:src$ cat test.s
 
 ```
 
+
+
+
+
+
 ### 3. The directory ucc/examples/sc contains the code for Chapter 1 in the book (The Dissection of C Compiler.pdf).
 
 #### How to build and use SC
@@ -162,7 +167,26 @@ Label_6:
 
 ```
 
+#### How to build and use SC2 (Generate 32-bit x86 assembly for Chapter 1 in the book)
 
+```sh
+
+
+iron@Katana:sc2$ make
+gcc  -o sc lex.c expr.c error.c decl.c stmt.c main.c emit.c func.c
+./sc < demo.c	> demo.s
+gcc  -m32 demo.s -o demo
+
+iron@Katana:sc2$ make run
+./demo 2022 11 12 17 35
+5050
+2022
+6
+
+iron@Katana:sc2$ cat demo.s
+
+	
+```
 
 
 
