@@ -28,11 +28,15 @@ static AstNodePtr DirectDeclarator(void){
 	if(curToken.kind == TK_ID){
 		directDecl = CreateAstNode(TK_ID,&curToken.value,NULL,NULL);
 		NEXT_TOKEN;		
-	}else if(curToken.kind == TK_LPAREN){
+	}
+#if 0	
+	else if(curToken.kind == TK_LPAREN){
 		NEXT_TOKEN;
 		directDecl = Declarator();
 		Expect(TK_RPAREN);
-	}else{
+	}
+#endif	
+	else{
 		Error("decl: id or '(' expected.  Found in  %s  line %d\n", __FILE__, __LINE__);
 	}
 	return directDecl;
@@ -45,6 +49,7 @@ static AstNodePtr DirectDeclarator(void){
  *******************************************************/
 static AstNodePtr PostfixDeclarator(void){
 	AstNodePtr decl = DirectDeclarator();
+#if 0	
 	while(1){
 		if(curToken.kind == TK_LBRACKET){
 			NEXT_TOKEN;
@@ -74,6 +79,7 @@ static AstNodePtr PostfixDeclarator(void){
 			break;
 		}
 	}
+#endif	
 	return decl;
 }
 /**************************************************
@@ -82,6 +88,7 @@ static AstNodePtr PostfixDeclarator(void){
  				postfix-declarator
  **************************************************/
 static AstNodePtr Declarator(void){
+#if 0	
 	if(curToken.kind == TK_MUL){
 		AstNodePtr pointerDec;
 		NEXT_TOKEN;
@@ -89,6 +96,7 @@ static AstNodePtr Declarator(void){
 		pointerDec->kids[1] = Declarator();
 		return pointerDec;
 	}
+#endif	
 	return PostfixDeclarator();
 }
 

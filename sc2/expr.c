@@ -107,6 +107,9 @@ AstNodePtr FunctionCallExpression(Token savedToken){
 		} else if(curToken.kind == TK_RPAREN){			
 			break;
 		}
+		else{
+			Error("Illegal tokens in function call.\n");
+		}
 
 	}
 	Expect(TK_RPAREN);
@@ -237,7 +240,8 @@ static void Do_PrintNode(AstNodePtr pNode){
 static int Do_GetLocalVarOrParameterOffset(struct astNode *arr, int size, char *id){
 	for(int i = 0; i < size; i++){
 		int len = strlen(id);
-		if(strncmp(arr[i].value.name, id, len) == 0){ // equal
+		int len2 = strlen(arr[i].value.name);		
+		if(strncmp(arr[i].value.name, id, len) == 0 && len == len2){ // equal
 			return arr[i].offset;
 		}
 	}

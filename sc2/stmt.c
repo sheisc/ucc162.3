@@ -102,10 +102,13 @@ static void DoLocalDeclarationNode(AstNodePtr pNode){
 			int cnt = func->local_vars_cnt;
 	        memset(&func->local_vars[cnt], 0, sizeof(func->local_vars[cnt]));
 			func->local_vars[cnt].op = TK_ID;
-			func->local_vars[cnt].value = curToken.value;
+			func->local_vars[cnt].value = pNode->value;// curToken.value;
 			// minus offset for local variables
 			func->local_vars[cnt].offset = GetFrameOffset();
 			func->local_vars_cnt++;
+			// char buf[128];
+			// sprintf(buf, "func->local_vars_cnt = %d %s\n", func->local_vars_cnt, pNode->value.name);
+			// perror(buf);
 		}
 	}
 }

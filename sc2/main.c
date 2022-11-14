@@ -78,6 +78,49 @@ SQAequal:
 	output_library_func("setl", "SQAless");
 	output_library_func("setg", "SQAlarger");
 	output_library_func("sete", "SQAequal");
+
+  /*
+
+int SQAStore(char *base, int offset, int val){
+    *((int *) (base + offset)) = val;
+    return val;
+}
+
+SQAstore:
+        movl    12(%esp), %eax
+        movl    4(%esp), %ecx
+        movl    8(%esp), %edx
+        movl    %eax, (%ecx,%edx)
+        ret
+  */	
+	EmitLabel("\n.text");
+	EmitLabel(".globl  %s", "SQAstore");
+	EmitLabel("%s:", "SQAstore");
+	EmitAssembly("movl 12(%%esp), %%eax");
+	EmitAssembly("movl 4(%%esp), %%ecx");
+	EmitAssembly("movl 8(%%esp), %%edx");
+	EmitAssembly("movl %%eax, (%%ecx,%%edx)");
+	EmitAssembly("ret"); 
+
+/*
+int SQAload(char *base, int offset){
+    return *((int *) (base + offset));
+}
+
+SQAload:
+        movl    4(%esp), %edx
+        movl    8(%esp), %eax
+        movl    (%edx,%eax), %eax
+        ret
+*/
+	EmitLabel("\n.text");
+	EmitLabel(".globl  %s", "SQAload");
+	EmitLabel("%s:", "SQAload");
+	EmitAssembly("movl 4(%%esp), %%edx");
+	EmitAssembly("movl 8(%%esp), %%eax");
+	EmitAssembly("movl (%%edx,%%eax), %%eax");
+	EmitAssembly("ret"); 
+	
 }
 
 int main(){
@@ -96,7 +139,7 @@ int main(){
 	.input_fmtstr:	.string	"%d"
 	.output_fmtstr:	.string	"%d\012"
 	********************************************************/
-	EmitLabel("#Auto-Genereated by SC2");
+	EmitLabel("#Auto-Genereated by SE352");
 	EmitLabel(".data");
 	EmitAssembly("%s:	.string	\"%%d\"",INPUT_FORMAT_STR_NAME);
 	EmitAssembly("%s:	.string	\"%%d\\012\"",OUTPUT_FORMAT_STR_NAME);

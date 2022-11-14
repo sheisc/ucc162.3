@@ -178,12 +178,9 @@ gcc  -o sc lex.c expr.c error.c decl.c stmt.c main.c emit.c func.c
 gcc  -m32 demo.s -o demo
 
 iron@Katana:sc2$ make run
-./demo 2022 11 12 17 35
-5050
-2022
-6
 
-iron@Katana:sc2$ cat demo.s
+
+iron@Katana:sc2$ cat demo.c
 
 	
 ```
