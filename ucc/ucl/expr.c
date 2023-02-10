@@ -25,7 +25,9 @@ static struct tokenOp TokenOps[] =
 #undef  TOKENOP
 };
 
-// operators' precedence
+/*
+ 	operators' precedence
+ */
 static int Prec[] =
 {
 #define OPINFO(op, prec, name, func, opcode) prec,
@@ -34,7 +36,9 @@ static int Prec[] =
 #undef OPINFO
 };
 
-// expression for integer constant 0
+/*
+	expression for integer constant 0
+ */
 AstExpression Constant0;
 
 /**
@@ -42,7 +46,9 @@ AstExpression Constant0;
  OPINFO(OP_ASSIGN,		  2,	"=",	  Assignment,	  NOP)
  OPINFO(OP_BITOR_ASSIGN,  2,	"|=",	  Assignment,	  NOP)
  */
-// operator names, mainly used for error reporting
+/*
+	operator names, mainly used for error reporting
+ */
 char *OPNames[] = 
 {
 #define OPINFO(op, prec, name, func, opcode) name,
@@ -75,19 +81,21 @@ static AstExpression ParsePrimaryExpression(void)
 
 		return expr;
 
-	/// Notice: Only when parsing constant and string literal,
-	/// ty member in astExpression is used since from OP_CONST
-	/// and OP_STR alone the expression's type can't be determined
-	// 20, 20U,20LU, 3.0f, 5.0, ....
-	case TK_INTCONST:		// 12345678
-	case TK_UINTCONST:		// 12345678U
-	case TK_LONGCONST:		// 12345678L
-	case TK_ULONGCONST:		// 12345678UL
-	case TK_LLONGCONST:		// 12345678LL
-	case TK_ULLONGCONST:	// 12345678ULL
-	case TK_FLOATCONST:		// 123.456f  123.456F
-	case TK_DOUBLECONST:	// 123.456
-	case TK_LDOUBLECONST:	// 123.456L	123.456l
+	/*
+		Notice: Only when parsing constant and string literal,
+		ty member in astExpression is used since from OP_CONST
+		and OP_STR alone the expression's type can't be determined
+		20, 20U,20LU, 3.0f, 5.0, ....
+	*/
+	case TK_INTCONST:		/* 12345678 */
+	case TK_UINTCONST:		/* 12345678U */
+	case TK_LONGCONST:		/* 12345678L */
+	case TK_ULONGCONST:		/* 12345678UL */
+	case TK_LLONGCONST:		/* 12345678LL */
+	case TK_ULLONGCONST:	/* 12345678ULL */
+	case TK_FLOATCONST:		/* 123.456f  123.456F */
+	case TK_DOUBLECONST:	/* 123.456 */
+	case TK_LDOUBLECONST:	/* 123.456L	123.456l */
 
 		CREATE_AST_NODE(expr, Expression);
 		/**
@@ -95,9 +103,11 @@ static AstExpression ParsePrimaryExpression(void)
 		 */
 		if (CurrentToken >= TK_FLOATCONST)
 			CurrentToken++;
-
-		/// nasty, requires that both from TK_INTCONST to TK_LDOUBLECONST
-		/// and from INT to LDOUBLE are consecutive
+		
+		/*
+			nasty, requires that both from TK_INTCONST to TK_LDOUBLECONST
+			and from INT to LDOUBLE are consecutive
+		*/
 		expr->ty = T(INT + CurrentToken - TK_INTCONST);
 		expr->op = OP_CONST;
 		expr->val = TokenValue;
@@ -105,8 +115,8 @@ static AstExpression ParsePrimaryExpression(void)
 
 		return expr;
 
-	case TK_STRING:			// "ABC"
-	case TK_WIDESTRING:		// L"ABC"
+	case TK_STRING:			/* "ABC" */
+	case TK_WIDESTRING:		/* L"ABC" */
 
 		CREATE_AST_NODE(expr, Expression);
 
@@ -117,7 +127,7 @@ static AstExpression ParsePrimaryExpression(void)
 
 		return expr;
 
-	case TK_LPAREN:		// (expr)
+	case TK_LPAREN:		/* (expr) */
 
 		NEXT_TOKEN;
 		expr = ParseExpression();
@@ -151,7 +161,7 @@ static AstExpression ParsePostfixExpression(void)
 	{
 		switch (CurrentToken)
 		{
-		case TK_LBRACKET:	// postfix-expression [ expression ]
+		case TK_LBRACKET:	/* postfix-expression [ expression ] */
 
 			CREATE_AST_NODE(p, Expression);
 
@@ -164,7 +174,7 @@ static AstExpression ParsePostfixExpression(void)
 			expr = p;
 			break;
 
-		case TK_LPAREN:		// postfix-expression ( [argument-expression-list] )
+		case TK_LPAREN:		/* postfix-expression ( [argument-expression-list] ) */
 
 			CREATE_AST_NODE(p, Expression);
 
@@ -174,9 +184,11 @@ static AstExpression ParsePostfixExpression(void)
 			if (CurrentToken != TK_RPAREN)
 			{
 				AstNode *tail;
-
-				/// function call expression's second kid is actually
-				/// a list of expression instead of a single expression
+				
+				/*
+					function call expression's second kid is actually
+					a list of expression instead of a single expression
+				*/
 				p->kids[1] = ParseAssignmentExpression();
 				tail = &p->kids[1]->next;
 				while (CurrentToken == TK_COMMA)
@@ -191,8 +203,8 @@ static AstExpression ParsePostfixExpression(void)
 			expr = p;
 			break;
 
-		case TK_DOT:		// postfix-expression . identifier
-		case TK_POINTER:	// postfix-expression -> identifier
+		case TK_DOT:		/* postfix-expression . identifier */
+		case TK_POINTER:	/* postfix-expression -> identifier */
 
 			CREATE_AST_NODE(p, Expression);
 
@@ -212,8 +224,8 @@ static AstExpression ParsePostfixExpression(void)
 			expr = p;
 			break;
 
-		case TK_INC:	// postfix-expression ++
-		case TK_DEC:	// postfix-expression --
+		case TK_INC:	/* postfix-expression ++ */
+		case TK_DEC:	/* postfix-expression -- */
 
 			CREATE_AST_NODE(p, Expression);
 
@@ -242,8 +254,10 @@ static AstExpression ParsePostfixExpression(void)
  *  unary-operator:
  *		++ -- & * + - ! ~
  */
- // The grammar of unary-expression in UCC is a little different from C89.
- // There is no cast-expression in UCC.
+ /*
+ 	The grammar of unary-expression in UCC is a little different from C89.
+ 	There is no cast-expression in UCC.
+  */
 static AstExpression ParseUnaryExpression()
 {
 	AstExpression expr;
@@ -269,11 +283,12 @@ static AstExpression ParseUnaryExpression()
 		return expr;
 
 	case TK_LPAREN:
-
-		/// When current token is (, it may be a type cast expression
-		/// or a primary expression, we need to look ahead one token,
-		/// if next token is type name, the expression is treated as
-		/// a type cast expression; otherwise a primary expresion
+		/*
+			When current token is (, it may be a type cast expression
+			or a primary expression, we need to look ahead one token,
+			if next token is type name, the expression is treated as
+			a type cast expression; otherwise a primary expresion
+		*/
 		BeginPeekToken();
 		t = GetNextToken();
 		if (IsTypeName(t))
@@ -298,8 +313,9 @@ static AstExpression ParseUnaryExpression()
 		break;
 
 	case TK_SIZEOF:
-
-		/// this case hase the same issue with TK_LPAREN case
+		/*
+			this case hase the same issue with TK_LPAREN case
+		*/
 		CREATE_AST_NODE(expr, Expression);
 
 		expr->op = OP_SIZEOF;
@@ -308,30 +324,34 @@ static AstExpression ParseUnaryExpression()
 		{			
 			BeginPeekToken();
 			t = GetNextToken();
-			// PRINT_DEBUG_INFO(("case TK_SIZEOF:"));
+			/* PRINT_DEBUG_INFO(("case TK_SIZEOF:")); */
 			if (IsTypeName(t))
 			{
-				//  sizeof ( type-name )  -------------->  () is required here.
-				// sizeof(a)		sizeof  a
+				/*
+					sizeof ( type-name )  -------------->  () is required here.
+					sizeof(a)		sizeof  a
+				*/
 				EndPeekToken();
 				
 				NEXT_TOKEN;
-				/// In this case, the first kid is not an expression,
-				/// but thanks to both type name and expression have a 
-				/// kind member to discriminate them.
+				/*
+					In this case, the first kid is not an expression,
+					but thanks to both type name and expression have a 
+					kind member to discriminate them.
+				*/
 				expr->kids[0] = (AstExpression)ParseTypeName();
 				Expect(TK_RPAREN);
 			}
 			else
 			{
-				// sizeof unary-expression
+				/* sizeof unary-expression */
 				EndPeekToken();
 				expr->kids[0] = ParseUnaryExpression();
 			}
 		}
 		else
 		{
-			// sizeof unary-expression
+			/* sizeof unary-expression */
 			expr->kids[0] = ParseUnaryExpression();
 		}
 
@@ -398,8 +418,10 @@ static AstExpression ParseBinaryExpression(int prec)
 			when the following is '||', which is lower than '+',
 				it is not part of SubE.
 	 */	
-	/// while the following binary operater's precedence is higher than current
-	/// binary operator's precedence, parses a higer precedence expression
+	/*
+		while the following binary operater's precedence is higher than current
+		binary operator's precedence, parses a higer precedence expression
+	 */
 	while (IsBinaryOP(CurrentToken) && (newPrec = Prec[BINARY_OP]) >= prec)
 	{
 		CREATE_AST_NODE(binExpr, Expression);
@@ -538,7 +560,9 @@ AstExpression ParseExpression(void)
 /**
  * Parse constant expression which is actually a conditional expression
  */ 
-//	constant-expression:	conditional-expression 
+/*
+	constant-expression:	conditional-expression 
+ */
 AstExpression ParseConstantExpression(void)
 {
 	return ParseConditionalExpression();

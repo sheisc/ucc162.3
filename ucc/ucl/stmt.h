@@ -26,7 +26,7 @@ typedef struct astLoopStatement
 {
 	AST_LOOP_STATEMENT_COMMON
 } *AstLoopStatement;
-//	[expression] ;
+/*	[expression] ; */
 typedef struct astExpressionStatement
 {
 	AST_STATEMENT_COMMON
@@ -44,7 +44,7 @@ typedef struct astExpressionStatement
 
 	
  */
-// identifier:	statement	
+/* identifier:	statement	*/
 typedef struct astLabelStatement
 {
 	AST_STATEMENT_COMMON
@@ -52,7 +52,7 @@ typedef struct astLabelStatement
 	AstStatement stmt;
 	Label label;
 } *AstLabelStatement;
-// case	constant-expression:	statement
+/* case	constant-expression:	statement */
 typedef struct astCaseStatement
 {
 	AST_STATEMENT_COMMON
@@ -61,7 +61,7 @@ typedef struct astCaseStatement
 	struct astCaseStatement *nextCase;
 	BBlock respBB;
 } *AstCaseStatement;
-// default:		statement
+/* default:		statement */
 typedef struct astDefaultStatement
 {
 	AST_STATEMENT_COMMON
@@ -106,7 +106,7 @@ typedef struct switchBucket
 	@nextBB
 	@defBB
  */
-// switch(expression) statement
+/* switch(expression) statement */
 typedef struct astSwitchStatement
 {
 	AST_STATEMENT_COMMON
@@ -126,7 +126,7 @@ typedef struct astSwitchStatement
 	@incrExpr	expression3
 	@testBB
  */
-// for([expression1];[expression2];[expression3]) statement
+/* for([expression1];[expression2];[expression3]) statement */
 typedef struct astForStatement
 {
 	AST_LOOP_STATEMENT_COMMON
@@ -134,26 +134,26 @@ typedef struct astForStatement
 	AstExpression incrExpr;
 	BBlock testBB;
 } *AstForStatement;
-// goto identifier
+/* goto identifier */
 typedef struct astGotoStatement
 {
 	AST_STATEMENT_COMMON
 	char *id;
 	Label label;
 } *AstGotoStatement;
-//	break;
+/*	break; */
 typedef struct astBreakStatement
 {
 	AST_STATEMENT_COMMON
 	AstStatement target;
 } *AstBreakStatement;
-// continue;
+/* continue; */
 typedef struct astContinueStatement
 {   
 	AST_STATEMENT_COMMON
 	AstLoopStatement target;
 } *AstContinueStatement;
-// return [expression];
+/* return [expression]; */
 typedef struct astReturnStatement
 {
 	AST_STATEMENT_COMMON
@@ -164,13 +164,13 @@ typedef struct astReturnStatement
 	@stmts		list of statements
 	@ilocals	id of local variables  ?
  */
-// { [declaration-list] 	[statement-list] }
+/* { [declaration-list] 	[statement-list] } */
 typedef struct astCompoundStatement
 {
 	AST_STATEMENT_COMMON
 	AstNode decls;
 	AstNode stmts;
-	//	local variables that has initializer-list.
+	/*	local variables that has initializer-list. */
 	Vector ilocals;
 } *AstCompoundStatement;
 

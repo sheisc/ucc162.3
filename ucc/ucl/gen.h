@@ -14,7 +14,7 @@ enum OPCode
 #undef OPCODE
 };
 /**
-//Intermediate Representation Instruction
+Intermediate Representation Instruction
 see uildasm.c
 
 #define DST  inst->opds[0]
@@ -34,7 +34,7 @@ typedef struct irinst
 	int opcode;
 	Symbol opds[3];
 } *IRInst;
-// control flow graph edge
+/* control flow graph edge */
 typedef struct cfgedge
 {
 	BBlock bb;
@@ -57,20 +57,20 @@ struct bblock
 	struct bblock *prev;
 	struct bblock *next;
 	Symbol sym;
-	// successors
+	/* successors */
 	CFGEdge succs;
-	// predecessors
+	/* predecessors */
 	CFGEdge preds;
 	struct irinst insth;
-	// number of instructions
+	/* number of instructions */
 	int ninst;
-	// number of successors
+	/* number of successors */
 	int nsucc;
-	// number of predecessors
+	/* number of predecessors */
 	int npred;
 	int ref;
-	#if 0		// commented
-	//int no;
+	#if 0		
+	/* int no; */
 	#endif
 };
 

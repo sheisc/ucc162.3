@@ -140,20 +140,21 @@ static void AllocateReg(IRInst inst, int index)
 
 	p = inst->opds[index];
 
-	// In x86, UCC only allocates register for temporary
+	/* In x86, UCC only allocates register for temporary */
 	if (p->kind != SK_Temp)
 		return;
 
-	// if it is already in a register, mark the register as used by current uil
+	/* if it is already in a register, mark the register as used by current uil */
 	if (p->reg != NULL)
 	{
 		UsedRegs |= 1 << p->reg->val.i[0];
 		return;
 	}
-
-	/// in x86, the first source operand is also destination operand, 
-	/// reuse the first source operand's register if the first source operand 
-	/// will not be used after this instruction
+	/*
+	 in x86, the first source operand is also destination operand, 
+	 reuse the first source operand's register if the first source operand 
+	 will not be used after this instruction
+	*/
 	if (index == 0 && SRC1->ref == 1 && SRC1->reg != NULL)
 	{
 		reg = SRC1->reg;
@@ -162,8 +163,10 @@ static void AllocateReg(IRInst inst, int index)
 		return;
 	}
 
-	/// get a register, if the operand is not destination operand, load the 
-	/// variable into the register
+	/*
+	 get a register, if the operand is not destination operand, load the 
+	 variable into the register
+	*/
 	reg = GetReg();
 	if (index != 0)
 	{
@@ -202,7 +205,7 @@ static void SaveX87Top(void)
  */
 static void EmitX87Branch(IRInst inst, int tcode)
 {
-	// see EmitBranch(). We have called ClearRegs() before jumping.
+	/* see EmitBranch(). We have called ClearRegs() before jumping. */
 	PutASMCode(X86_LDF4 + tcode - F4, &SRC1);
 	PutASMCode(ASM_CODE(inst->opcode, tcode), inst->opds);
 
@@ -216,7 +219,7 @@ static void EmitX87Branch(IRInst inst, int tcode)
  */
 static int IsLiveAfterCurEmit(IRInst inst,int index){
 	int isLive = 1;
-	// Try decrement ref
+	/* Try decrement ref */
 	if (! (inst->opcode >= JZ && inst->opcode <= IJMP) &&
 		    inst->opcode != CALL){
 		DST->ref--;
@@ -225,7 +228,7 @@ static int IsLiveAfterCurEmit(IRInst inst,int index){
 	}
 	isLive = (inst->opds[index]->ref > 0);
 
-	// roll back
+	/* roll back */
 	if (! (inst->opcode >= JZ && inst->opcode <= IJMP) &&
 		    inst->opcode != CALL){
 		DST->ref++;
@@ -240,15 +243,15 @@ static int IsLiveAfterCurEmit(IRInst inst,int index){
  */
 static void EmitX87Move(IRInst inst, int tcode)
 {
-	// let X87 TOP be the first source operand
+	/* let X87 TOP be the first source operand */
 	if (X87Top != SRC1)
 	{
 		SaveX87Top();
-		// TEMPLATE(X86_LDF4,	   "flds %0")
+		/* TEMPLATE(X86_LDF4,	   "flds %0") */
 		PutASMCode(X86_LDF4 + tcode - F4, &SRC1);
 	}
 
-	// only put temporary in register
+	/* only put temporary in register */
 	/**
 		Because 
 		TryAddValue(Type ty, int op, Symbol src1, Symbol src2) in gen.c
@@ -297,12 +300,12 @@ static void EmitX87Move(IRInst inst, int tcode)
 /**
  * Emit floating point assign instruction
  */
- //	1.23f + 1.1f,	1.0 * 2.0	,  -a,  see opcode.h
+ /*	1.23f + 1.1f,	1.0 * 2.0	,  -a,  see opcode.h */
 static void EmitX87Assign(IRInst inst, int tcode)
 {
-	// SRC2 could be NULL when it is a unary operator, like '-a'
+	/* SRC2 could be NULL when it is a unary operator, like '-a' */
 	assert(DST->kind == SK_Temp && SRC1 != NULL);
-	// PRINT_CUR_IRInst(inst);
+	/* PRINT_CUR_IRInst(inst); */
 	if(SRC1 != X87Top){
 		SaveX87Top();
 		PutASMCode(X86_LDF4 + tcode - F4, &SRC1);
@@ -329,7 +332,7 @@ static void EmitX87Assign(IRInst inst, int tcode)
 		TEMPLATE(X86_SUBF8,    "fsubl %2")
 	 */	
 	PutASMCode(ASM_CODE(inst->opcode, tcode), inst->opds);
-	// now DST be the new TOP of X87
+	/* now DST be the new TOP of X87 */
 	DST->needwb = 1;
 	X87Top = DST;
 	X87TCode = tcode;
@@ -367,7 +370,7 @@ static void EmitMoveBlock(IRInst inst)
 
 	 */
 	SRC2 = IntConstant(inst->ty->size);
-	// TEMPLATE(X86_MOVB,	   "leal %0, %%edi;leal %1, %%esi;movl %2, %%ecx;rep movsb")
+	/* TEMPLATE(X86_MOVB,	   "leal %0, %%edi;leal %1, %%esi;movl %2, %%ecx;rep movsb") */
 	PutASMCode(X86_MOVB, inst->opds);
 }
 
@@ -378,7 +381,7 @@ static void EmitMove(IRInst inst)
 {
 	int tcode = TypeCode(inst->ty);
 	Symbol reg;
-	//PRINT_DEBUG_INFO(("%s",GetAsmCodeName(X86_X87_POP)));
+	/* PRINT_DEBUG_INFO(("%s",GetAsmCodeName(X86_X87_POP))); */
 	if (tcode == F4 || tcode == F8)
 	{
 		EmitX87Move(inst, tcode);
@@ -406,12 +409,12 @@ static void EmitMove(IRInst inst)
 			movb b, %al
 			movb %al, a
 			
-			movb $51, a		// SK_Constant
+			movb $51, a		...>> SK_Constant
 
 		 */
 		if (SRC1->kind == SK_Constant)
 		{
-			// TEMPLATE(X86_MOVI1,    "movb %1, %0")
+			/* TEMPLATE(X86_MOVI1,    "movb %1, %0") */
 			Move(X86_MOVI1, DST, SRC1);
 		}
 		else
@@ -483,7 +486,7 @@ static Symbol PutInReg(Symbol p)
 		return p->reg;
 	}
 	reg = GetReg();
-	// TEMPLATE(X86_MOVI4,    "movl %1, %0")
+	/* TEMPLATE(X86_MOVI4,    "movl %1, %0") */
 	Move(X86_MOVI4, reg, p);
 	return reg;
 }
@@ -494,9 +497,10 @@ static Symbol PutInReg(Symbol p)
 static void EmitIndirectMove(IRInst inst)
 {
 	Symbol reg;
-
-	/// indirect move is the same as move, except using register indirect address
-	/// mode for destination operand
+	/*
+	 indirect move is the same as move, except using register indirect address
+	 mode for destination operand
+	*/
 	reg = PutInReg(DST);
 	inst->opcode = MOV;
 	DST = reg->next;
@@ -506,7 +510,7 @@ static void EmitIndirectMove(IRInst inst)
 /**
  * Emit assembly code for assign
  */
- //	a+b,		a-b,	a*b,a|b, a << 4
+/*	a+b,		a-b,	a*b,a|b, a << 4 */
 static void EmitAssign(IRInst inst)
 {
 	int code;
@@ -555,7 +559,7 @@ static void EmitAssign(IRInst inst)
 		UsedRegs = 1 << EAX | 1 << EDX;
 		if (SRC2->kind == SK_Constant)
 		{
-			// Because "idivl $10" is illegal
+			/* Because "idivl $10" is illegal */
 			Symbol reg = GetReg();
 
 			Move(X86_MOVI4, reg, SRC2);
@@ -651,10 +655,10 @@ static void EmitCast(IRInst inst)
 	int code;
 
 	dst = DST;
-
-	//  this assertion fails, because TypeCast is not treated as common subexpression in UCC.
-	// assert(DST->kind == SK_Temp);		//  See TryAddValue(..)
-
+	/*
+	  this assertion fails, because TypeCast is not treated as common subexpression in UCC.
+	 assert(DST->kind == SK_Temp);		...>>  See TryAddValue(..)
+	*/
 	reg = NULL;
 	code = inst->opcode + X86_EXTI1 - EXTI1;
 	switch (code)
@@ -670,15 +674,17 @@ static void EmitCast(IRInst inst)
 			DST = GetReg();
 		}		
 		PutASMCode(code, inst->opds);
-		//	If dst != DST, then the original destination is not temporary,
-		//	we mov the value in register to the named variable.	
+		/*
+			If dst != DST, then the original destination is not temporary,
+			we mov the value in register to the named variable.	
+		*/
 		if (dst != DST)
 		{
 			Move(X86_MOVI4, dst, DST);
 		}		
 		break;
 
-	case X86_TRUI1:		// truncate I4/U4 ---------->  I1		
+	case X86_TRUI1:		/* truncate I4/U4 ---------->  I1		*/
 		assert(TypeCode(SRC1->ty) == I4 || TypeCode(SRC1->ty) == U4);
 
 		if (SRC1->reg != NULL)
@@ -693,7 +699,7 @@ static void EmitCast(IRInst inst)
 		Move(X86_MOVI1, DST, reg);
 		break;
 
-	case X86_TRUI2:		// // truncate I4/U4 ---------->  I2
+	case X86_TRUI2:		/* truncate I4/U4 ---------->  I2 */
 
 		assert(TypeCode(SRC1->ty) == I4 || TypeCode(SRC1->ty) == U4);
 
@@ -780,14 +786,14 @@ static void EmitCast(IRInst inst)
 		}else{
 			PutASMCode(code, inst->opds); 
 		}
-		// we have touched the X87top in the last statement; mark it invalid explicitely.
+		/* we have touched the X87top in the last statement; mark it invalid explicitely. */
 		X87Top = NULL;
 		break;
 	}
 	ModifyVar(dst);
 
 }
-//	a++	, float/double is also done here.	
+/*	a++	, float/double is also done here.	 */
 static void EmitInc(IRInst inst)
 {
 	/**
@@ -801,10 +807,10 @@ static void EmitInc(IRInst inst)
 	 */
 	PutASMCode(X86_INCI1 + TypeCode(inst->ty), inst->opds);
 }
-//	a--
+/*	a-- */
 static void EmitDec(IRInst inst)
 {
-	//PRINT_CUR_IRInst(inst);
+	/* PRINT_CUR_IRInst(inst); */
 	PutASMCode(X86_DECI1 + TypeCode(inst->ty), inst->opds);
 }
 
@@ -818,7 +824,7 @@ static void EmitBranch(IRInst inst)
 	DST = p->sym;
 	if (tcode == F4 || tcode == F8)
 	{
-		//  see examples/cfg/crossBB.c
+		/*  see examples/cfg/crossBB.c */
 		ClearRegs();
 		EmitX87Branch(inst, tcode);
 		return;
@@ -915,7 +921,7 @@ static void EmitIndirectJump(IRInst inst)
 
 	DST = swtch;
 	len = strlen(DST->aname);
-	//PRINT_DEBUG_INFO(("%s ",DST->aname));
+	/* PRINT_DEBUG_INFO(("%s ",DST->aname)); */
 	while (*p != NULL)
 	{
 		DefineAddress((*p)->sym);
@@ -930,7 +936,7 @@ static void EmitIndirectJump(IRInst inst)
 
 	SRC1 = reg;
 	ClearRegs();
-	// TEMPLATE(X86_IJMP,     "jmp *%0(,%1,4)")
+	/* TEMPLATE(X86_IJMP,     "jmp *%0(,%1,4)") */
 	PutASMCode(X86_IJMP, inst->opds);
 }
 /**
@@ -948,8 +954,10 @@ static void EmitReturn(IRInst inst)
 		{			
 			int tcode = TypeCode(ty);
 			SaveX87Top();
-			// TEMPLATE(X86_LDF4,	   "flds %0")
-			// When X87Top is NULL, X87TCode could be 0.
+			/*
+			 TEMPLATE(X86_LDF4,	   "flds %0")
+			 When X87Top is NULL, X87TCode could be 0.
+			*/
 			PutASMCode(X86_LDF4 + tcode - F4, inst->opds);
 		}
 		X87Top = NULL;
@@ -962,9 +970,9 @@ static void EmitReturn(IRInst inst)
 	{
 		inst->opcode = IMOV;
 		SRC1 = DST;
-		// see  EmitFunction()
+		/* see  EmitFunction() */
 		DST = FSYM->params;
-		// The actual work is done in EmitMoveBlock()
+		/* The actual work is done in EmitMoveBlock() */
 		EmitIndirectMove(inst);
 		return;
 	}
@@ -1122,7 +1130,7 @@ static void EmitCall(IRInst inst)
 
 	if (IsRealType(rty))
 	{
-		// 		TEMPLATE(X86_STF4,	   "fstps %0")
+		/* 		TEMPLATE(X86_STF4,	   "fstps %0") */
 		PutASMCode(X86_STF4 + (rty->categ != FLOAT), inst->opds);
 		return;
 	}
@@ -1183,7 +1191,7 @@ static void EmitAddress(IRInst inst)
 	--------------------------
 
 	 movl %eax, ptr
-	 //	EmitDeref(t1 = *ptr;)
+	 ....>>	EmitDeref(t1 = *ptr;)
 	 movl ptr, %ecx	---------------	PutInReg(ptr);
 	 movl (%ecx), %edx
 	 
@@ -1286,7 +1294,7 @@ static void EmitBBlock(BBlock bb)
 		if( (inst->opcode >= JZ && inst->opcode <= IJMP) || (inst->opcode == CALL)){
 			SaveX87Top();
 		}
-		//  the kernel part of emit ASM from IR.
+		/*  the kernel part of emit ASM from IR. */
 		EmitIRInst(inst);
 		/**
 			ref is used as a factor in spilling register 
@@ -1345,7 +1353,7 @@ static int LayoutFrame(FunctionSymbol fsym, int fstParamPos)
 	{
 		AsVar(p)->offset = offset;		
 		if(p->ty->size == 0){
-			//	empty struct or array of empty struct to be of 1 byte size
+			/*	empty struct or array of empty struct to be of 1 byte size */
 			offset += ALIGN(EMPTY_OBJECT_SIZE, STACK_ALIGN_SIZE);
 		}else{
 			offset += ALIGN(p->ty->size, STACK_ALIGN_SIZE);
@@ -1369,14 +1377,14 @@ static int LayoutFrame(FunctionSymbol fsym, int fstParamPos)
 			goto next;
 		
 	
-		// for empty struct object or array of empty struct object
+		/* for empty struct object or array of empty struct object */
 		if(p->ty->size == 0){
 			offset += ALIGN(EMPTY_OBJECT_SIZE, STACK_ALIGN_SIZE);		
 		}else{
 			offset += ALIGN(p->ty->size, STACK_ALIGN_SIZE);	
 		}
 		AsVar(p)->offset = -offset;
-		// PRINT_DEBUG_INFO((" offset = %d, name = %s ",AsVar(p)->offset,AsVar(p)->name));
+		/* PRINT_DEBUG_INFO((" offset = %d, name = %s ",AsVar(p)->offset,AsVar(p)->name)); */
 next:
 		p = p->next;
 	}
@@ -1394,7 +1402,7 @@ static void EmitPrologue(int stksize)
 	if (stksize != 0)
 	{
 		Symbol sym = IntConstant(stksize);
-		// TEMPLATE(X86_EXPANDF,  "subl %0, %%esp")
+		/* TEMPLATE(X86_EXPANDF,  "subl %0, %%esp") */
 		PutASMCode(X86_EXPANDF, &sym);
 	}
 }
@@ -1420,7 +1428,7 @@ void EmitFunction(FunctionSymbol fsym)
 	rty = fsym->ty->bty;
 	/**
 		 typedef struct{
-			 int arr[10];	// or char arr[3];
+			 int arr[10];	...>> or char arr[3];
 		 }Data;
 		 
 		 
@@ -1466,7 +1474,7 @@ void EmitFunction(FunctionSymbol fsym)
 	bb = fsym->entryBB;
 	while (bb != NULL)
 	{	
-		// to show all basic blocks
+		/* to show all basic blocks */
 		DefineLabel(bb->sym);
 		EmitBBlock(bb);
 		bb = bb->next;
@@ -1482,13 +1490,15 @@ void EmitFunction(FunctionSymbol fsym)
 	EmitEpilogue(stksize);
 	PutString("\n");
 }
-//  store register value to variable
+/*  store register value to variable */
 void StoreVar(Symbol reg, Symbol v)
 {
-	// WIN32:
-	// TEMPLATE(X86_MOVI4,     "mov %d0, %d1")
-	// Linux:
-	// TEMPLATE(X86_MOVI4,    "movl %1, %0")
+	/*
+	 WIN32:
+	 TEMPLATE(X86_MOVI4,     "mov %d0, %d1")
+	 Linux:
+	 TEMPLATE(X86_MOVI4,    "movl %1, %0")
+	*/
 	Move(X86_MOVI4, v, reg);
 }
 

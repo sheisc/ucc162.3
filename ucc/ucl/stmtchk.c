@@ -9,7 +9,7 @@
 #define TopStatement(v)          TOP_ITEM(v)
 
 static AstStatement CheckStatement(AstStatement stmt);
-// If not existing, add the label.
+/* If not existing, add the label. */
 static Label TryAddLabel(char *id)
 {
 	Label p = CURRENTF->labels;
@@ -92,7 +92,7 @@ static AstStatement CheckExpressionStatement(AstStatement stmt)
 					   case  constant-expression :	statement
 					   default :  statement
 */
- //  only check   "id: statement"  in this function.   case-label is checked later.
+ /*  only check   "id: statement"  in this function.   case-label is checked later. */
 static AstStatement CheckLabelStatement(AstStatement stmt)
 {
 	AstLabelStatement labelStmt = AsLabel(stmt);
@@ -139,7 +139,7 @@ static AstStatement CheckCaseStatement(AstStatement stmt)
 {
 	AstCaseStatement caseStmt = AsCase(stmt);
 	AstSwitchStatement swtchStmt;
-	// We have pushed the current switch statement in CheckSwitchStatement(...)
+	/* We have pushed the current switch statement in CheckSwitchStatement(...) */
 	swtchStmt = (AstSwitchStatement)TopStatement(CURRENTF->swtches);
 	if (swtchStmt == NULL)
 	{
@@ -196,7 +196,7 @@ static AstStatement CheckIfStatement(AstStatement stmt)
 	AstIfStatement ifStmt = AsIf(stmt);
 
 	ifStmt->expr = Adjust(CheckExpression(ifStmt->expr), 1);
-	// The controlling expression of an if statement shall have scalar type. 
+	/* The controlling expression of an if statement shall have scalar type. */
 	if (! IsScalarType(ifStmt->expr->ty))
 	{
 		Error(&stmt->coord, "The expression in if statement shall be scalar type.");
@@ -228,7 +228,7 @@ static AstStatement CheckIfStatement(AstStatement stmt)
 static AstStatement CheckSwitchStatement(AstStatement stmt)
 {
 	AstSwitchStatement swtchStmt = AsSwitch(stmt);
-	// switch statement is breakable
+	/* switch statement is breakable */
 	PushStatement(CURRENTF->swtches,   stmt);
 	PushStatement(CURRENTF->breakable, stmt);
 
@@ -261,7 +261,7 @@ static AstStatement CheckLoopStatement(AstStatement stmt)
 
 	PushStatement(CURRENTF->loops,    stmt);
 	PushStatement(CURRENTF->breakable, stmt);
-	// Adjust expr's type to Pointer(...)  when its type is FUNCTION/ARRAY
+	/* Adjust expr's type to Pointer(...)  when its type is FUNCTION/ARRAY */
 	loopStmt->expr = Adjust(CheckExpression(loopStmt->expr), 1);
 	if (! IsScalarType(loopStmt->expr->ty))
 	{
@@ -285,12 +285,12 @@ static AstStatement CheckForStatement(AstStatement stmt)
 
 	PushStatement(CURRENTF->loops,     stmt);
 	PushStatement(CURRENTF->breakable, stmt);
-	// check expression-1
+	/* check expression-1 */
 	if (forStmt->initExpr)
 	{
 		forStmt->initExpr = CheckExpression(forStmt->initExpr);
 	}
-	// check expression-2
+	/* check expression-2 */
 	if (forStmt->expr)
 	{
 		/**
@@ -306,7 +306,7 @@ static AstStatement CheckForStatement(AstStatement stmt)
 			Error(&stmt->coord, "The second expression in for statement shall be scalar type.");
 		}
 	}
-	// check expression-3
+	/* check expression-3 */
 	if (forStmt->incrExpr)
 	{
 		forStmt->incrExpr = CheckExpression(forStmt->incrExpr);
@@ -335,7 +335,7 @@ static AstStatement CheckGotoStatement(AstStatement stmt)
 
 	return stmt;
 }
-// break;
+/* break; */
 static AstStatement CheckBreakStatement(AstStatement stmt)
 {
 	AstBreakStatement brkStmt = AsBreak(stmt);
@@ -348,7 +348,7 @@ static AstStatement CheckBreakStatement(AstStatement stmt)
 
 	return stmt;
 }
-// continue;
+/* continue; */
 static AstStatement CheckContinueStatement(AstStatement stmt)
 {
 	AstContinueStatement contStmt = AsCont(stmt);
@@ -436,12 +436,12 @@ static AstStatement CheckLocalCompound(AstStatement stmt)
 
 static AstStatement (* StmtCheckers[])(AstStatement) = 
 {
-	CheckExpressionStatement,	// the index is (NK_ExpressionStatement - NK_ExpressionStatement), 0
-	CheckLabelStatement,			// the index is ( NK_LabelStatement - NK_ExpressionStatement), 1
-	CheckCaseStatement,			// 2
-	CheckDefaultStatement,		// 3
-	CheckIfStatement,			// 4
-	CheckSwitchStatement,		// 5
+	CheckExpressionStatement,	/* the index is (NK_ExpressionStatement - NK_ExpressionStatement), 0 */
+	CheckLabelStatement,		/* the index is ( NK_LabelStatement - NK_ExpressionStatement), 1 */
+	CheckCaseStatement,		/* 2 */
+	CheckDefaultStatement,		/* 3 */
+	CheckIfStatement,		/* 4 */
+	CheckSwitchStatement,		/* 5 */
 	CheckLoopStatement,
 	CheckLoopStatement,
 	CheckForStatement,

@@ -11,7 +11,7 @@
 static AstNodePtr DirectDeclarator(void);
 static AstNodePtr PostfixDeclarator(void);
 static AstNodePtr Declarator(void);
-////////////////////////////////////////////////////////////////
+
 /**
    direct-declarator:
  		ID

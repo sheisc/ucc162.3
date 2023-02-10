@@ -46,7 +46,7 @@ FILE* CreateOutput(char *filename, char *ext)
 {
 	char tmp[256];
 	char *p = tmp;
-	// hello.c  --->  hello.s / hello.ast  /hello.uil
+	/* hello.c  --->  hello.s / hello.ast  /hello.uil */
 	while (*filename && *filename != '.')
 		*p++ = *filename++;
 	strcpy(p, ext);

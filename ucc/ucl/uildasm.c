@@ -57,11 +57,11 @@ static void DAssemUIL(IRInst inst)
 		break;
 
 	case MOV:
-		// d = 4;
+		/* d = 4; */
 		fprintf(IRFile, "%s = %s", DST->name, SRC1->name);
 		break;
 
-	case IMOV:	// indirect mov
+	case IMOV:	/* indirect mov */
 		fprintf(IRFile, "*%s = %s", DST->name, SRC1->name);
 		break;
 
@@ -71,7 +71,7 @@ static void DAssemUIL(IRInst inst)
 	case JL:
 	case JGE:
 	case JLE:
-		// 	if (n > 2) goto BB0;
+		/* 	if (n > 2) goto BB0; */
 		fprintf(IRFile, "if (%s %s %s) goto %s", SRC1->name, OPCodeNames[op],
 			    SRC2->name, ((BBlock)DST)->sym->name);
 		break;
@@ -85,12 +85,12 @@ static void DAssemUIL(IRInst inst)
 		break;
 
 	case JMP:
-		// 	goto BB3;
+		/* 	goto BB3; */
 		fprintf(IRFile, "goto %s", ((BBlock)DST)->sym->name);
 		break;
 
-	case IJMP:	// indirect jmp
-		// goto(label1,label2,...)[VarName]
+	case IJMP:	/* indirect jmp  */
+		/* goto(label1,label2,...)[VarName] */
 		{
 			BBlock *p = (BBlock *)DST;
 
@@ -105,17 +105,17 @@ static void DAssemUIL(IRInst inst)
 		break;
 
 	case CALL:
-		// [VarName=] call VarName(Operand,Operand,...)
+		/* [VarName=] call VarName(Operand,Operand,...) */
 		{
 			ILArg arg;
 			Vector args = (Vector)SRC2;
 			int i;
-			// t1 = f(t0);			
+			/* t1 = f(t0);	*/		
 			if (DST != NULL)
 			{
 				fprintf(IRFile, "%s : ", DST->name);
 			}
-			//	printf(t0, t1);
+			/*	printf(t0, t1); */
 			fprintf(IRFile, "%s(", SRC1->name);
 			for (i = 0; i < LEN(args); ++i)
 			{
@@ -130,7 +130,7 @@ static void DAssemUIL(IRInst inst)
 		break;
 
 	case RET:
-		// return t4;
+		/* return t4; */
 		fprintf(IRFile, "return %s", DST->name);
 		break;
 
@@ -172,9 +172,9 @@ void DAssemFunction(AstFunction func)
 
 	while (bb != NULL)
 	{
-		//	BB0:
+		/*	BB0: */
 		if(bb->sym && bb->npred > 0){
-		#if 0	// commented
+		#if 0	
 			fprintf(IRFile, "\n%s: ref = %d, sym->ref = %d ,npred = %d , nsucc = %d \n", 
 				bb->sym->name, bb->ref, bb->sym->ref,bb->npred, bb->nsucc);
 		#endif
@@ -190,7 +190,7 @@ void DAssemFunction(AstFunction func)
 		}
 		bb = bb->next;
 	}
-	// if the exit block has predecessors, gen a  "ret" intermediate instruction
+	/* if the exit block has predecessors, gen a  "ret" intermediate instruction */
 	if (fsym->exitBB->npred != 0)
 		fprintf(IRFile, "\tret\n");
 

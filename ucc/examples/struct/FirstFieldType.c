@@ -14,7 +14,7 @@ int main(){
 	tk.value = 2;
 	tk.kind = 2;
 
-	//switch(tk.value){	// -----------Bug, tk.value is mistaken as struct type.
+	/* switch(tk.value){	 -----------Bug, tk.value is mistaken as struct type. */
 	switch(tk.kind){
 	case 1:
 		printf("%s %d : case 1\n",__FILE__,__LINE__);

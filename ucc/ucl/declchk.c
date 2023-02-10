@@ -34,10 +34,7 @@ static AstExpression CheckAddressConstant(AstExpression expr)
 		int arr[4];
 		int main(){
 			
-				//The result is 
-					//4cb060 4cb060 4cb060 .
-					//4cb064 4cb070 4cb064 .
-		
+
 			printf("%x %x %x .\n", arr,&arr,&arr[0]);
 			printf("%x %x %x .\n", arr+1,&arr+1,&arr[0]+1);
 			return 0;
@@ -53,13 +50,13 @@ static AstExpression CheckAddressConstant(AstExpression expr)
 		expr->kids[1]->val.i[0] += (expr->op == OP_ADD ? 1 : -1) * addr->kids[1]->val.i[0];
 		return expr;
 	}
-	// &
-	if (expr->op == OP_ADDRESS){// &num
+	/* & */ 
+	if (expr->op == OP_ADDRESS){/* &num */
 		addr = expr->kids[0];
-		//PRINT_DEBUG_INFO(("expr->op == OP_ADDRESS"));
-	}else{// arr
+		/* PRINT_DEBUG_INFO(("expr->op == OP_ADDRESS")); */
+	}else{/* arr */
 		addr = expr;
-		//PRINT_DEBUG_INFO(("expr->op != OP_ADDRESS"));
+		/* PRINT_DEBUG_INFO(("expr->op != OP_ADDRESS")); */
 	}
 
 	while (addr->op == OP_INDEX || addr->op == OP_MEMBER)
@@ -95,7 +92,7 @@ static AstExpression CheckAddressConstant(AstExpression expr)
 	}
 	return p;
 }
-// 
+ 
 static void CheckInitConstant(AstInitializer init)
 {
 	InitData initd = init->idata;
@@ -125,7 +122,7 @@ static void CheckInitConstant(AstInitializer init)
 	}
 	return;
 }
-// 	"|"		BOR	: bit or		BitField:	bit-field of struct
+/*	"|"		BOR	: bit or		BitField:	bit-field of struct */
 static AstExpression BORBitField(AstExpression expr1, AstExpression expr2)
 {
 	AstExpression bor;
@@ -143,11 +140,11 @@ static AstExpression BORBitField(AstExpression expr1, AstExpression expr2)
 			 int low:	 16;
 		 };
 		 
-		 struct Data dt = {"abc",12};	// Illegal, but alarmed later.
+		 struct Data dt = {"abc",12};	
 		 
 	 "expr1->op is << , expr2->op is const"
 	*/
-	// PRINT_DEBUG_INFO(("expr1->op is %s , expr2->op is %s",OPNames[expr1->op],OPNames[expr2->op]));
+	/* PRINT_DEBUG_INFO(("expr1->op is %s , expr2->op is %s",OPNames[expr1->op],OPNames[expr2->op])); */
 	CREATE_AST_NODE(bor, Expression);
 
 	bor->coord = expr1->coord;
@@ -176,10 +173,10 @@ static AstExpression PlaceBitField(Field fld, AstExpression expr)
 			int low:	16;
 		};
 		int abc;
-		struct Data dt = {&abc,12};	//	Illegal, but alarmed later.
+		struct Data dt = {&abc,12};	
 		"expr->op : &"
 	 */
-	//PRINT_DEBUG_INFO(("expr->op : %s",OPNames[expr->op]));
+	/* PRINT_DEBUG_INFO(("expr->op : %s",OPNames[expr->op])); */
 	CREATE_AST_NODE(lsh, Expression);
 
 	lsh->coord = expr->coord;
@@ -283,18 +280,20 @@ static AstInitializer CheckInitializerInternal(InitData *tail, AstInitializer in
 				ArrayType aty = (ArrayType)ty;
 				aty->size = size;
 				if(aty->bty->size != 0){
-					//PRINT_DEBUG_INFO(("size = %d, %d",aty->bty->size,size));
+					/* PRINT_DEBUG_INFO(("size = %d, %d",aty->bty->size,size)); */
 					aty->len = size / aty->bty->size;
 				}
 			}
 			else if (ty->size == size - p->expr->ty->bty->size){
-				//	char str[3] = "abc";	or	int arr[3] = L"123";		
+				/*	char str[3] = "abc";	or	int arr[3] = L"123";	*/
 				p->expr->ty->size = size - p->expr->ty->bty->size;
 			}
 			else if (ty->size < size){
-				//	L"123456789"		---->	On Linux, 	size is 40
-				//	"abcdef"			---->	size is 7
-				//PRINT_DEBUG_INFO(("str->size = %d",size));
+				/*
+					L"123456789"		---->	On Linux, 	size is 40
+					"abcdef"			---->	size is 7
+					PRINT_DEBUG_INFO(("str->size = %d",size));
+				*/
 				p->expr->ty->size = ty->size;
 				Warning(&init->coord,"initializer-string for char/wchar array is too long");
 			}
@@ -326,7 +325,7 @@ static AstInitializer CheckInitializerInternal(InitData *tail, AstInitializer in
 			ArrayType aty = (ArrayType) ty;
 
 			if(aty->bty->size != 0 && aty->len == 0){
-				//PRINT_CUR_ASTNODE(init);
+				/* PRINT_CUR_ASTNODE(init); */
 				aty->len = size/aty->bty->size;
 			}
 			ty->size = size;			
@@ -351,13 +350,13 @@ static AstInitializer CheckInitializerInternal(InitData *tail, AstInitializer in
 			
 			*offset = start + fld->offset;
 			
-			#if 1		// added   see examples/init/struct.c
+			#if 1		/* added   see examples/init/struct.c */
 			if( (IsRecordType(fld->ty) && fld->id == NULL)){
 				*offset = start;
 			}
 			#endif		
 			
-			//PRINT_DEBUG_INFO(("*offset = %d , start = %d , fld->offset = %d",*offset, start, fld->offset));
+			/* PRINT_DEBUG_INFO(("*offset = %d , start = %d , fld->offset = %d",*offset, start, fld->offset)); */
 			p = CheckInitializerInternal(tail, p, fld->ty, offset, error);
 			if (fld->bits != 0)
 			{
@@ -365,16 +364,16 @@ static AstInitializer CheckInitializerInternal(InitData *tail, AstInitializer in
 			}
 			fld = fld->next;
 		}
-		#if 1		// added
+		#if 1		/* added */
 		*offset = start + ty->size;
-		//PRINT_DEBUG_INFO(("*offset = %d , start = %d, ty->size= %d",*offset, start, ty->size));
+		/* PRINT_DEBUG_INFO(("*offset = %d , start = %d, ty->size= %d",*offset, start, ty->size)); */
 		#endif
 		if (init->lbrace)
 		{
 			if (p != NULL)	{
 				Warning(&init->coord, "excess elements in struct initializer");
 			}	
-			#if 0		// bug ?  see Space()
+			#if 0		/* bug ?  see Space() */
 			PRINT_DEBUG_INFO(("*offset = %d , ty->size= %d",*offset, ty->size));
 			*offset = ty->size;
 			#endif
@@ -433,7 +432,7 @@ static void CheckInitializer(AstInitializer init, Type ty)
 	{
 		/**
 			struct Data dt;
-			struct Data dt2 = dt;		// Legal	in local scope, not in global scope
+			struct Data dt2 = dt;		
 		 */
 		init->expr = Adjust(CheckExpression(init->expr), 1);
 		if (! CanAssign(ty, init->expr))
@@ -494,17 +493,17 @@ static Type DeriveType(TypeDerivList tyDrvList, Type ty,Coord coord){
 		{
 			if (ty->categ == FUNCTION){ 
 				Error(coord, "array of function");
-				//	assume ty to be pointer to function
+				/*	assume ty to be pointer to function */
 				ty = PointerTo(ty);
 			}
 			if(IsIncompleteType(ty,!IGNORE_ZERO_SIZE_ARRAY)){
 				Error(coord,"array has incomplete element type");
-				// assume len to be one, for better error recovery
+				/* assume len to be one, for better error recovery */
 				((ArrayType) ty)->len = 1;
 			}
 			if(tyDrvList->len < 0){
 				Error(coord,"size of array is negative");
-				// assume len to be one, for better error recovery
+				/* assume len to be one, for better error recovery */
 				((ArrayType) ty)->len = 1;
 			}
 			ty = ArrayOf(tyDrvList->len, ty);		
@@ -528,12 +527,12 @@ static Type DeriveType(TypeDerivList tyDrvList, Type ty,Coord coord){
 			 */
 			if(ty->categ == ARRAY){
 				Error(coord,"function cannot return array type");
-				// assume ty be pointer to array for better error recovery
+				/* assume ty be pointer to array for better error recovery */
 				ty = PointerTo(ty);
 			}
 			if( ty->categ == FUNCTION){
 				Error(coord,"function cannot return function type");
-				// assume ty be pointer to array for better error recovery
+				/* assume ty be pointer to array for better error recovery */
 				ty = PointerTo(ty);
 			}
 			ty = FunctionReturn(ty, tyDrvList->sig);
@@ -558,7 +557,7 @@ static Type DeriveType(TypeDerivList tyDrvList, Type ty,Coord coord){
 static void AddParameter(Vector params, char *id, Type ty, int reg, Coord coord)
 {
 	Parameter param;
-	//	f(a,a,b)		is illegal,  redefinition of parameter.
+	/*	f(a,a,b)		is illegal,  redefinition of parameter. */
 	FOR_EACH_ITEM(Parameter, param, params)
 		if (param->id && param->id == id)
 		{
@@ -566,7 +565,7 @@ static void AddParameter(Vector params, char *id, Type ty, int reg, Coord coord)
 			return;
 		}
 	ENDFOR
-	//
+	
 	ALLOC(param);
 
 	param->id = id;
@@ -574,9 +573,11 @@ static void AddParameter(Vector params, char *id, Type ty, int reg, Coord coord)
 	param->reg = reg;
 	INSERT_ITEM(params, param);
 }
-//	@funcDec			f(int a, int b, int c)
-//	@paramDecl		int a	or 	int b, ...
-// 						"int a "	in 	f(int a, int b, int c).
+/*
+	@funcDec			f(int a, int b, int c)
+	@paramDecl		int a	or 	int b, ...
+ 						"int a "	in 	f(int a, int b, int c).
+*/
 static void CheckParameterDeclaration(AstFunctionDeclarator funcDec,
                                       AstParameterDeclaration paramDecl)
 {
@@ -588,10 +589,10 @@ static void CheckParameterDeclaration(AstFunctionDeclarator funcDec,
 	{
 		Error(&paramDecl->coord, "Invalid storage class");
 	}
-	//	right now, the @ty maybe incomplete, we will use DeriveType to form a complete type later.
+	/*	right now, the @ty maybe incomplete, we will use DeriveType to form a complete type later. */
 	ty = paramDecl->specs->ty;
 	CheckDeclarator(paramDecl->dec);
-	// f(void)		?
+	/* f(void)		? */
 	if (paramDecl->dec->id == NULL && paramDecl->dec->tyDrvList == NULL &&
 	    ty->categ == VOID && LEN(funcDec->sig->params) == 0)
 	{
@@ -604,7 +605,7 @@ static void CheckParameterDeclaration(AstFunctionDeclarator funcDec,
 	}
 
 	ty = DeriveType(paramDecl->dec->tyDrvList, ty,&paramDecl->coord);
-	// when we are here, the type information for parameter is completer now.
+	/* when we are here, the type information for parameter is completer now. */
 	if (ty != NULL)
 		ty = AdjustParameter(ty);
 
@@ -617,10 +618,12 @@ static void CheckParameterDeclaration(AstFunctionDeclarator funcDec,
 	}	
 
 	id = paramDecl->dec->id;
-	// only when we declare a function, the parameter can be anonymous.
-	//	f(int,int,int);
-	//	but in a definition,
-	//	f(int,int ,int ){}		is illegal.
+	/*
+	 only when we declare a function, the parameter can be anonymous.
+		f(int,int,int);
+		but in a definition,
+		f(int,int ,int ){}		is illegal.
+	*/
 	if (id == NULL && funcDec->partOfDef)
 	{
 		Error(&paramDecl->coord, "Expect parameter name");
@@ -630,7 +633,7 @@ static void CheckParameterDeclaration(AstFunctionDeclarator funcDec,
 	AddParameter(funcDec->sig->params, id, ty, 
 		paramDecl->specs->sclass == TK_REGISTER, &paramDecl->coord);
 }
-//	"int a, int b , int c "	in 	f(int a, int b, int c).
+/*	"int a, int b , int c "	in 	f(int a, int b, int c). */
 static void CheckParameterTypeList(AstFunctionDeclarator funcDec)
 {
 	AstParameterTypeList paramTyList = funcDec->paramTyList;
@@ -644,14 +647,14 @@ static void CheckParameterTypeList(AstFunctionDeclarator funcDec)
 	}
 	funcDec->sig->hasEllipsis = paramTyList->ellipsis;
 }
-//	int f(int a, int b, int c)
+/*	int f(int a, int b, int c) */
 static void CheckFunctionDeclarator(AstFunctionDeclarator dec)
 {
 	AstFunctionDeclarator funcDec = (AstFunctionDeclarator)dec;
 
 
 	CheckDeclarator(funcDec->dec);
-	// see examples/scope/function.c
+	/* see examples/scope/function.c */
 	EnterParameterList();
 
 	ALLOC(funcDec->sig);
@@ -668,7 +671,7 @@ static void CheckFunctionDeclarator(AstFunctionDeclarator dec)
 	{
 		/**
 			int f(int a,int b,int c){
-				//......
+				......
 			}			
 		 */	
 		CheckParameterTypeList(funcDec);
@@ -678,7 +681,7 @@ static void CheckFunctionDeclarator(AstFunctionDeclarator dec)
 		/**
 			int f(a,b,c)	-------------->  the type for a,b,c is NULL.
 				int a,b;double c;{
-				//......
+				......
 			}
 			
 		 */	
@@ -688,7 +691,7 @@ static void CheckFunctionDeclarator(AstFunctionDeclarator dec)
 		ENDFOR 
 	}
 	else if (LEN(funcDec->ids))
-	{	// void f(a,b,c);		see examples/function/oldstyle.c
+	{	/* void f(a,b,c);		see examples/function/oldstyle.c */
 		Error(&funcDec->coord, "Identifier list should be in definition.");
 	}
 	ALLOC(funcDec->tyDrvList);
@@ -703,7 +706,7 @@ static void CheckFunctionDeclarator(AstFunctionDeclarator dec)
 	}
 	LeaveParemeterList();
 }
-//	int arr[4];
+/*	int arr[4]; */
 static void CheckArrayDeclarator(AstArrayDeclarator arrDec)
 {
 	CheckDeclarator(arrDec->dec);
@@ -727,16 +730,18 @@ static void CheckArrayDeclarator(AstArrayDeclarator arrDec)
 	arrDec->tyDrvList->next = arrDec->dec->tyDrvList;
 	arrDec->id = arrDec->dec->id;
 }
-//	int	*a[5];
+/*	int	*a[5]; */
 static void CheckPointerDeclarator(AstPointerDeclarator ptrDec)
 {
 	int qual = 0;
 	AstToken tok = (AstToken)ptrDec->tyQuals;
-	// we want to create typeDerivList object for the successor of @ptrDec first.
+	/* we want to create typeDerivList object for the successor of @ptrDec first. */
 	CheckDeclarator(ptrDec->dec);
-	// When we are here, we are sure that the typeDerivList Object has been created
-	// for the successor of @ptrDec.		So we can do this later:
-	//	"ptrDec->tyDrvList->next = ptrDec->dec->tyDrvList;"
+	/*
+	 When we are here, we are sure that the typeDerivList Object has been created
+	 for the successor of @ptrDec.		So we can do this later:
+		"ptrDec->tyDrvList->next = ptrDec->dec->tyDrvList;"
+	*/
 	while (tok)
 	{
 		qual |= tok->token == TK_CONST ? CONST : VOLATILE;
@@ -843,7 +848,7 @@ static void CheckStructDeclarator(Type rty, AstStructDeclarator stDec, Type fty)
 
 	if (((RecordType)rty)->hasFlexArray && rty->categ == STRUCT){
 		Error(&stDec->coord, "the flexible array must be the last member");
-		//return;
+		/* return; */
 	}		
 	if (id && LookupField(rty, id))
 	{
@@ -864,17 +869,19 @@ static void CheckStructDeclarator(Type rty, AstStructDeclarator stDec, Type fty)
 		}
 		else if (id && stDec->expr->val.i[0] == 0)
 		{
-			//	"int:0;" is a legal and special case
+			/*	"int:0;" is a legal and special case */
 			Error(&stDec->coord, "bit field's width should not be 0");
 		}
 		if(	fty->categ >= CHAR && fty->categ <= ULONG){
-			// The original UCC only allow bit-field with INT or UINT type,
-			// In order to allow char/short/.../,
-			// we promote char /short to int here, to be consistent with the code in EndRecord().
-			// But the memory layout maybe different from cl.exe on Windows.
-			// It seems that GCC/Clang also use the trick here.
-			// Rewriting EndRecord() may be another solution.
-			// But just keep it simple :)
+			/*
+			 The original UCC only allow bit-field with INT or UINT type,
+			 In order to allow char/short/.../,
+			 we promote char /short to int here, to be consistent with the code in EndRecord().
+			 But the memory layout maybe different from cl.exe on Windows.
+			 It seems that GCC/Clang also use the trick here.
+			 Rewriting EndRecord() may be another solution.
+			 But just keep it simple :)
+			*/
 			fty = IsUnsigned(fty)?T(UINT):T(INT);
 		}else{
 			Error(&stDec->coord, "Bit field must be integer type.");
@@ -920,7 +927,7 @@ static void CheckStructDeclaration(AstStructDeclaration stDecl, Type rty)
 	 */
 	if (stDec == NULL)
 	{
-		// see  examples/struct/anonymousField.c
+		/* see  examples/struct/anonymousField.c */
 		if(IsRecordSpecifier(stDecl->specs->tySpecs)){
 			AstStructSpecifier spec = (AstStructSpecifier) stDecl->specs->tySpecs;
 			if(spec->id == NULL){
@@ -964,7 +971,7 @@ static Type CheckStructOrUnionSpecifier(AstStructSpecifier stSpec)
 		call StartRecord and AddTag(..) to add a new symbol when necessary 
 	 */
 	if (stSpec->id != NULL && !stSpec->hasLbrace)
-	{	// struct-or-union id
+	{	/* struct-or-union id */
 		tag = LookupTag(stSpec->id);
 		if (tag == NULL)
 		{
@@ -979,18 +986,18 @@ static Type CheckStructOrUnionSpecifier(AstStructSpecifier stSpec)
 		return tag->ty;
 	}
 	else if (stSpec->id == NULL && stSpec->hasLbrace)
-	{	// struct-or-union	{struct-declaration-list}
+	{	/* struct-or-union	{struct-declaration-list} */
 		ty = StartRecord(NULL, categ);
-		// Anytime, If  the lbrace of struct/union exists, it is treated a complete type.
+		/* Anytime, If  the lbrace of struct/union exists, it is treated a complete type. */
 		((RecordType)ty)->complete = 1;
 		goto chk_decls;
 	}
 	else if (stSpec->id != NULL && stSpec->hasLbrace)
-	{	// struct-or-union	id	{struct-declaration-list}
+	{	/* struct-or-union	id	{struct-declaration-list} */
 		tag = LookupTag(stSpec->id);
 		
 		if (tag == NULL || tag->level < Level)
-		{	// If it has not been declared yet, or has but in outer-scope.
+		{	/* If it has not been declared yet, or has but in outer-scope. */
 			ty = StartRecord(stSpec->id, categ);
 			((RecordType)ty)->complete = 1;
 			AddTag(stSpec->id, ty,&stSpec->coord);
@@ -1013,7 +1020,7 @@ static Type CheckStructOrUnionSpecifier(AstStructSpecifier stSpec)
 		goto chk_decls;
 	}
 	else
-	{	// struct-or-union;		illegal & already alarmed during syntax parsing		
+	{	/* struct-or-union;		illegal & already alarmed during syntax parsing		*/
 		ty = StartRecord(NULL, categ);
 		EndRecord(ty,&stSpec->coord);
 		return ty;
@@ -1027,7 +1034,7 @@ chk_decls:
 		CheckStructDeclaration(stDecl, ty);
 		stDecl = (AstStructDeclaration)stDecl->next;
 	}
-	// calculate the size of the struct and other type-informations.
+	/* calculate the size of the struct and other type-informations. */
 	EndRecord(ty,&stSpec->coord);
 	return ty;
 
@@ -1040,7 +1047,7 @@ chk_decls:
 	}
 	
  */
-//see examples/enum/enumerator.c
+/* see examples/enum/enumerator.c */
 static int CheckEnumRedeclaration(AstEnumerator enumer){
 	Symbol sym;
 	sym = LookupID(enumer->id);
@@ -1061,12 +1068,12 @@ static int CheckEnumerator(AstEnumerator enumer, int last, Type ty)
 
 	CheckEnumRedeclaration(enumer);
 	if (enumer->expr == NULL)
-	{	// e.g.	RED		
+	{	/* e.g.	RED		*/
 		AddEnumConstant(enumer->id, ty, last + 1,&enumer->coord);
 		return last + 1;
 	}
 	else
-	{	// e.g.	GREEN = 3
+	{	/* e.g.	GREEN = 3  */
 		enumer->expr = CheckConstantExpression(enumer->expr);
 		if (enumer->expr == NULL)
 		{
@@ -1098,12 +1105,12 @@ static Type CheckEnumSpecifier(AstEnumSpecifier enumSpec)
 			So we don't need hasLbrace.
 		 */
 		if (enumSpec->id == NULL && enumSpec->enumers == NULL){
-			//	enum;		illegal , already alarmed during syntax parsing			
+			/*	enum;		illegal , already alarmed during syntax parsing			*/
 			return T(INT);
 		}
 		
 		if (enumSpec->id != NULL && enumSpec->enumers == NULL)
-		{	//	enum COLOR ...				
+		{	/*	enum COLOR ...				*/
 			tag = LookupTag(enumSpec->id);
 			if(tag == NULL){
 				tag = AddTag(enumSpec->id, Enum(enumSpec->id),&enumSpec->coord); 		
@@ -1114,11 +1121,11 @@ static Type CheckEnumSpecifier(AstEnumSpecifier enumSpec)
 			return tag->ty; 			
 		}
 		else if (enumSpec->id == NULL && enumSpec->enumers != NULL)
-		{	//	enum {RED,GREEN,BLUE} ...
+		{	/*	enum {RED,GREEN,BLUE} ... */
 			ty = T(INT);			
 		}
 		else	
-		{	//	enum Color{RED,GREEN,BLUE}
+		{	/*	enum Color{RED,GREEN,BLUE} */
 			EnumType ety;
 			tag = LookupTag(enumSpec->id);
 			if (tag == NULL || tag->level < Level){
@@ -1139,7 +1146,7 @@ static Type CheckEnumSpecifier(AstEnumSpecifier enumSpec)
 			}		
 			ty = tag->ty;			
 		}
-		//
+		
 		enumer = (AstEnumerator)enumSpec->enumers;
 		last = -1;
 		while (enumer)
@@ -1160,7 +1167,7 @@ static void CheckDeclarationSpecifiers(AstSpecifiers specs)
 	int size = 0, sign = 0;
 	int signCnt = 0, sizeCnt = 0, tyCnt = 0;
 	int qual = 0;
-	//storage-class-specifier:		extern	, auto,	static, register, ... 
+	/* storage-class-specifier:		extern	, auto,	static, register, ...  */
 	tok = (AstToken)specs->stgClasses;
 	if (tok)
 	{
@@ -1170,14 +1177,14 @@ static void CheckDeclarationSpecifiers(AstSpecifiers specs)
 		}
 		specs->sclass = tok->token;
 	}
-	//type-qualifier:	const, volatile
+	/* type-qualifier:	const, volatile */
 	tok = (AstToken)specs->tyQuals;
 	while (tok)
 	{
 		qual |= (tok->token == TK_CONST ? CONST : VOLATILE);
 		tok = (AstToken)tok->next;
 	}
-	//type-specifier:	int,double, struct ..., union ..., ...
+	/* type-specifier:	int,double, struct ..., union ..., ... */
 	p = specs->tySpecs;
 	while (p)
 	{
@@ -1261,7 +1268,7 @@ static void CheckDeclarationSpecifiers(AstSpecifiers specs)
 		}
 		p = p->next;
 	}
-	//When only signed or unsigned or nothing is specified, the default type is int.
+	/* When only signed or unsigned or nothing is specified, the default type is int. */
 	ty = tyCnt == 0 ? T(INT) : ty;
 	/**
 		typedef	int double;
@@ -1348,14 +1355,14 @@ static void CheckTypedef(AstDeclaration decl)
 			Error(&initDec->coord, "Illegal type");
 			ty = T(INT);
 		}
-		// typedef int INT32 = 200;	-----> error
+		/* typedef int INT32 = 200;	-----> error */
 		if (initDec->init)
 		{
 			Error(&initDec->coord, "Can't initialize typedef name");
 		}
 
 		sym = LookupID(initDec->dec->id);
-		// see  examples/typedef/different.c
+		/* see  examples/typedef/different.c  */
 		if (sym && sym->level == Level && (sym->kind != SK_TypedefName || ! IsCompatibleType(ty, sym->ty)))
 		{
 			Error(&initDec->coord, "Redeclaration of %s", initDec->dec->id);
@@ -1368,7 +1375,7 @@ next:
 		initDec = (AstInitDeclarator)initDec->next;
 	}
 }
-// 
+
 Type CheckTypeName(AstTypeName tname)
 {
 	Type ty;
@@ -1407,13 +1414,13 @@ void CheckLocalDeclaration(AstDeclaration decl, Vector v)
 	 */	
 	if (decl->specs->sclass == TK_TYPEDEF)
 	{
-		// PRINT_CUR_POS(0);
+		/* PRINT_CUR_POS(0); */
 		CheckTypedef(decl);
 		return;
 	}
 	ty = decl->specs->ty;
 	sclass = decl->specs->sclass;
-	// the local variable is AUTO default.
+	/* the local variable is AUTO default. */
 	if (sclass == 0)
 	{
 		sclass = TK_AUTO;
@@ -1422,7 +1429,7 @@ void CheckLocalDeclaration(AstDeclaration decl, Vector v)
 	while (initDec)
 	{
 		CheckDeclarator(initDec->dec);
-		if (initDec->dec->id == NULL){	// 	int ;		
+		if (initDec->dec->id == NULL){	/* 	int ;		*/
 			goto next;
 		}
 		ty = DeriveType(initDec->dec->tyDrvList, decl->specs->ty,&initDec->coord);
@@ -1435,7 +1442,7 @@ void CheckLocalDeclaration(AstDeclaration decl, Vector v)
 		{
 			/**
 				void f1(void){
-				    static void g(void); // illegal to declare static function in local scope in C89
+				    static void g(void);  ....>> illegal to declare static function in local scope in C89
 				}
 				But in VS2008, it is OK.
 			 */
@@ -1474,9 +1481,9 @@ void CheckLocalDeclaration(AstDeclaration decl, Vector v)
 		}		
 		if ((sym = LookupID(initDec->dec->id)) == NULL || sym->level < Level)
 		{
-			// here , we check local variables or static variables in function-definition.
+			/* here , we check local variables or static variables in function-definition. */
 			VariableSymbol vsym;
-			// see examples/declaration/extern.c
+			/* see examples/declaration/extern.c */
 			if(sclass == TK_EXTERN && sym && !IsCompatibleType(sym->ty, ty)){
 				Error(&decl->coord, "redefinition of \'%s\' with a different type",initDec->dec->id);
 			}
@@ -1523,7 +1530,7 @@ static void CheckGlobalDeclaration(AstDeclaration decl)
 	int sclass;
 
 	CheckDeclarationSpecifiers(decl->specs);
-	// typedef 	int INT_ARR[4];
+	/* typedef 	int INT_ARR[4]; */
 	if (decl->specs->sclass == TK_TYPEDEF)
 	{
 		CheckTypedef(decl);
@@ -1532,18 +1539,18 @@ static void CheckGlobalDeclaration(AstDeclaration decl)
 
 	ty = decl->specs->ty;
 	sclass = decl->specs->sclass;
-	// the storage-class could only be EXTERN or STATIC for global variable.
+	/* the storage-class could only be EXTERN or STATIC for global variable. */
 	if (sclass == TK_REGISTER || sclass == TK_AUTO)
 	{
 		Error(&decl->coord, "Invalid storage class");
 		sclass = TK_EXTERN;
 	}
-	// check init-declarator list.
+	/* check init-declarator list. */
 	initDec = (AstInitDeclarator)decl->initDecs;
 	while (initDec)
 	{
 		CheckDeclarator(initDec->dec);
-		//	int	;	----->		anonymous
+		/*	int	;	----->		anonymous */
 		if (initDec->dec->id == NULL)
 			goto next;
 
@@ -1553,7 +1560,7 @@ static void CheckGlobalDeclaration(AstDeclaration decl)
 			Error(&initDec->coord, "Illegal type");
 			ty = T(INT);
 		}
-		// 
+		 
 		if (IsFunctionType(ty))
 		{
 			if (initDec->init)
@@ -1603,7 +1610,7 @@ static void CheckGlobalDeclaration(AstDeclaration decl)
 			Error(&decl->coord, "Conflict linkage of %s", initDec->dec->id);
 		}
 		if (sym->sclass == TK_EXTERN){
-			//PRINT_DEBUG_INFO(("% d , %d",sym->sclass,sclass));
+			/* PRINT_DEBUG_INFO(("% d , %d",sym->sclass,sclass)); */
 			sym->sclass = sclass;			
 		}
 
@@ -1635,7 +1642,7 @@ next:
 	}
 	
 }
-// declaration-list(opt)  in old-style function-definition
+/* declaration-list(opt)  in old-style function-definition */
 static void CheckIDDeclaration(AstFunctionDeclarator funcDec, AstDeclaration decl)
 {
 	Type ty, bty;
@@ -1706,16 +1713,16 @@ void CheckFunction(AstFunction func)
 	Parameter param;
 	
 	func->fdec->partOfDef = 1;
-	// check declaration-specifiers
+	/* check declaration-specifiers */
 	CheckDeclarationSpecifiers(func->specs);
-	//The default storage-class of function definition is extern.
+	/* The default storage-class of function definition is extern. */
 	if ((sclass = func->specs->sclass) == 0)
 	{
 		sclass = TK_EXTERN;
 	}
-	// check declarator
+	/* check declarator */
 	CheckDeclarator(func->dec);
-	// "double a;int b;"  in 	"void g(a,b) double a;int b;{}"
+	/* "double a;int b;"  in 	"void g(a,b) double a;int b;{}" */
 	p = func->decls;
 	while (p)
 	{
@@ -1788,7 +1795,7 @@ void CheckFunction(AstFunction func)
 	}
 	CheckCompoundStatement(func->stmt);
 	ExitScope();
-	// Referencing an undefined label is considered as an error.
+	/* Referencing an undefined label is considered as an error. */
 	label = func->labels;
 	while (label)
 	{
@@ -1798,7 +1805,7 @@ void CheckFunction(AstFunction func)
 		}
 		label = label->next;
 	}
-	// only when return type is void, the return value can be omitted
+	/* only when return type is void, the return value can be omitted */
 	if (ty->bty != T(VOID) && ! func->hasReturn)
 	{
 		Warning(&func->coord, "missing return value");

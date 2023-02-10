@@ -7,9 +7,9 @@
 Vector CreateVector(int size)
 {
 	Vector v = NULL;
-	// allocate a struct vector object from Heap
+	/* allocate a struct vector object from Heap */
 	ALLOC(v);
-	// allocate @size slots for the vector object
+	/* allocate @size slots for the vector object */
 	v->data = (void **)HeapAllocate(CurrentHeap, size * sizeof(void *));
 	v->size = size;
 	v->len = 0;
@@ -19,7 +19,7 @@ Vector CreateVector(int size)
 /**
  * Double the vector's size to hold more data
  */
-//  Anytime, the vector is not large enough, we expand it.
+/*  Anytime, the vector is not large enough, we expand it. */
 void ExpandVector(Vector v)
 {
 	void *orig;

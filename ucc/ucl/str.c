@@ -36,16 +36,16 @@ char* InternName(char *id, int len)
 	int i;
 	int h;
 	NameBucket p;
-	// try to find the id in the hash buckets.
+	/* try to find the id in the hash buckets. */
 	h = ELFHash(id, len) & NAME_HASH_MASK;
 	for (p = NameBuckets[h]; p != NULL; p = p->link)
 	{
 		if (len == p->len && strncmp(id, p->name, len) == 0)
 			return p->name;
 	}
-	// allocate memory for struct nameBucket object
+	/* allocate memory for struct nameBucket object */
 	p = HeapAllocate(&StringHeap, sizeof(*p));
-	// allocate memory for string
+	/* allocate memory for string */
 	p->name = HeapAllocate(&StringHeap, len + 1);
 	for (i = 0; i < len; ++i)
 	{
@@ -53,7 +53,7 @@ char* InternName(char *id, int len)
 	}
 	p->name[len] = 0;
 	p->len = len;
-	// append the new nameBucket object at the end of the corresponding list in Hash table.
+	/* append the new nameBucket object at the end of the corresponding list in Hash table. */
 	p->link = NameBuckets[h];
 	NameBuckets[h] = p;
 
@@ -76,9 +76,9 @@ void AppendSTR(String str, char *tmp, int len, int wide)
 	char *p;
 	int times = 1;
 
-	// PRINT_DEBUG_INFO(("len = %d",len));
+	/* PRINT_DEBUG_INFO(("len = %d",len)); */
 	size = str->len + len + 1;
-	// always save wide char as int, no matter	whether sizeof(WCHAR) is 2 or 4
+	/* always save wide char as int, no matter	whether sizeof(WCHAR) is 2 or 4 */
 	if (wide){
 		times = sizeof(UCC_WC_T);
 	}
@@ -95,8 +95,10 @@ void AppendSTR(String str, char *tmp, int len, int wide)
 	}
 	str->chs = p;
 	str->len = size - 1;
-	// str->wide = wide;
-	// add 0 at the end of the string
+	/*
+	 str->wide = wide;
+	 add 0 at the end of the string
+	*/
 	if (! wide)
 	{
 		str->chs[size - 1] = 0;

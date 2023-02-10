@@ -12,13 +12,16 @@ static Symbol TranslatePrimaryExpression(AstExpression expr)
 {
 	if (expr->op == OP_CONST)
 		return AddConstant(expr->ty, expr->val);
-
-	/// if the expression is adjusted from an array or a function,
-	/// returns the address of the symbol for this identifier
+	/*
+	 if the expression is adjusted from an array or a function,
+	 returns the address of the symbol for this identifier
+	*/
 	if (expr->op == OP_STR || expr->isarray || expr->isfunc){
-		//#if  1	// added
-		//assert(expr->op != OP_STR);
-		//#endif
+		/*
+		 #if  1	
+		 assert(expr->op != OP_STR);
+		 #endif
+		*/
 		return AddressOf(expr->val.p);
 	}
 
@@ -46,11 +49,11 @@ static Symbol TranslatePrimaryExpression(AstExpression expr)
 	 }
 
 	 function main
-	 	// dt.b = 30;		---------------------- WriteBitField
+	 	 ...>> dt.b = 30;		---------------------- WriteBitField
 		 t1 = dt[4] & -4096;
 		 t2 = t1 | 30;
 		 dt[4] = t2;
-		 // a = dt.b; 		----------------------  ReadBitField
+		 ...>> a = dt.b; 		----------------------  ReadBitField
 		 t5 = dt[4] << 20;
 		 t6 = t5 >> 20;	-----------			arithmetic right shift	(with sign)
 		 a = t6;
@@ -78,7 +81,7 @@ static Symbol ReadBitField(Field fld, Symbol p)
 	 * In order to read b's value, at first, we must left shift b to the most significant bit
 	 * then right shift b's to the least significant bit.
 	 */
-	// to be consistent with GCC/Clang, see examples/struct/bitfieldSign.c
+	/* to be consistent with GCC/Clang, see examples/struct/bitfieldSign.c */
 	p = Simplify(T(INT),LSH, p, IntConstant(lbits));
 	p = Simplify(GetBitFieldType(fld), RSH, p, IntConstant(rbits));	
 
@@ -167,7 +170,7 @@ static Symbol WriteBitField(Field fld, Symbol dst, Symbol src)
 */
 static Symbol Offset(Type ty, Symbol addr, Symbol voff, int coff)
 {
-	//PRINT_I_AM_HERE();
+	
 	if (voff != NULL)
 	{	
 		/**
@@ -175,12 +178,12 @@ static Symbol Offset(Type ty, Symbol addr, Symbol voff, int coff)
 			For example:
 				arr[index][2];
 		 */
-		//PRINT_DEBUG_INFO(("%s",addr->name));
+		/* PRINT_DEBUG_INFO(("%s",addr->name)); */
 		voff = Simplify(T(POINTER), ADD, voff, IntConstant(coff));
 		addr = Simplify(T(POINTER), ADD, addr, voff);
 		return Deref(ty, addr);
 	}	
-	//	TranslateMemberAccess/TranslateArrayIndex
+	/*	TranslateMemberAccess/TranslateArrayIndex */
 	/**
 		In fact, we don't need the following if-statement.
 		But we can generate better assembly code with this if.
@@ -205,7 +208,7 @@ static Symbol Offset(Type ty, Symbol addr, Symbol voff, int coff)
 			see AddressOf(...),		arr	--->  addressof(arr)
 							offset(): t0, arr
 		 */
-		//PRINT_DEBUG_INFO(("Offset(): %s, %s",addr->name,AsVar(addr)->def->src1->name));
+		/* PRINT_DEBUG_INFO(("Offset(): %s, %s",addr->name,AsVar(addr)->def->src1->name)); */
 		return CreateOffset(ty, AsVar(addr)->def->src1, coff,addr->pcoord);
 	}
 	/**
@@ -241,7 +244,7 @@ static Symbol Offset(Type ty, Symbol addr, Symbol voff, int coff)
 			return 0;
 		}
 	 */
-	//PRINT_DEBUG_INFO(("%s",addr->name));
+	/* PRINT_DEBUG_INFO(("%s",addr->name)); */
 	return Deref(ty, Simplify(T(POINTER), ADD, addr, IntConstant(coff)));
 }
 
@@ -290,9 +293,9 @@ static Symbol TranslateBranchExpression(AstExpression expr)
 	TranslateBranch(expr, trueBB, falseBB);
 
 	StartBBlock(falseBB);
-	// a = 0;
+	/*  a = 0; */
 	GenerateMove(expr->ty, t, IntConstant(0));
-	// goto BB1
+	/* goto BB1 */
 	GenerateJump(nextBB);
 
 	StartBBlock(trueBB);
@@ -308,7 +311,7 @@ static Symbol TranslateBranchExpression(AstExpression expr)
  */
  /**
 	expr->op	  is  OP_INDEX
-	//
+
 	int main(){
 		int arr[5][6];
 		int x = 3;
@@ -316,16 +319,16 @@ static Symbol TranslateBranchExpression(AstExpression expr)
 		arr[3][4] = 34;
 		return 0;
 	}
-	//
+
 	function main
 		x = 3;
-		// arr[x][4]
+		...>> arr[x][4]
 		t0 = x * 24;		-------	sizeof(int)*6 is 24
 		t1 = &arr;
 		t2 = t0 + 16;		-------  sizeof(int)*4 is 16
 		t3 = t1 + t2;		-------  array addr + total offset
 		*t3 = 10;
-		// arr[3][4]
+		...>> arr[3][4]
 		arr[88] = 34;		-------	3*(sizeof(int)*6) + 4 * sizeof(int)  = 72 + 16 = 88
 		return 0;
 		ret
@@ -350,7 +353,7 @@ static Symbol TranslateArrayIndex(AstExpression expr)
 	int coff = 0;
 	
 	p = expr;
-	/// 
+
 	do
 	{
 		if (p->kids[1]->op == OP_CONST)
@@ -366,7 +369,7 @@ static Symbol TranslateArrayIndex(AstExpression expr)
 			voff = Simplify(voff->ty, ADD, voff, TranslateExpression(p->kids[1]));
 		}
 		p = p->kids[0];
-		// see 	case OP_DEREF in CheckUnaryExpression()
+		/* see 	case OP_DEREF in CheckUnaryExpression() */
 	} while (p->op == OP_INDEX);
 
 	
@@ -398,8 +401,10 @@ static Symbol TranslateFunctionCall(AstExpression expr)
 	while (arg)
 	{
 		ALLOC(ilarg);
-		// After TranslateExpression(arg), sym->ty may be different from art->ty.
-		// See AddressOf() and the following comments for detail.
+		/*
+		 After TranslateExpression(arg), sym->ty may be different from art->ty.
+		 See AddressOf() and the following comments for detail.
+		*/
 		ilarg->sym = TranslateExpression(arg);
 		ilarg->ty = arg->ty;
 				
@@ -432,14 +437,14 @@ static Symbol TranslateFunctionCall(AstExpression expr)
 		 return 0;
 	 }
 
-	 //		see CreateOffset(...)
+	 ...>>		see CreateOffset(...)
 	 function main
 		 t0 = &dt;
 		 ptr = t0;
-		 //	----------------	ptr->b	= 30
+		 ...>>	----------------	ptr->b	= 30
 		 t1 = ptr + 4;
 		 *t1 = 30;
-		 //	dt.c = 50;
+		 ...>>	dt.c = 50;
 		 dt[8] = 50;
 		 return 0;
 		 ret
@@ -464,7 +469,7 @@ static Symbol TranslateMemberAccess(AstExpression expr)
 		fld =  p->val.p;
 		coff = fld->offset;
 		addr = TranslateExpression(expr->kids[0]);
-		//PRINT_DEBUG_INFO(("name = %s",addr->name));
+		
 	}
 	else
 	{
@@ -481,8 +486,10 @@ static Symbol TranslateMemberAccess(AstExpression expr)
 		}
 		addr = AddressOf(TranslateExpression(p));
 	}
-	//	No variable offset when accessing member of a struct.	
-	//PRINT_DEBUG_INFO(("%s",addr->name));
+	/*
+	No variable offset when accessing member of a struct.	
+	PRINT_DEBUG_INFO(("%s",addr->name));
+	*/
 	dst = Offset(expr->ty, addr, NULL, coff);	
 	/**
 		store struct field object in symbol object for struct filed,
@@ -498,24 +505,23 @@ static Symbol TranslateMemberAccess(AstExpression expr)
 			Data dt;
 			int main(){
 				int a ;
-				dt.b = 1;		// lvalue is 1
-				a = dt.b;		// lvalue is 0
+				dt.b = 1;		...>> lvalue is 1
+				a = dt.b;		...>> lvalue is 0
 				return 0;
 			}	
 			function main
-				t1 : dt[4] | 1;		// writing
+				t1 : dt[4] | 1;		...>> writing
 				dt[4] = t1;
 				
-				t4 : dt[4] << 31;		// reading
+				t4 : dt[4] << 31;	...>> reading
 				t5 : t4 >> 31;
 				a = t5;
 				return 0;
 		If we want to read the value of bitfiled, read it.
 		The result after reading is a temporary, as t5 above.
 	 */
-	// PRINT_DEBUG_INFO(("lvalue = %d",expr->lvalue));
+	/* PRINT_DEBUG_INFO(("lvalue = %d",expr->lvalue)); */
 	if (fld->bits != 0 && expr->lvalue == 0){
-		//PRINT_CUR_ASTNODE(expr);
 		return ReadBitField(fld, dst);
 	}
 	
@@ -537,7 +543,7 @@ static Symbol TranslateIncrement(AstExpression expr)
 			that in TranslateAssignmentExpression().
 	 */
 	p = TranslateExpression(casgn->kids[0]);	
-	//PRINT_DEBUG_INFO(("%s",p->name));
+	/* PRINT_DEBUG_INFO(("%s",p->name)); */
 	casgn->kids[0]->op = OP_ID;
 	casgn->kids[0]->val.p = p;
 	fld = p->val.p;
@@ -561,7 +567,7 @@ static Symbol TranslateIncrement(AstExpression expr)
 				*ptr = t1;
 				return 0;
 		 */
-		//PRINT_DEBUG_INFO(("symbol: %s", GetSymbolKind(p->kind)));
+		/* PRINT_DEBUG_INFO(("symbol: %s", GetSymbolKind(p->kind))); */
 		if (casgn->kids[0]->bitfld)
 		{
 			ret = ReadBitField(fld, p);
@@ -632,15 +638,17 @@ static Symbol TranslateCast(Type ty, Type sty, Symbol src)
 		assert(dcode == I4);
 	}
 	if(scode == dcode){
-		// for examples:	unsigned int ---> unsigned long
-		//PRINT_DEBUG_INFO(("%s,%d:%s--->%s",src->pcoord->filename,src->pcoord->ppline,
-		//					TypeToString(sty), TypeToString(ty)));
+		/*
+		for examples:	unsigned int ---> unsigned long
+		PRINT_DEBUG_INFO(("%s,%d:%s--->%s",src->pcoord->filename,src->pcoord->ppline,
+							TypeToString(sty), TypeToString(ty)));
+		*/
 		return src;
 	}
 
 	if (dcode == V)
 		return NULL;
-	//
+
 	switch (scode)
 	{
 	/**
@@ -688,9 +696,9 @@ static Symbol TranslateCast(Type ty, Type sty, Symbol src)
 					printf("%x \n",((unsigned int)a) >> 1);
 					return 0;
 				}
-				//	short	-->		int	-->		unsigned int
+				...>>	short	-->		int	-->		unsigned int
 			*/	
-			// see examples/cast/sign.c
+			/* see examples/cast/sign.c */
 			Symbol temp = CreateTemp(ty);
 			GenerateMove(ty,temp,src);
 			return temp;
@@ -767,18 +775,18 @@ static Symbol TranslateUnaryExpression(AstExpression expr)
 	src = TranslateExpression(expr->kids[0]);
 	switch (expr->op)
 	{
-	case OP_CAST:	//	(int) a
-		//PRINT_DEBUG_INFO(("%s --> %s",TypeToString(expr->kids[0]->ty),TypeToString(expr->ty)));
+	case OP_CAST:	/*	(int) a */
+		/* PRINT_DEBUG_INFO(("%s --> %s",TypeToString(expr->kids[0]->ty),TypeToString(expr->ty))); */
 		return TranslateCast(expr->ty, expr->kids[0]->ty, src);
 
-	case OP_ADDRESS:	// &a		
+	case OP_ADDRESS:	/* &a		*/
 		return AddressOf(src);
 
-	case OP_DEREF:		// *a
+	case OP_DEREF:		/* *a */
 		return Deref(expr->ty, src);
 
 	case OP_NEG:
-	case OP_COMP:		//	+/-
+	case OP_COMP:		/*	+/- */
 		return Simplify(expr->ty, OPMap[expr->op], src, NULL);
 
 	default:
@@ -836,7 +844,7 @@ static Symbol TranslateConditionalExpression(AstExpression expr)
 	falseBB = CreateBBlock();
 	nextBB = CreateBBlock();
 	
-	// to be consistent with if(){}else{}
+	/* to be consistent with if(){}else{} */
 	TranslateBranch(Not(expr->kids[0]), falseBB,trueBB);
 
 	StartBBlock(trueBB);
@@ -902,7 +910,7 @@ static Symbol TranslateAssignmentExpression(AstExpression expr)
 			If we comment the following two lines, we will get two lines of "int * f(void)",
 			which is not correct semantics.
 		 */
-		//PRINT_DEBUG_INFO(("op = %s",OPNames[expr->kids[0]->op]));
+		/* PRINT_DEBUG_INFO(("op = %s",OPNames[expr->kids[0]->op])); */
 		expr->kids[0]->op = OP_ID;
 		expr->kids[0]->val.p = expr->kids[0]->bitfld ? ReadBitField(fld, dst) : dst;
 	}
@@ -918,7 +926,7 @@ static Symbol TranslateAssignmentExpression(AstExpression expr)
 			see	the examples in TranslateIncrement(AstExpression expr)
 		 */
 		Symbol addr = AsVar(dst)->def->src1;
-		//PRINT_DEBUG_INFO(("name = %s",dst->name));
+		/* PRINT_DEBUG_INFO(("name = %s",dst->name)); */
 		GenerateIndirectMove(expr->ty, addr, src);
 		dst = Deref(expr->ty, addr);
 	}
@@ -1039,7 +1047,7 @@ void TranslateBranch(AstExpression expr, BBlock trueBB, BBlock falseBB)
 			}
 			------------------------------------
 			function main
-				if (a) goto BB1;	// No matter a is true or not, we always goto BB1.
+				if (a) goto BB1;	....>> No matter a is true or not, we always goto BB1.
 			BB1: 
 				if (b) goto BB3;
 			BB2: 
@@ -1110,7 +1118,7 @@ void TranslateBranch(AstExpression expr, BBlock trueBB, BBlock falseBB)
 		break;
 
 	case OP_NOT:		
-		// for better  if(!!!!!a)	, here we treat it as bool expression, also see TranslateUnaryExpression()
+		/* for better  if(!!!!!a)	, here we treat it as bool expression, also see TranslateUnaryExpression() */
 		{
 			int count = 1;
 			AstExpression parent = expr;

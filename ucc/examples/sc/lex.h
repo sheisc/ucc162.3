@@ -1,25 +1,25 @@
 #ifndef	LEX_H
 #define	LEX_H
-//
+
 #define	MAX_ID_LEN	15
 
 
 
 
-//
+
 typedef	union{
 	char name[MAX_ID_LEN+1];
 	int  numVal;
 
 }Value;
 
-//
+
 typedef enum {
 	#define	TOKEN(kind,name)	kind,
 	#include "tokens.txt"
 	#undef	TOKEN
 }TokenKind;
-//
+
 typedef struct{
 	TokenKind kind;
 	Value value;

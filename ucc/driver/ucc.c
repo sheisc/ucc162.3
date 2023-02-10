@@ -143,11 +143,11 @@ char** BuildCommand(char *cmd[], List flags, List infiles, List outfiles)
 	int i, j;
 	List lists[3];
 	List p;
-	//	$1
+	/*	$1 */
 	lists[0] = flags;
-	//	$2
+	/*	$2 */
 	lists[1] = infiles;
-	//	$3
+	/*	$3 */
 	lists[2] = outfiles;
 	for (i = j = 0; cmd[i] != NULL; i++)
 	{
@@ -222,7 +222,7 @@ static int GetFileType(char *filename)
 static void AddFile(char *filename)
 {
 	int type = GetFileType(filename);
-	//	4	R_OK	,2	W_OK	,1	X_OK
+	/*	4	R_OK	,2	W_OK	,1	X_OK */
 	if (access(filename, 4) != 0)
 	{
 		fprintf(stderr, "No such file: %s\n", filename);
@@ -378,13 +378,13 @@ int InvokeProgram(int oftype)
 
 		for (p = Option.aflags, Option.aflags = NULL; p != NULL; p = p->next)
 		{
-			// see "-Wa,"	strlen("-Wa,") is 4	,ParseCmdLine()
+			/* see "-Wa,"	strlen("-Wa,") is 4	,ParseCmdLine() */
 			Option.aflags = ListCombine(Option.aflags, ParseOption(p->str + 4));
 		}
 		for (p = Option.pfiles; p != NULL; p = p->next)
 		{
 			if(Option.out && Option.oftype == ASM_FILE){
-				//PRINT_DEBUG_INFO(("Option.out = %s\n",Option.out));
+				/* PRINT_DEBUG_INFO(("Option.out = %s\n",Option.out)); */
 				ofname = Option.out;				
 			}else{
 				ofname = FileName(p->str, DEF_ASM_EXT);				
@@ -428,7 +428,7 @@ int InvokeProgram(int oftype)
 		}		
 		for (p = Option.lflags, Option.lflags = NULL; p != NULL; p = p->next)
 		{
-			// see "-Wl,"	strlen("-Wl,") is 4	,ParseCmdLine()
+			/* see "-Wl,"	strlen("-Wl,") is 4	,ParseCmdLine() */
 			Option.lflags = ListCombine(Option.lflags, ParseOption(p->str + 4));
 		}
 
@@ -451,7 +451,7 @@ static int ParseCmdLine(int argc, char *argv[])
 
 	for (i = 0; i < argc; ++i)
 	{
-		//PRINT_DEBUG_INFO(("%s",argv[i]));
+		/* PRINT_DEBUG_INFO(("%s",argv[i])); */
 		if (strcmp(argv[i], "--dump-ast") == 0 ||
 			strcmp(argv[i], "--dump-IR") == 0)
 		{

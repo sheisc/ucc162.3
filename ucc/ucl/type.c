@@ -2,8 +2,10 @@
 #include "output.h"
 #include "type.h"
 #include "config.h"
-// primary type: CHAR, ..., DOUBLE, ... , POINTER,VOID.  
-// in fact, POINTER should be considered as a kind of type operator ?
+/*
+ primary type: CHAR, ..., DOUBLE, ... , POINTER,VOID.  
+ in fact, POINTER should be considered as a kind of type operator ?
+*/
 struct type Types[VOID - CHAR + 1];
 Type DefaultFunctionType;
 Type WCharType;
@@ -28,23 +30,22 @@ const char * GetCategName(int categ){
 	Because function Qualify() only copies part of object recordType/enumType/arrayType.
 	So we have to unqualied it before calling the following function.
  */
-//
 int IsZeroSizeArray(Type ty){
 	ty = Unqual(ty);
 	return (ty->categ == ARRAY && (((ArrayType)ty)->len == 0) && ty->size == 0);	 
 }
-//
+
 int IsIncompleteEnum(Type ty){
 	ty = Unqual(ty);
 	return ( ty->categ == ENUM  &&  !((EnumType)ty)->complete );
 }
-//
+
 int IsIncompleteRecord(Type ty){
 	ty = Unqual(ty);
 	return ( IsRecordType(ty) && !((RecordType) ty)->complete);
 }
 
-// we  test whether it is incomplete enum/struct/union or array of these objects.
+/* we  test whether it is incomplete enum/struct/union or array of these objects. */
 int IsIncompleteType(Type ty, int ignoreZeroArray){
 	ty = Unqual(ty);
 	switch(ty->categ){
@@ -88,14 +89,14 @@ static int IsCompatibleFunction(FunctionType fty1, FunctionType fty2)
 	int parLen1, parLen2;
 	int i;
 
-	// return types shall be compatible
+	/* return types shall be compatible */
 	/**
 		For two function types to be compatible,
 		both shall specify compatible return types.
 	 */
 	if (! IsCompatibleType(fty1->bty, fty2->bty))
 		return 0;
-	// if they both don't have prototype and do have Compatible return type, then they are compatible.
+	/* if they both don't have prototype and do have Compatible return type, then they are compatible. */
 	if (! sig1->hasProto && ! sig2->hasProto)
 	{
 		return 1;
@@ -109,8 +110,10 @@ static int IsCompatibleFunction(FunctionType fty1, FunctionType fty2)
 		 */
 		parLen1 = LEN(sig1->params);
 		parLen2 = LEN(sig2->params);
-		// If one has variable parameters while the other one not, 
-		// or their parameter count are not the same, they are incompatible functions.
+		/*
+		 If one has variable parameters while the other one not, 
+		 or their parameter count are not the same, they are incompatible functions.
+		*/
 		/**
 			void f(int a,...){
 
@@ -123,11 +126,11 @@ static int IsCompatibleFunction(FunctionType fty1, FunctionType fty2)
 				
 				return 0;
 			}
-			// It is an error in UCC, while a warning in VS2008.
+			...>> It is an error in UCC, while a warning in VS2008.
 		 */
 		if ((sig1->hasEllipsis ^ sig2->hasEllipsis) || (parLen1 != parLen2))
 			return 0;
-		// recursive check whether parameters are compatible.
+		/* recursive check whether parameters are compatible. */
 		for (i = 0; i < parLen1; ++i)
 		{
 			p1 = (Parameter)GET_ITEM(sig1->params, i);
@@ -279,8 +282,8 @@ mix_proto:
 		 printf("%x %x.\n",dt.a);
 		 SetData(&dt);		-------------------->  VS2008:  a warning, InCompatible type.
 		 printf("%x %x.\n",dt.a);
-		 // double 3.0	 is 0x00000000 0x40080000	 LITTLE_ENDIAN
-		 // 3.0f is prototed to double 3.0,the pushed into stack
+		 ...>> double 3.0	 is 0x00000000 0x40080000	 LITTLE_ENDIAN
+		 ...>> 3.0f is prototed to double 3.0,the pushed into stack
 		 printf("%x %x.\n",3.0f);
 		 return 0;
 	 }
@@ -293,14 +296,14 @@ int IsCompatibleType(Type ty1, Type ty2)
 	if (ty1 == ty2)
 		return 1;
 	/**
-		// const / volatile qualifier
+		const / volatile qualifier
 		For two qualified types to be compatible, both shall have the identically 
 		qualified version of a compatible type; the order of type qualifiers within 
 		a list of specifiers or qualifiers does not care.
 	*/
 	if (ty1->qual != ty2->qual)
 		return 0;
-	// throw away the const/volatile qualifier
+	/* throw away the const/volatile qualifier */
 	ty1 = Unqual(ty1);
 	ty2 = Unqual(ty2);
 	/**
@@ -309,24 +312,24 @@ int IsCompatibleType(Type ty1, Type ty2)
 	 	or
 	 	ty2 is ENUM, ty1 is T(INT)
 	 	
-	 	see <http://flash-gordon.me.uk/ansi.c.txt>
+	 	see <ansi.c.txt>
 	 	Each enumerated type shall be compatible with an integer type; 
 	 	the choice of type is implementation-defined.
 	 */
-	#if 0 	// commented
+	#if 0 	
 	if (ty1->categ == ENUM && ty2 == ty1->bty ||
 		ty2->categ == ENUM && ty1 == ty2->bty)
 		return 1;
 	#endif
 	if (ty1->categ != ty2->categ)
 		return 0;
-	// we are sure now: ty1 and ty2 have same category.
+	/* we are sure now: ty1 and ty2 have same category. */
 	/**
 		What will happen when  categ is STRUCT/UNION ?
 	 */
 	switch (ty1->categ)
 	{
-	case POINTER:	// recursive check ty1->bty and ty2->bty
+	case POINTER:	/* recursive check ty1->bty and ty2->bty */
 		/**
 			For two pointer types to be compatible, both shall be identically 
 			qualified and both shall be pointers to compatible types.
@@ -349,7 +352,7 @@ int IsCompatibleType(Type ty1, Type ty2)
 	case FUNCTION:
 		return IsCompatibleFunction((FunctionType)ty1, (FunctionType)ty2);
 
-	default:	// STRUCT/UNION
+	default:	/* STRUCT/UNION */
 		return ty1 == ty2;
 	}
 }
@@ -371,7 +374,7 @@ Type Enum(char *id)
 	ety->categ = ENUM;
 	ety->id = id;
 
-	// enumeration type is compatilbe with int
+	/* enumeration type is compatilbe with int */
 	ety->bty = T(INT);
 	ety->size = ety->bty->size;
 	ety->align = ety->bty->align;
@@ -380,7 +383,7 @@ Type Enum(char *id)
 	return (Type)ety;
 }
 
-//  a little ugly, just for safe.  see examples/qualfier/qualify.c
+/*  a little ugly, just for safe.  see examples/qualfier/qualify.c */
 static Type DoTypeClone(Type ty){
 	int categ = ty->categ;
 	if(categ == STRUCT || categ == UNION){
@@ -422,15 +425,19 @@ Type Qualify(int qual, Type ty)
 		see examples/qulifier/qualify.c
 	 */
 	Type qty;
-	// @qual is const or volatile
-	// if ty has already been qualified by @qual or qual is zero, just return @ty itself.
+	/*
+	 @qual is const or volatile
+	 if ty has already been qualified by @qual or qual is zero, just return @ty itself.
+	*/
 	if (qual == 0 || qual == ty->qual)
 		return ty;
-	// we don't want to change the @ty. So we copy @ty first.
+	/* we don't want to change the @ty. So we copy @ty first. */
 	qty = DoTypeClone(ty);
 	qty->qual |= qual;
-	// if ty has been qualified, get the original type(not qualified one)
-	// else ty has not been qualified, ty is the original type.
+	/*
+	 if ty has been qualified, get the original type(not qualified one)
+	 else ty has not been qualified, ty is the original type.
+	*/
 	if (ty->qual != 0)
 	{
 		qty->bty = ty->bty;
@@ -515,7 +522,7 @@ Type FunctionReturn(Type ty, Signature sig)
  */
 Type StartRecord(char *id, int categ)
 {
-	// @categ is STRUCT or UNION;
+	/* @categ is STRUCT or UNION; */
 	RecordType rty;
 
 	ALLOC(rty);
@@ -554,13 +561,13 @@ Field AddField(Type ty, char *id, Type fty, int bits)
 	RecordType rty = (RecordType)ty;
 	Field fld;
 
-	if (fty->size == 0)		// int arr[];
+	if (fty->size == 0)		/* int arr[]; */
 	{
 		if(fty->categ == ARRAY){
 			rty->hasFlexArray = 1;	
 		}
 	}
-	// If one field member is const ,the total struct object is const.
+	/* If one field member is const ,the total struct object is const. */
 	if (fty->qual & CONST)
 	{
 		rty->hasConstFld = 1;
@@ -571,7 +578,7 @@ Field AddField(Type ty, char *id, Type fty, int bits)
 	fld->id = id;
 	fld->ty = fty;
 	fld->bits = bits;
-	// offset will be determined in function EndRecord(Type ty)
+	/* offset will be determined in function EndRecord(Type ty) */
 	fld->pos = fld->offset = 0;
 	fld->next = NULL;
 
@@ -591,7 +598,7 @@ Field LookupField(Type ty, char *id)
 
 	while (fld != NULL)
 	{
-		// unnamed struct/union field in a struct/union
+		/* unnamed struct/union field in a struct/union */
 		if (fld->id == NULL && IsRecordType(fld->ty))
 		{
 			/**
@@ -599,21 +606,21 @@ Field LookupField(Type ty, char *id)
 				typedef struct Data{
 					int a;
 					struct{
-						int b;			// Dada d;  d.b = 5;
+						int b;			...>> Dada d;  d.b = 5;
 					};	
 				}Data;
 				(2)
 				typedef struct Data{
 					int a;
 					struct{
-						int a;	// OK.		Data d;  d.b.a = 3;
-					} b;	// this is not an unnamed filed. its name is b. Though the struct is unnamed.	
+						int a;	...>> OK.		Data d;  d.b.a = 3;
+					} b;	...>> this is not an unnamed filed. its name is b. Though the struct is unnamed.	
 				}Data;
 				(3)
 				typedef struct Data{
 					int a;
 					struct{
-						int a;	// redefinition of a
+						int a;	...>> redefinition of a
 					} ;	
 				}Data;				
 			 */
@@ -623,7 +630,7 @@ Field LookupField(Type ty, char *id)
 			if (p)
 				return p;
 		}
-		else if (fld->id == id)	// see function  InternName() and AppendSTR()
+		else if (fld->id == id)	/* see function  InternName() and AppendSTR() */
 			return fld;
 
 		fld = fld->next;
@@ -649,7 +656,7 @@ Field LookupField(Type ty, char *id)
 			int d1;	----	0
 			int d2;	----	4
 			int d3;	----	8
-		}d;					//  
+		}d;					 
 	}
 	When we know the offset for 'b' is 4,
 	we call AddOffset(...) to calculate the offset of 
@@ -669,7 +676,7 @@ void AddOffset(RecordType rty, int offset)
 {
 	Field fld = rty->flds;
 
-	//PRINT_DEBUG_INFO(("fld->id == NULL && IsRecordType(fld->ty)"));
+	/* PRINT_DEBUG_INFO(("fld->id == NULL && IsRecordType(fld->ty)")); */
 	while (fld)
 	{
 		fld->offset += offset;
@@ -703,19 +710,19 @@ void EndRecord(Type ty, Coord coord)
 		while (fld)
 		{
 			
-			// align each field
+			/* align each field */
 			fld->offset = rty->size = ALIGN(rty->size, fld->ty->align);			
 			/**
 				when we call  recursive CheckStructOrUnionSpecifier(...):
-					//  CheckStructOrUnionSpecifier(...)-------------------------(c1)
+					...>>  CheckStructOrUnionSpecifier(...)-------------------------(c1)
 					
 					typedef struct{ ------------------------StartRecord()	-----(s1)
 						int a;
 						
-						// CheckStructOrUnionSpecifier(...)	----------------------(c2)
+						...>> CheckStructOrUnionSpecifier(...)	----------------------(c2)
 						struct{---------------- StartRecord()					-----(s2)
 							int b;
-						};		// fld->id is NULL.
+						};		...>> fld->id is NULL.
 							-------------------EndRecord()					----(e2)
 							
 					}Data; -------------------------------EndRecord()	-----(e1)
@@ -733,17 +740,19 @@ void EndRecord(Type ty, Coord coord)
 			{
 				AddOffset((RecordType)fld->ty, fld->offset);
 			}
-			// process bit-field
+			/* process bit-field */
 			if (fld->bits == 0)
 			{
-				/// if current field is not a bit-field, whenever last field is bit-field or not, 
-				/// it will occupy a chunk of memory of its size.
+				/*
+				 if current field is not a bit-field, whenever last field is bit-field or not, 
+				 it will occupy a chunk of memory of its size.
+				*/
 				if (bits != 0)
 				{
 					/**
 						struct {
 							int a:12;
-							//rty->size
+							...>> rty->size
 							int b;	---------- we are here.
 						}
 					 */
@@ -766,27 +775,31 @@ void EndRecord(Type ty, Coord coord)
 						....
 					}
 				 */
-				// current bit-field and previous bit-fields can be placed together into an int.
-				// calculate the position in an 'int' for the current bit-field.
+				/*
+				 current bit-field and previous bit-fields can be placed together into an int.
+				 calculate the position in an 'int' for the current bit-field.
+				*/
 				fld->pos = LITTLE_ENDIAN ? bits : intBits - bits;
 				bits = bits + fld->bits;
-				// the int space for bit-fields are full now.
+				/* the int space for bit-fields are full now. */
 				if (bits == intBits)
 				{
 					rty->size += T(INT)->size;
 					bits = 0;
 				}
-				//PRINT_DEBUG_INFO((""));
+				/* PRINT_DEBUG_INFO(("")); */
 			}
 			else
 			{
-				/// current bit-field can't be placed together with previous bit-fields,
-				/// must start a new chunk of memory
+				/*
+				 current bit-field can't be placed together with previous bit-fields,
+				 must start a new chunk of memory
+				*/
 				/**
 					struct{
 						int a:24;	---------------	a's offset is 0
-						// rty->size is 0
-						// rty->align is 4
+						...>> rty->size is 0
+						...>> rty->align is 4
 						int b:30;
 					}
 				 */
@@ -797,13 +810,13 @@ void EndRecord(Type ty, Coord coord)
 				/**
 					struct{
 						int a:24;	---------------	a's offset is 0
-						// rty->size is 0
-						// rty->align is 4
+						...>> rty->size is 0
+						...>> rty->align is 4
 						int b:30;	---------------	b's offset is 4
 						right now				
-						// rty->size increments by T(INT)->size:		---  4
+						...>> rty->size increments by T(INT)->size:		---  4
 									the last filed 'a' will occupy the whole int space.
-						// b's offset is:		--------  4
+						...>> b's offset is:		--------  4
 									the new value of rty->size
 									that is the sum of the  old value of rty->size 
 									(also the old value of field->offset)
@@ -811,7 +824,7 @@ void EndRecord(Type ty, Coord coord)
 									
 					}
 				 */	
-				 //PRINT_DEBUG_INFO((""));
+				 
 			}
 			/**
 				The align of struct is changing during calling 
@@ -823,14 +836,14 @@ void EndRecord(Type ty, Coord coord)
 			}
 			fld = fld->next;
 		}
-		// the last field of struct is bit-filed 
+		/* the last field of struct is bit-filed  */
 		if (bits != 0)
 		{
 			rty->size += T(INT)->size;
 		}
 		rty->size = ALIGN(rty->size, rty->align);
 	}
-	else		//UNION
+	else		/* UNION */
 	{
 		/**
 			(1)
@@ -840,19 +853,19 @@ void EndRecord(Type ty, Coord coord)
 		 */
 		while (fld)
 		{
-			// if the field member of a union has larger align 
+			/* if the field member of a union has larger align  */
 			if (fld->ty->align > rty->align)
 			{
 				rty->align = fld->ty->align;
 			}
-			// // if the field member of a union has larger size 
+			/* if the field member of a union has larger size  */
 			if (fld->ty->size > rty->size)
 			{
 				rty->size = fld->ty->size;
 			}
 			fld = fld->next;
 		}
-		//  for better diagnosis
+		/*  for better diagnosis */
 		if(rty->hasFlexArray){
 			Error(coord,"flexible array member in union");
 		}
@@ -888,7 +901,7 @@ void EndRecord(Type ty, Coord coord)
   */
 Type CompositeType(Type ty1, Type ty2)
 {
-	// ty1 and ty2 must be compatible when calling this function
+	/* ty1 and ty2 must be compatible when calling this function */
 	/**
 		 A composite type can be constructed from two types that are compatible;
 		 it is a type that is compatible with both of the two types and has the following additions:
@@ -966,8 +979,10 @@ Type CompositeType(Type ty1, Type ty2)
 /**
  * Return the common real type for ty1 and ty2
  */
-// from the view of values a type can represent, common real type is like least common multiple.LCM 
-//  real type:	the type of real number	f
+/*
+ from the view of values a type can represent, common real type is like least common multiple.LCM 
+  real type:	the type of real number	f
+*/
 Type CommonRealType(Type ty1, Type ty2)
 {
 	/**
@@ -1004,17 +1019,19 @@ Type CommonRealType(Type ty1, Type ty2)
 
 	if (ty1->categ == FLOAT || ty2->categ == FLOAT)
 		return T(FLOAT);
-	// neither ty1 nor ty2 is floating number.
+	/* neither ty1 nor ty2 is floating number. */
 	ty1 = ty1->categ < INT ? T(INT) : ty1;
 	ty2 = ty2->categ < INT ? T(INT) : ty2;
 
 	if (ty1->categ == ty2->categ)
 		return ty1;
-	// ty1 and ty2 have the same sign
+	/* ty1 and ty2 have the same sign */
 	if ((IsUnsigned(ty1) ^ IsUnsigned(ty2)) == 0)
 		return ty1->categ > ty2->categ ? ty1 : ty2;
-	// Their signs are different.
-	// Swap ty1 and ty2, then we treat ty1 as Unsigned, ty2 as signed later.
+	/*
+	 Their signs are different.
+	 Swap ty1 and ty2, then we treat ty1 as Unsigned, ty2 as signed later.
+	*/
 	if (IsUnsigned(ty2))
 	{
 		Type ty;
@@ -1023,10 +1040,10 @@ Type CommonRealType(Type ty1, Type ty2)
 		ty1 = ty2;
 		ty2 = ty;
 	}
-	// fg: (ty1,ty2) : ( ULONG,INT)
+	/* fg: (ty1,ty2) : ( ULONG,INT) */
 	if (ty1->categ  >= ty2->categ)
 		return ty1;
-	// fg: (ty1,ty2) : ( UINT, LONG)
+	/* fg: (ty1,ty2) : ( UINT, LONG) */
 	/**
 		if the size of UINT and LONG are both 4 bytes,
 			we will return ULONG as the common real type later.
@@ -1053,7 +1070,7 @@ Type AdjustParameter(Type ty)
 		``function returning type '' shall be adjusted to
 		``pointer to function returning type ,'	
 	 */
-	// int f(int arr[3]) ---->  int f(int *);
+	/* int f(int arr[3]) ---->  int f(int *); */
 	if (ty->categ == ARRAY)
 		return PointerTo(ty->bty);
 	/**
@@ -1093,7 +1110,7 @@ int TypeCode(Type ty)
 	static int optypes[] = {I1, U1, I2, U2, I4, U4, I4, U4, I4, U4, I4,/* float */ F4, F8, F8, U4, V, B, B, B};
 
 	assert(ty->categ != FUNCTION);
-	// Mapping CHAR ...  to  I1 ....
+	/* Mapping CHAR ...  to  I1 .... */
 	return optypes[ty->categ];
 }
 
@@ -1120,10 +1137,10 @@ char* TypeToString(Type ty)
 			str = "volatile";
 		else 
 			str = "const volatile";
-		// for example: const volatile int
+		/* for example: const volatile int */
 		return FormatName("%s %s", str, TypeToString(ty));
 	}
-	// primary type
+	/* primary type */
 	if (ty->categ >= CHAR && ty->categ <= LONGDOUBLE && ty->categ != ENUM)
 		return names[ty->categ];
 
@@ -1150,7 +1167,7 @@ char* TypeToString(Type ty)
 	case FUNCTION:
 		{
 			FunctionType fty = (FunctionType)ty;
-			// ignore the parameters ?
+			/* ignore the parameters ? */
 			return FormatName("%s ()", TypeToString(fty->bty));
 		}
 
@@ -1168,7 +1185,7 @@ void SetupTypeSystem(void)
 	int i;
 	FunctionType fty;
 	/**
-	// setup type size for each type.
+	 setup type size for each type.
 		some elements in Types[] are just place-holders.
 		e.g.  ENUM,  ?
 	 */
@@ -1181,10 +1198,10 @@ void SetupTypeSystem(void)
 	T(DOUBLE)->size = DOUBLE_SIZE;
 	T(LONGDOUBLE)->size = LONG_DOUBLE_SIZE;
 	T(POINTER)->size = INT_SIZE;
-	// without this, TypeToString() would have Segmentation fault
+	/* without this, TypeToString() would have Segmentation fault */
 	T(POINTER)->bty = T(INT);
 
-	// type category, type alignment
+	/* type category, type alignment */
 	for (i = CHAR; i <= VOID; ++i)
 	{
 		T(i)->categ = i;
@@ -1198,9 +1215,9 @@ void SetupTypeSystem(void)
 	fty->categ = FUNCTION;
 	fty->qual = 0;
 	fty->align = fty->size = T(POINTER)->size;
-	// for function type, its bty field is the type of the function return value.
+	/* for function type, its bty field is the type of the function return value. */
 	fty->bty = T(INT);
-	// withou any parameters and no prototype, old-style declaration.
+	/* withou any parameters and no prototype, old-style declaration. */
 	ALLOC(fty->sig);
 	CALLOC(fty->sig->params);
 	fty->sig->hasProto = 0;

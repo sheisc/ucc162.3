@@ -19,7 +19,7 @@ OPINFO(OP_MOD_ASSIGN,    2,    "%=",     Assignment,     NOP)
 OPINFO(OP_QUESTION,      3,    "?",      Conditional,    NOP)
 OPINFO(OP_COLON,         3,    ":",      Error,          NOP)
 
-//
+
 OPINFO(OP_OR,            4,    "||",     Binary,         NOP)
 OPINFO(OP_AND,           5,    "&&",     Binary,         NOP)
 OPINFO(OP_BITOR,         6,    "|",      Binary,         BOR)
@@ -38,7 +38,7 @@ OPINFO(OP_SUB,           12,   "-",      Binary,         SUB)
 OPINFO(OP_MUL,           13,   "*",      Binary,         MUL)
 OPINFO(OP_DIV,           13,   "/",      Binary,         DIV)
 OPINFO(OP_MOD,           13,   "%",      Binary,         MOD)
-// 
+ 
 OPINFO(OP_CAST,          14,   "cast",   Unary,          NOP)
 OPINFO(OP_PREINC,        14,   "++",     Unary,          NOP)
 OPINFO(OP_PREDEC,        14,   "--",     Unary,          NOP)

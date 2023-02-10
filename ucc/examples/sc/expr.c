@@ -19,7 +19,7 @@ int snprintf(char *str, size_t size, const char *format, ...);
 #define	ADD_RIGHT_ASSOCIATE	
 #define	MUL_RIGHT_ASSOCIATE	
 
-/////////////////////////////////////////////////////////////////////
+
 static int NewTemp(void){
 	static int tmpNo;
 	return tmpNo++;
@@ -29,7 +29,7 @@ AstNodePtr CreateAstNode(TokenKind tk,Value * pVal,
 		AstNodePtr left,AstNodePtr right){
 
 	AstNodePtr pNode = (AstNodePtr) malloc(sizeof(struct astNode));
-	// memset(pNode,0,sizeof(*pNode));
+	/* memset(pNode,0,sizeof(*pNode)); */
 	pNode->op = tk;
 	pNode->value = *pVal;
 	pNode->kids[0] = left;
@@ -38,7 +38,7 @@ AstNodePtr CreateAstNode(TokenKind tk,Value * pVal,
 }
 
 
-//
+
 void Expect(TokenKind tk){
 	if(curToken.kind == tk){
 		NEXT_TOKEN;
@@ -46,7 +46,7 @@ void Expect(TokenKind tk){
 		Error("%s expected.\n",GetTokenName(tk));		
 	}
 }
-// 
+
 
 static AstNodePtr PrimaryExpression(void){
 	AstNodePtr expr = NULL;
@@ -65,7 +65,7 @@ static AstNodePtr PrimaryExpression(void){
 }
 
 
-//	id - id - id -....
+/*	id - id - id -.... */
 static AstNodePtr MultiplicativeExpression(void){
 #ifndef	MUL_RIGHT_ASSOCIATE
 	AstNodePtr left;

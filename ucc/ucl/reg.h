@@ -2,9 +2,9 @@
 #define __REG_H_
 
 enum { EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI };
-//  indirect addressing   register,  [eax] or (%eax)
+/*  indirect addressing   register,  [eax] or (%eax) */
 #define SK_IRegister (SK_Register + 1)
-//  no register is satisfied
+/*  no register is satisfied */
 #define NO_REG -1
 
 void StoreVar(Symbol reg, Symbol v);
@@ -18,7 +18,7 @@ Symbol GetReg(void);
 extern Symbol X86Regs[];
 extern Symbol X86ByteRegs[];
 extern Symbol X86WordRegs[];
-// bit mask for register use
+/* bit mask for register use */
 extern int UsedRegs;
 
 #endif

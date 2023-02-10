@@ -70,7 +70,7 @@ static AstExpression ScalePointerOffset(AstExpression offset, int scale)
 	val.i[1] = 0;
 	val.i[0] = scale;
 	expr->kids[1] = Constant(offset->coord, offset->ty, val);
-	//PRINT_CUR_ASTNODE(offset);
+	/* PRINT_CUR_ASTNODE(offset); */
 	return FoldConstant(expr);
 }
 
@@ -129,7 +129,7 @@ static AstExpression CheckPrimaryExpression(AstExpression expr)
 		(3)  in assembly code, "12345" do have names as global variable names.
 			.str0:	.string	"%p"
 		 */
-		//PRINT_DEBUG_INFO(("%s",((String)expr->val.p)->chs)); 
+		/* PRINT_DEBUG_INFO(("%s",((String)expr->val.p)->chs));  */
 		expr->op = OP_ID;
 		expr->val.p = AddString(expr->ty, expr->val.p,&expr->coord);
 		expr->lvalue = 1;
@@ -175,11 +175,11 @@ static AstExpression CheckPrimaryExpression(AstExpression expr)
 		expr->ty = T(INT);
 	}
 	else
-	{	// ID,  or function designatr
+	{	/* ID,  or function designatr */
 		expr->ty = p->ty;
 		expr->val.p = p;
 		expr->inreg   = p->sclass == TK_REGISTER;
-		// an ID is a lvalue, while a function designator not.
+		/* an ID is a lvalue, while a function designator not. */
 		expr->lvalue  = expr->ty->categ != FUNCTION;
 	}
 
@@ -189,7 +189,7 @@ static AstExpression CheckPrimaryExpression(AstExpression expr)
 static AstExpression PromoteArgument(AstExpression arg)
 {
 	Type ty = Promote(arg->ty);
-	//PRINT_DEBUG_INFO(("%s",TypeToString(ty)));
+	/* PRINT_DEBUG_INFO(("%s",TypeToString(ty))); */
 	return Cast(ty, arg);
 }
 
@@ -219,7 +219,7 @@ static AstExpression CheckArgument(FunctionType fty, AstExpression arg, int argN
 	if (! fty->sig->hasProto)
 	{
 		arg = PromoteArgument(arg);
-		// see CheckFunctionCall(),	we never check the number of arguments when no prototype.
+		/* see CheckFunctionCall(),	we never check the number of arguments when no prototype. */
 		*argFull = 0;
 		return arg;
 	}
@@ -264,7 +264,7 @@ static AstExpression CheckFunctionCall(AstExpression expr)
 	}
 	else
 	{
-		// PRINT_DEBUG_INFO(("%s",OPNames[expr->kids[0]->op]));
+		/* PRINT_DEBUG_INFO(("%s",OPNames[expr->kids[0]->op])); */
 		expr->kids[0] = CheckExpression(expr->kids[0]);
 	}
 	expr->kids[0] = Adjust(expr->kids[0], 1);
@@ -293,12 +293,12 @@ static AstExpression CheckFunctionCall(AstExpression expr)
 	}
 	*tail = NULL;
 	
-	// see examples/argument/argCount.c
+	/* see examples/argument/argCount.c */
 	while (arg != NULL){
 		CheckExpression(arg);
 		arg = (AstExpression)arg->next;	
 	}
-	argNo--;		//	when argNo is 1, it means that we want to check argument 1, indexing from 1 to n .	
+	argNo--;		/*	when argNo is 1, it means that we want to check argument 1, indexing from 1 to n .	 */
 	
 	/**
 		the number and types of arguments are not compared with those of the
@@ -340,8 +340,8 @@ static AstExpression CheckMemberAccess(AstExpression expr)
 				int b;
 			}Data;
 			Data dt;
-			dt.a = 3;			// legal		lvalue is 1
-			GetData().a = 3;	// illegal		lvalue is 0
+			dt.a = 3;			...>> legal		lvalue is 1
+			GetData().a = 3;	...>> illegal		lvalue is 0
 		 */
 		expr->kids[0] = Adjust(expr->kids[0], 0);
 		ty = expr->kids[0]->ty;
@@ -356,8 +356,8 @@ static AstExpression CheckMemberAccess(AstExpression expr)
 		/**
 		For example:
 			Type ty;
-			((FunctionType) ty)->sig;			// the whole expression, lvalue is 1
-			((FunctionType) ty) is considered as a right value.	//lvalue is 0
+			((FunctionType) ty)->sig;			...>> the whole expression, lvalue is 1
+			((FunctionType) ty) is considered as a right value.	...>> lvalue is 0
 		 */
 		expr->kids[0] = Adjust(expr->kids[0], 1);
 		ty = expr->kids[0]->ty;
@@ -381,7 +381,7 @@ static AstExpression CheckMemberAccess(AstExpression expr)
 	expr->bitfld = fld->bits != 0;
 	return expr;
 }
-//	a++,a--,++a,--a		------------->     a+= 1, a-=1
+/*	a++,a--,++a,--a		------------->     a+= 1, a-=1 */
 static AstExpression TransformIncrement(AstExpression expr)
 {
 	AstExpression casgn;
@@ -390,8 +390,10 @@ static AstExpression TransformIncrement(AstExpression expr)
 	val.i[1] = 0; val.i[0] = 1;
 	CREATE_AST_NODE(casgn, Expression);
 	casgn->coord = expr->coord;
-	//	a++, ++a -------------->  a += 1
-	//	a--, --a	 -------------- >  a -= 1
+	/*
+		a++, ++a -------------->  a += 1
+		a--, --a	 -------------- >  a -= 1
+	*/
 	casgn->op = (expr->op == OP_POSTINC || expr->op == OP_PREINC) ? OP_ADD_ASSIGN : OP_SUB_ASSIGN;
 	casgn->kids[0] = expr->kids[0];
 	casgn->kids[1] = Constant(expr->coord, T(INT), val);
@@ -431,11 +433,13 @@ static AstExpression CheckPostfixExpression(AstExpression expr)
 			expr->lvalue = 1;
 			expr->kids[1] = DoIntegerPromotion(expr->kids[1]);
 			expr->kids[1] = ScalePointerOffset(expr->kids[1], expr->ty->size);
-			//  see examples/array/array.c			
-			//	We use "expr->ty->categ != ARRAY" , not "!expr->isarray".
-			//	Because of post-order visiting of the AST,  at this time, expr->isarray is always 0.
+			/*
+			  see examples/array/array.c			
+				We use "expr->ty->categ != ARRAY" , not "!expr->isarray".
+				Because of post-order visiting of the AST,  at this time, expr->isarray is always 0.
+			*/
 			if(!expr->kids[0]->isarray && expr->ty->categ != ARRAY ){
-			//if(expr->ty->categ != ARRAY){
+			/* if(expr->ty->categ != ARRAY){ */
 			/**
 			int arr2[2][2][2];
 			arr2[1][1][1];
@@ -463,7 +467,7 @@ static AstExpression CheckPostfixExpression(AstExpression expr)
 				addExpr->ty = expr->kids[0]->ty;
 				addExpr->kids[0] = expr->kids[0];
 				addExpr->kids[1] = expr->kids[1];
-				//PRINT_I_AM_HERE();
+				/* PRINT_I_AM_HERE(); */
 				deref->lvalue = 1;
 				return deref;
 			}
@@ -479,8 +483,8 @@ static AstExpression CheckPostfixExpression(AstExpression expr)
 	case OP_PTR_MEMBER:
 		return CheckMemberAccess(expr);
 
-	case OP_POSTINC:		// a++
-	case OP_POSTDEC:	// a--
+	case OP_POSTINC:		/* a++ */
+	case OP_POSTDEC:	/* a-- */
 		return TransformIncrement(expr);
 
 	default:
@@ -501,19 +505,19 @@ static AstExpression CheckPostfixExpression(AstExpression expr)
 		 struct Data1 d1;
 		 struct Data2 d2;
 		 d2 = (struct Data1)d1;	------------------  error, not 
-		 	//	d1's type is struct , not scalar
-		 	// 	(struct Data1) is struct, not scalar
+		 	...	d1's type is struct , not scalar
+		 	...	(struct Data1) is struct, not scalar
 		 d2 = *((struct Data2 *)&d1);--------------- ok	
-		 	//	&d1's type is pointer, a scalar
-		 	//  (struct Data2 *) is also a pointer.
+		 	...	&d1's type is pointer, a scalar
+		 	...  (struct Data2 *) is also a pointer.
 	}
  */
 static AstExpression CheckTypeCast(AstExpression expr)
 {
 	Type ty;
-	// see ParseUnaryExpression() for the astExpression node of OP_CAST after syntax parsing.
+	/* see ParseUnaryExpression() for the astExpression node of OP_CAST after syntax parsing. */
 	ty = CheckTypeName((AstTypeName)expr->kids[0]);
-	//	
+	
 	expr->kids[1] = Adjust(CheckExpression(expr->kids[1]), 1);
 	/**
 	see	asni.c.txt
@@ -526,7 +530,7 @@ static AstExpression CheckTypeCast(AstExpression expr)
 		Error(&expr->coord, "Illegal type cast");
 		return expr->kids[1];
 	}
-	// BothScalarType(ty, expr->kids[1]->ty) || ty->categ == VOID
+	/* BothScalarType(ty, expr->kids[1]->ty) || ty->categ == VOID */
 	return Cast(ty, expr->kids[1]);
 }
 
@@ -561,19 +565,19 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 
 	switch (expr->op)
 	{
-	case OP_PREINC:	// ++a
-	case OP_PREDEC:	// --a
-		// PRINT_I_AM_HERE();
+	case OP_PREINC:	/* ++a */
+	case OP_PREDEC:	/* --a */
+		/* PRINT_I_AM_HERE(); */
 		return TransformIncrement(expr);
 
-	case OP_ADDRESS:	// &a
+	case OP_ADDRESS:	/* &a */
 		expr->kids[0] = CheckExpression(expr->kids[0]);
 		ty = expr->kids[0]->ty;
-		//PRINT_DEBUG_INFO(("%s",OPNames[expr->kids[0]->op]));
+		/* PRINT_DEBUG_INFO(("%s",OPNames[expr->kids[0]->op])); */
 		if (expr->kids[0]->op == OP_DEREF)
 		{
 			/**
-			//	&*a;	------------>  a		('a' is pointer,  not lvalue)
+				&*a;	------------>  a		('a' is pointer,  not lvalue)
 				int a = 30;
 				int * ptr = &a;
 				int * ptr2 = &*ptr;
@@ -607,20 +611,20 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 				}
 				int main(){
 					&f;
-					//&&f;	----------------- error, &f is a pointer to function, not function designator
+					... &&f;	----------------- error, &f is a pointer to function, not function designator
 					return 0;
 				}
 			 */
-			// to make it clear taht "&a" is not a lvalue.
+			/* to make it clear taht "&a" is not a lvalue. */
 			expr->lvalue = 0;
 			expr->ty = PointerTo(ty);
-			//PRINT_I_AM_HERE();
+			/* PRINT_I_AM_HERE(); */
 			return expr;
 		}
 		break;
 
-	case OP_DEREF:	// *
-		//PRINT_I_AM_HERE();
+	case OP_DEREF:	/* * */
+		/* PRINT_I_AM_HERE(); */
 		expr->kids[0] = Adjust(CheckExpression(expr->kids[0]), 1);
 		ty = expr->kids[0]->ty;
 		if (expr->kids[0]->op == OP_ADDRESS)
@@ -635,7 +639,7 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 			expr->kids[0]->kids[0]->ty = ty->bty;
 			return expr->kids[0]->kids[0];
 		}
-#if 0		// commented	
+#if 0			
 		else if (expr->kids[0]->op == OP_ADD && expr->kids[0]->kids[0]->isarray)
 #endif	
 #if 1
@@ -661,7 +665,7 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 		}
 		if (IsPtrType(ty))
 		{
-			// The operand of the unary * operator shall have pointer type. 
+			/* The operand of the unary * operator shall have pointer type.  */
 			/**
 				We know the type of the @expr now.
 				int number = 3;
@@ -690,7 +694,7 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 			{
 				return expr->kids[0];
 			}
-			// see examples/array/offset.c
+			/* see examples/array/offset.c */
 			if(expr->ty->categ == ARRAY || expr->kids[0]->isarray){
 				union value val;
 				val.i[0] = val.i[1] = 0;
@@ -711,8 +715,8 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 		}
 		break;
 
-	case OP_POS:		// +a	-----------  rvalue, not lvalue
-	case OP_NEG:	// -a
+	case OP_POS:		/* +a	-----------  rvalue, not lvalue */
+	case OP_NEG:	/* -a  */
 		expr->kids[0] = Adjust(CheckExpression(expr->kids[0]), 1);
 		/**
 		The operand of the unary + or - operator shall have arithmetic
@@ -731,15 +735,17 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 			 */
 			expr->kids[0] = DoIntegerPromotion(expr->kids[0]);
 			expr->ty = expr->kids[0]->ty;
-			//	+a  is still a;
-			//   for -a, we do constant-folding.
+			/*
+				+a  is still a;
+			   for -a, we do constant-folding.
+			*/
 			return expr->op == OP_POS ? expr->kids[0] : FoldConstant(expr);
 		}
 		break;
 
-	case OP_COMP:	// ~a
+	case OP_COMP:	/* ~a */
 		expr->kids[0] = Adjust(CheckExpression(expr->kids[0]), 1);
-		// The operand of the ~ operator, integral type; 
+		/* The operand of the ~ operator, integral type;  */
 		if (IsIntegType(expr->kids[0]->ty))
 		{
 			expr->kids[0] = DoIntegerPromotion(expr->kids[0]);
@@ -748,7 +754,7 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 		}
 		break;
 
-	case OP_NOT:	// !a
+	case OP_NOT:	/* !a */
 		expr->kids[0] = Adjust(CheckExpression(expr->kids[0]), 1);
 		if (IsScalarType(expr->kids[0]->ty))
 		{
@@ -757,7 +763,7 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 		}
 		break;
 
-	case OP_SIZEOF:	// sizeof(a)
+	case OP_SIZEOF:	/* sizeof(a) */
 		/**
 		     sizeof  unary-expression
                   sizeof (  type-name )
@@ -765,7 +771,7 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 		if (expr->kids[0]->kind == NK_Expression)
 		{
 			expr->kids[0] = CheckExpression(expr->kids[0]);
-			// sizeof can't be applied to a bit-field
+			/* sizeof can't be applied to a bit-field */
 			if (expr->kids[0]->bitfld)
 				goto err;
 			ty = expr->kids[0]->ty;
@@ -796,7 +802,7 @@ static AstExpression CheckUnaryExpression(AstExpression expr)
 		expr->val.i[0] = ty->size;
 		return expr;
 
-	case OP_CAST:	// (int)a
+	case OP_CAST:	/* (int)a */
 		return CheckTypeCast(expr);
 
 	default:
@@ -849,14 +855,14 @@ ok:
 static AstExpression CheckAddOP(AstExpression expr)
 {
 	Type ty1, ty2;
-	//PRINT_I_AM_HERE();
+	/* PRINT_I_AM_HERE(); */
 	if (expr->kids[0]->op == OP_CONST)
 	{
 		SWAP_KIDS(expr);
 	}
 	ty1 = expr->kids[0]->ty;
 	ty2 = expr->kids[1]->ty;
-	//	3+4
+	/*	3+4  */
 	if (BothArithType(ty1, ty2))
 	{
 		PERFORM_ARITH_CONVERSION(expr);
@@ -906,7 +912,7 @@ static AstExpression CheckSubOP(AstExpression expr)
 
 	ty1 = expr->kids[0]->ty;
 	ty2 = expr->kids[1]->ty;
-	// 3 + 4
+	/* 3 + 4  */
 	if (BothArithType(ty1, ty2))
 	{
 		PERFORM_ARITH_CONVERSION(expr);
@@ -979,7 +985,7 @@ static AstExpression CheckRelationalOP(AstExpression expr)
 	expr->ty = T(INT);
 	ty1 = expr->kids[0]->ty;
 	ty2 = expr->kids[1]->ty;
-	//	 both operands have arithmetic type; 
+	/*	 both operands have arithmetic type;  */
 	if (BothArithType(ty1, ty2))
 	{
 		PERFORM_ARITH_CONVERSION(expr);
@@ -1023,7 +1029,7 @@ static AstExpression CheckEqualityOP(AstExpression expr)
 	expr->ty = T(INT);
 	ty1 = expr->kids[0]->ty;
 	ty2 = expr->kids[1]->ty;
-	// both operands have arithmetic type;
+	/* both operands have arithmetic type; */
 	if (BothArithType(ty1, ty2))
 	{
 		PERFORM_ARITH_CONVERSION(expr);
@@ -1127,27 +1133,27 @@ Binary opeator:
  */
 static AstExpression (* BinaryOPCheckers[])(AstExpression) = 
 {
-	CheckLogicalOP,	// "||"
-	CheckLogicalOP,	// "&&"
-	CheckBitwiseOP,	// |
-	CheckBitwiseOP, // ^
-	CheckBitwiseOP,	// &
-	CheckEqualityOP,	// ==
-	CheckEqualityOP,	// !=
-	CheckRelationalOP,	// >
-	CheckRelationalOP,	// <
-	CheckRelationalOP,	// >=
-	CheckRelationalOP,	// <=
-	CheckShiftOP,		//	<<
-	CheckShiftOP,		// >>
-	CheckAddOP,			// +
-	CheckSubOP,			// -
-	CheckMultiplicativeOP,	// *
-	CheckMultiplicativeOP,	//  /
-	CheckMultiplicativeOP	// %
+	CheckLogicalOP,	/* "||" */
+	CheckLogicalOP,	/* "&&" */
+	CheckBitwiseOP,	/* | */
+	CheckBitwiseOP, /* ^  */
+	CheckBitwiseOP,	/* & */
+ 	CheckEqualityOP,	/* == */
+	CheckEqualityOP,	/* != */
+	CheckRelationalOP,	/* > */
+	CheckRelationalOP,	/* < */
+	CheckRelationalOP,	/* >= */
+	CheckRelationalOP,	/* <= */
+	CheckShiftOP,		/*	<<  */
+	CheckShiftOP,		/* >> */
+	CheckAddOP,			/* + */
+	CheckSubOP,			/* - */
+	CheckMultiplicativeOP,	/* * */
+	CheckMultiplicativeOP,	/*  / */
+	CheckMultiplicativeOP	/* % */
 };
 /**
-// This function is used later in 
+ ... This function is used later in 
  static AstExpression (* ExprCheckers[])(AstExpression) = {
  }
  */
@@ -1199,7 +1205,7 @@ static AstExpression CheckAssignmentExpression(AstExpression expr)
 		Error(&expr->coord, "The left operand cannot be modified");
 	}
 	/**
-	//	a += b  -------------->   a = a + b;
+		a += b  -------------->   a = a + b;
 	see 3.3.16.2 Compound assignment
 		
 		   A compound assignment of the form E1 op = E2 differs from the
@@ -1220,14 +1226,14 @@ static AstExpression CheckAssignmentExpression(AstExpression expr)
 			We don't call CheckBinaryExpression() here.
 			That is ,we don't touch the lvalue here.
 		 */
-		//PRINT_DEBUG_INFO(("lvalue = %d",expr->kids[0]->lvalue));
+		/* PRINT_DEBUG_INFO(("lvalue = %d",expr->kids[0]->lvalue)); */
 		expr->kids[1] = (*BinaryOPCheckers[lopr->op - OP_OR])(lopr);
-		//PRINT_DEBUG_INFO(("lvalue = %d",expr->kids[1]->kids[0]->lvalue));
+		/* PRINT_DEBUG_INFO(("lvalue = %d",expr->kids[1]->kids[0]->lvalue)); */
 	}
-	// we have use CanModify() to test whether left operand is modifiable.
+	/* we have use CanModify() to test whether left operand is modifiable. */
 	ty = expr->kids[0]->ty;
 	
-	// we are sure ty is not qualified by CONST now.
+	/* we are sure ty is not qualified by CONST now. */
 	if (! CanAssign(ty, expr->kids[1]))
 	{
 		Error(&expr->coord, "Wrong assignment");
@@ -1256,21 +1262,21 @@ static AstExpression CheckConditionalExpression(AstExpression expr)
 	/**
 		the first operand ?  the second operand: the third operand
 	 */
-	// the first operand
+	/* the first operand */
 	expr->kids[0] = Adjust(CheckExpression(expr->kids[0]), 1);
-	// The first operand shall have scalar type.
+	/* The first operand shall have scalar type. */
 	if (! IsScalarType(expr->kids[0]->ty))
 	{
 		Error(&expr->coord, "The first expression shall be scalar type.");
 	}
-	// the second operand
+	/* the second operand */
 	expr->kids[1]->kids[0] = Adjust(CheckExpression(expr->kids[1]->kids[0]), 1);
-	// the third operand
+	/* the third operand */
 	expr->kids[1]->kids[1] = Adjust(CheckExpression(expr->kids[1]->kids[1]), 1);
 
 	ty1 = expr->kids[1]->kids[0]->ty;
 	ty2 = expr->kids[1]->kids[1]->ty;
-	// both operands have arithmetic type; 
+	/* both operands have arithmetic type;  */
 	if (BothArithType(ty1, ty2))
 	{
 		/**
@@ -1297,7 +1303,7 @@ static AstExpression CheckConditionalExpression(AstExpression expr)
 		expr->ty = ty1;
 	}
 	else if (ty1->categ == VOID && ty2->categ == VOID)
-	{	// both operands have void type;  the result has void type.
+	{	/* both operands have void type;  the result has void type. */
 		expr->ty = T(VOID);
 	}
 	/**
@@ -1326,12 +1332,12 @@ static AstExpression CheckConditionalExpression(AstExpression expr)
 	 */
 	else if (IsPtrType(ty1) && IsNullConstant(expr->kids[1]->kids[1]))
 	{
-		// one operand is a pointer and the other is a null pointer constant; 
+		/* one operand is a pointer and the other is a null pointer constant;  */
 		expr->ty = ty1;
 	}
 	else if (IsPtrType(ty2) && IsNullConstant(expr->kids[1]->kids[0]))
 	{
-		//  one operand is a pointer and the other is a null pointer constant; 
+		/*  one operand is a pointer and the other is a null pointer constant;  */
 		expr->ty = ty2;
 	}
 	/**
@@ -1400,9 +1406,11 @@ static AstExpression (* ExprCheckers[])(AstExpression) =
 static AstExpression CastExpression(Type ty, AstExpression expr)
 {
 	AstExpression cast;
-	// (float)3 ----------->  3.0f
-	//	int a = 3;	(void) a;		------------ legal.
-	//PRINT_DEBUG_INFO(("CastExpression(): %s",GetCategName(expr->ty->categ)));
+	/*
+	 (float)3 ----------->  3.0f
+		int a = 3;	(void) a;		------------ legal.
+	PRINT_DEBUG_INFO(("CastExpression(): %s",GetCategName(expr->ty->categ)));
+	*/
 	if (expr->op == OP_CONST && ty->categ != VOID)
 		return FoldCast(ty, expr);
 
@@ -1416,8 +1424,8 @@ static AstExpression CastExpression(Type ty, AstExpression expr)
 	return cast;
 }
 /**
-//	Judge whether "a = b;" is legal.
-//	When this function is called, we are sure ty is not qualified by CONST now ?
+	Judge whether "a = b;" is legal.
+	When this function is called, we are sure ty is not qualified by CONST now ?
 	see CheckAssignmentExpression(AstExpression expr)
 						we call  CanModify() before calling CanAssign()
 	see 		 3.3.16.1 Simple assignment
@@ -1464,7 +1472,7 @@ int CanAssign(Type lty, AstExpression expr)
 	{
 		return 1;
 	}
-	// the left operand is a pointer and the right is a null pointer constant.  
+	/* the left operand is a pointer and the right is a null pointer constant.  */
 	if (IsPtrType(lty) && IsNullConstant(expr))
 	{
 		return 1;
@@ -1501,7 +1509,7 @@ AstExpression Cast(Type ty, AstExpression expr)
 	}
 	if (scode < F4 && dcode < F4 && scode / 2 == dcode / 2)
 	{
-		// see examples/cast/sign.c
+		/* see examples/cast/sign.c */
 		int scateg = expr->ty->categ;
 		int dcateg = ty->categ;
 		if(scateg != dcateg && scateg >= INT && scateg <= ULONGLONG){			
@@ -1546,49 +1554,49 @@ AstExpression Cast(Type ty, AstExpression expr)
 	}
 	int main(){
 		while(f){	------------>  f is a FUNCTION, not scalar-type, 
-				//  we have to adjust f to POINTER(FUNCTION) here
+				...  we have to adjust f to POINTER(FUNCTION) here
 		}
 	}
  */
 AstExpression Adjust(AstExpression expr, int rvalue)
 {
-	//  see 	examples/qualfier/const.c
+	/*  see 	examples/qualfier/const.c */
 	int qual = 0;
 	if (rvalue)
 	{
 		qual = expr->ty->qual;
 		expr->ty = Unqual(expr->ty);
 		expr->lvalue = 0;
-		//PRINT_CUR_ASTNODE(expr);
+		/* PRINT_CUR_ASTNODE(expr); */
 	}
 
 	if (expr->ty->categ == FUNCTION)
 	{
 		expr->ty = PointerTo(expr->ty);
 		expr->isfunc = 1;
-		//PRINT_I_AM_HERE();
+		/* PRINT_I_AM_HERE(); */
 	}
 	else if (expr->ty->categ == ARRAY)
 	{
 		expr->ty = PointerTo(Qualify(qual,expr->ty->bty));
 		/**
-			"abc" = "123";		// illegal
+			"abc" = "123";		.... illegal
 			(1)
 			OP_STR	---->  OP_ID,	lvalue is 1
 			here, we have to set lvalue to 0 explicitely
 			(2)	for an id of array type, its lvalue is first set to 
 				1 in CheckPrimaryExpression(AstExpression expr).				
 		 */
-		// PRINT_DEBUG_INFO(("lvalue = %x",expr->lvalue != 0));
+		/* PRINT_DEBUG_INFO(("lvalue = %x",expr->lvalue != 0)); */
 		expr->lvalue = 0;
 		expr->isarray = 1;
-		//PRINT_CUR_ASTNODE(expr);
+		/* PRINT_CUR_ASTNODE(expr); */
 		
 	}
 
 	return expr;
 }
-// if epxr->ty is smaller than INT, promote to INT; otherwise, untouched.
+/* if epxr->ty is smaller than INT, promote to INT; otherwise, untouched. */
 AstExpression DoIntegerPromotion(AstExpression expr)
 {
 	return expr->ty->categ < INT ? Cast(T(INT), expr) : expr;
@@ -1598,7 +1606,7 @@ AstExpression CheckExpression(AstExpression expr)
 {
 	return (* ExprCheckers[expr->op])(expr);
 }
-//	This function check whether @expr is a int-const.
+/*	This function check whether @expr is a int-const. */
 AstExpression CheckConstantExpression(AstExpression expr)
 {
 	expr = CheckExpression(expr);

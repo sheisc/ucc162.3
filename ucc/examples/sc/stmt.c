@@ -20,12 +20,12 @@ static AstStmtNodePtr WhileStatement(void);
 
 static int isPrefixOfStatement(TokenKind tk);
 static int NewLabel(void);
-/////////////////////////////////////////////////////////////////////
+
 static TokenKind prefixOfStmt[] = {
 	TK_ID,TK_IF,TK_WHILE,TK_LBRACE,TK_INT
 };
 
-///////////////////////////////////////////////////////////////////////////////
+
 static int NewLabel(void){
 	static int labelNo;
 	return labelNo++;
@@ -57,7 +57,7 @@ static int isPrefixOfStatement(TokenKind tk){
 }
 static AstStmtNodePtr ExpressionStatement(void){
 	if(curToken.kind == TK_ID){
-		//	id = expression;
+		/*	id = expression; */
 		AstStmtNodePtr assign = CreateStmtNode(TK_ASSIGN);
 		assign->kids[0] = CreateAstNode(TK_ID,&curToken.value,NULL,NULL);
 		NEXT_TOKEN;
@@ -70,7 +70,7 @@ static AstStmtNodePtr ExpressionStatement(void){
 		Expect(TK_SEMICOLON);
 		return assign;
 	}else if(IS_PREFIX_OF_DECL(curToken.kind)){
-		// declaration ;
+		/* declaration ; */
 		AstStmtNodePtr decl = CreateStmtNode(TK_DECLARATION);
 		decl->expr = Declaration();
 		Expect(TK_SEMICOLON);
@@ -112,7 +112,7 @@ static AstStmtNodePtr IfStatement(void){
 	if(curToken.kind == TK_ELSE){
 		NEXT_TOKEN;
 		ifStmt->elseStmt = Statement();
-		// label for the statement after if-statment
+		/* label for the statement after if-statment */
 		ifStmt->kids[1] = CreateLabelNode();
 	}
 	
@@ -136,11 +136,11 @@ static AstStmtNodePtr WhileStatement(void){
 	whileStmt->expr = Expression();
 	Expect(TK_RPAREN);
 	whileStmt->thenStmt = Statement();
-	// lable for the statement after while	
+	/* lable for the statement after while	*/
 	whileStmt->kids[1] = CreateLabelNode();
 	return whileStmt;
 }
-//	comStmt->next ----> list of statements
+/*	comStmt->next ----> list of statements */
 AstStmtNodePtr CompoundStatement(void){
 	AstStmtNodePtr comStmt;
 	AstStmtNodePtr * pStmt;
@@ -218,7 +218,7 @@ void VisitStatementNode(AstStmtNodePtr stmt){
 			}
 		}
 		break;
-	case TK_DECLARATION:	//declaration
+	case TK_DECLARATION:	/* declaration */
 		VisitDeclarationNode(stmt->expr);
 		break;
 	}

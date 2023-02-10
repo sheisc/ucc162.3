@@ -19,25 +19,29 @@ TOKENOP(TK_OR,            OP_OR,            OP_NONE)
 TOKENOP(TK_AND,           OP_AND,           OP_NONE)
 TOKENOP(TK_BITOR,         OP_BITOR,         OP_NONE)
 TOKENOP(TK_BITXOR,        OP_BITXOR,        OP_NONE)
-//	TK_BITAND		used as binary		OP_BITAND		a|b
-//					used as unary		OP_ADDRESS	&a
+/*
+	TK_BITAND		used as binary		OP_BITAND		a|b
+					used as unary		OP_ADDRESS	&a
+*/
 TOKENOP(TK_BITAND,        OP_BITAND,        OP_ADDRESS)
 TOKENOP(TK_EQUAL,         OP_EQUAL,         OP_NONE)
 TOKENOP(TK_UNEQUAL,       OP_UNEQUAL,       OP_NONE)
 TOKENOP(TK_GREAT,         OP_GREAT,         OP_NONE)
 TOKENOP(TK_LESS,          OP_LESS,          OP_NONE)
-#if 0		// commented
+#if 0		/* commented */
 TOKENOP(TK_LESS_EQ,       OP_GREAT_EQ,      OP_NONE)
 TOKENOP(TK_GREAT_EQ,      OP_LESS_EQ,       OP_NONE)
 #endif
-#if 1		// modified
+#if 1		/* modified */
 TOKENOP(TK_GREAT_EQ,     OP_GREAT_EQ ,       OP_NONE)
 TOKENOP(TK_LESS_EQ, 	  OP_LESS_EQ,		OP_NONE)
 #endif
 TOKENOP(TK_LSHIFT,        OP_LSHIFT,        OP_NONE)
 TOKENOP(TK_RSHIFT,        OP_RSHIFT,        OP_NONE)
-//TK_ADD		used as binary		OP_ADD	a+b
-//				used as unary		OP_POS		+a		positive
+/*
+TK_ADD		used as binary		OP_ADD	a+b
+				used as unary		OP_POS		+a		positive
+*/
 TOKENOP(TK_ADD,           OP_ADD,           OP_POS)
 TOKENOP(TK_SUB,           OP_SUB,           OP_NEG)
 TOKENOP(TK_MUL,           OP_MUL,           OP_DEREF)

@@ -367,7 +367,7 @@ static void DumpStatement(AstStatement stmt, int pos)
 		break;
 
 	case NK_ReturnStatement:
-	//   (ret 0)
+		/*   (ret 0) */
 		fprintf(ASTFile, "(ret ");
 		DumpExpression(AsRet(stmt)->expr, pos + 5);
 		fprintf(ASTFile, ")");

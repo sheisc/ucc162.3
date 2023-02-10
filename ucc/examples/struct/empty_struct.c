@@ -19,7 +19,7 @@ typedef struct{
 }Data;
 
 int main(){
-	//int arr[];
+	/* int arr[]; */
 	Data d;
 	printf("%d %d\n",sizeof(d.a.d),sizeof(d));
 	return 0;
@@ -30,7 +30,7 @@ int main(){
 
 #include <stdio.h>
 
-         typedef struct tnode TNODE;	//  an uncomplete type here.
+         typedef struct tnode TNODE;	
          struct tnode {
                   int count;
                   TNODE *left, *right;
@@ -40,7 +40,7 @@ int main(){
 typedef struct{
 	int b;
 	struct{
-		//int d;
+		
 	}a;
 	int c;
 }Data;

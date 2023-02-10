@@ -7,7 +7,7 @@ typedef struct astStmtNode{
 	TokenKind op;
 	Value value;
 	struct astNode * kids[2];
-	/////////////////////////////
+	/*  ...  */
 	struct astNode * expr;
 	struct astStmtNode * thenStmt;
 	struct astStmtNode * elseStmt;

@@ -38,8 +38,8 @@ typedef struct astNode
 /**
 	coord:		label's coordinate
 	id:			label's name
-	// In C, the scope of label is whole function.
-	// The label's reference can appear before label's definition.
+	In C, the scope of label is whole function.
+	The label's reference can appear before label's definition.
 	ref:			label's reference count
 	defined:	if label is defined
 	respBB:		corresponding basic block,

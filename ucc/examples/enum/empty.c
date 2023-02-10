@@ -5,6 +5,6 @@ enum Color{
 
 int main(){
 	
-	//printf("%d %d\n",RED,GREEN);
+	/* printf("%d %d\n",RED,GREEN); */
 	return 0;
 }

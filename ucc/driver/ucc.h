@@ -12,18 +12,18 @@ typedef struct list
 
 struct option
 {
-	List pflags;	// flags for preprocessor
-	List cflags;	// flags for compiler
-	List aflags;	// flags for assembler
-	List lflags;	// flags for linker
-	List cfiles;	//.c
-	List pfiles;	//.i
-	List afiles;	//.s
-	List ofiles;	//.obj
-	List lfiles;	//.a	.lib
-	List linput;	//input for linker
+	List pflags;	/* flags for preprocessor */
+	List cflags;	/* flags for compiler */
+	List aflags;	/* flags for assembler */
+	List lflags;	/* flags for linker */
+	List cfiles;	/* .c */
+	List pfiles;	/* .i */
+	List afiles;	/* .s */
+	List ofiles;	/* .obj */
+	List lfiles;	/* .a	.lib */
+	List linput;	/* input for linker */
 	int verbose;
-	int oftype;	//output file type
+	int oftype;	/* output file type */
 	char *out;
 };
 
@@ -38,9 +38,9 @@ void SetupToolChain(void);
 int  InvokeProgram(int oftype);
 
 extern char* ExtNames[];
-extern List PPFiles;	//*.i
-extern List ASMFiles;	//*.s
-extern List OBJFiles;	//*.obj
+extern List PPFiles;	/* *.i */
+extern List ASMFiles;	/* *.s */
+extern List OBJFiles;	/* *.obj */
 extern struct option Option;
 
 

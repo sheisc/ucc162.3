@@ -10,23 +10,23 @@ typedef struct  bucketLinker{
 
 
 
-// number of strings
+/* number of strings */
 static int StringNum;
 /**
 	Three global hashtables.
  */
-// tags in global scope, tag means struct/union, enumeration name
+/* tags in global scope, tag means struct/union, enumeration name */
 static struct table GlobalTags;
-// normal identifiers in global scope
+/* normal identifiers in global scope */
 static struct table GlobalIDs;
-// all the constants
+/* all the constants */
 static struct table Constants;
-// tags in current scope
+/* tags in current scope */
 static Table Tags;
-// normal identifiers in current scope
+/* normal identifiers in current scope */
 static Table Identifiers;
 
-// see examples/scope/parameterList.c
+/* see examples/scope/parameterList.c */
 static int inParameterList = 0;
 static Table savedIdentifiers,savedTags;
 
@@ -61,23 +61,27 @@ void RestoreParameterListTable(void){
 	Four Linked-list
  */
 
-// used to construct symobl list
+/* used to construct symobl list */
 static Symbol *FunctionTail, *GlobalTail, *StringTail, *FloatTail;
-// all the function symbols
+/* all the function symbols */
 Symbol Functions;
-// all the gloabl variables and static variables
+/* all the gloabl variables and static variables */
 Symbol Globals;
-// all the strings
-// see EmitStrings(void)
+/*
+ all the strings
+ see EmitStrings(void)
+ */
 Symbol Strings;
-// all the floating constants
+/* all the floating constants */
 Symbol FloatConstants;
-/// Scope level, file scope will be 0, when entering each nesting level,
-/// Level increment; exiting each nesting level, Level decrement
+/*
+ Scope level, file scope will be 0, when entering each nesting level,
+ Level increment; exiting each nesting level, Level decrement
+*/
 int Level;
-// number of temporaries
+/* number of temporaries */
 int TempNum;
-// number of labels, see CreateLabel(void)
+/* number of labels, see CreateLabel(void) */
 int LabelNum;
 
 /**
@@ -134,7 +138,7 @@ static Symbol AddSymbol(Table tbl, Symbol sym)
 		tbl->buckets = HeapAllocate(CurrentHeap, size);
 		memset(tbl->buckets, 0, size);
 	}
-	// add the new symbol into the first positon of bucket[h] list.
+	/* add the new symbol into the first positon of bucket[h] list. */
 	linker->link = (BucketLinker) tbl->buckets[h];
 	linker->sym = sym;
 	sym->level = tbl->level;
@@ -185,17 +189,17 @@ Symbol LookupTag(char *name)
 {
 	return LookupSymbol(Tags, name);
 }
-// Tag:  struct/union/enum name
+/* Tag:  struct/union/enum name */
 /**
 	There may be two symbols for "Data" in hashtable Tags,
 	but with different levels. ?
 	
 	struct Data{
-		//...
+		...
 	};
 	void f(){
 		struct Data{
-			//	...
+				...
 		};
 		
 	}
@@ -213,12 +217,12 @@ Symbol AddTag(char *name, Type ty, Coord pcoord)
 	Symbol p;
 
 	CALLOC(p);
-	// PRINT_DEBUG_INFO(("AddTag %s, level = %d",name, Level));
+	/* PRINT_DEBUG_INFO(("AddTag %s, level = %d",name, Level)); */
 	p->kind = SK_Tag;
 	p->name = name;
 	p->ty = ty;
 	p->pcoord = pcoord;
-	//  see examples/scope/parameterList.c
+	/*  see examples/scope/parameterList.c */
 	if(IsInParameterList()){		
 		Warning(pcoord, "declaration of '%s %s' will not be visible outside of this function",
 			GetCategName(ty->categ), name ?name:"<anonymous>");
@@ -251,7 +255,7 @@ Symbol AddTypedefName(char *name, Type ty,Coord pcoord)
 	Symbol p;
 
 	CALLOC(p);
-	// PRINT_DEBUG_INFO(("AddTypedefName %s, level = %d",name, Level));
+	/* PRINT_DEBUG_INFO(("AddTypedefName %s, level = %d",name, Level)); */
 	p->kind = SK_TypedefName;
 	p->name = name;
 	p->ty = ty;
@@ -293,7 +297,7 @@ Symbol AddFunction(char *name, Type ty, int sclass,Coord pcoord)
 	FunctionSymbol p;
 
 	CALLOC(p);
-	//PRINT_DEBUG_INFO(("%s at %s:%d",name,coord->filename,coord->ppline));
+	/* PRINT_DEBUG_INFO(("%s at %s:%d",name,coord->filename,coord->ppline)); */
 	p->kind = SK_Function;
 	p->name = name;
 	p->ty = ty;
@@ -305,7 +309,7 @@ Symbol AddFunction(char *name, Type ty, int sclass,Coord pcoord)
 	FunctionTail = &p->next;
 
 	if(Identifiers  != &GlobalIDs){
-		//PRINT_DEBUG_INFO(("%s at %s:%d",name,pcoord->filename,pcoord->ppline));
+		/* PRINT_DEBUG_INFO(("%s at %s:%d",name,pcoord->filename,pcoord->ppline)); */
 		AddSymbol(Identifiers, (Symbol)p);		
 	}
 
@@ -348,7 +352,7 @@ Symbol AddConstant(Type ty, union value val)
 		if (p->ty == ty && p->val.i[0] == val.i[0] && p->val.i[1] == val.i[1])
 			return p;
 	}
-	// If not existing, we will create a new one.
+	/* If not existing, we will create a new one. */
 	CALLOC(p);
 
 	p->kind = SK_Constant;
@@ -358,7 +362,7 @@ Symbol AddConstant(Type ty, union value val)
 		p->name = FormatName("%d", val.i[0]);
 		break;
 
-	case POINTER:	// name for POINTER const is 0x12345678, that is ,its address.
+	case POINTER:	/* name for POINTER const is 0x12345678, that is ,its address. */
 		if (val.i[0] == 0)
 		{
 			p->name = "0";
@@ -386,10 +390,10 @@ Symbol AddConstant(Type ty, union value val)
 	p->ty = ty;
 	p->sclass = TK_STATIC;
 	p->val = val;
-	// insert the new const into hashtable bucket.
+	/* insert the new const into hashtable bucket. */
 	p->link = Constants.buckets[h];
 	Constants.buckets[h] = p;
-	// if it is a float const, added to end of FloatConsts linked-list.
+	/* if it is a float const, added to end of FloatConsts linked-list. */
 	if (ty->categ == FLOAT || ty->categ == DOUBLE)
 	{
 		*FloatTail = p;
@@ -451,7 +455,7 @@ Symbol CreateTemp(Type ty)
 
 	return (Symbol)p;
 }
-// mainly create basic block's label name.
+/* mainly create basic block's label name. */
 Symbol CreateLabel(void)
 {
 	Symbol p;
@@ -469,7 +473,7 @@ Symbol CreateLabel(void)
 Symbol CreateOffset(Type ty, Symbol base, int coff,Coord pcoord)
 {
 	VariableSymbol p;
-	//PRINT_DEBUG_INFO(("%s %d",base->name,coff));
+	/* PRINT_DEBUG_INFO(("%s %d",base->name,coff)); */
 	/**
 	see examples/struct/FirstFieldType.c
 		When coff is zero,
@@ -477,8 +481,10 @@ Symbol CreateOffset(Type ty, Symbol base, int coff,Coord pcoord)
 		But,
 		their types are different.
 	 */
-	// 		for better uilasm.c, see TranslateCompoundStatement(AstStatement stmt)
-	//		double d = 1.23;		---->		d[0] = 1.23;	--->	d = 1.23;
+	/*
+	 		for better uilasm.c, see TranslateCompoundStatement(AstStatement stmt)
+			double d = 1.23;		---->		d[0] = 1.23;	--->	d = 1.23;
+	*/
 	if(coff == 0 && (IsArithType(base->ty) || (ty == base->ty))){
 		return base;
 	}
@@ -498,8 +504,8 @@ Symbol CreateOffset(Type ty, Symbol base, int coff,Coord pcoord)
 		};
 		struct Data dt;
 		int main(){
-			dt.i.a = 30;		// we don't get here when compiling this statement.
-			dt.b[1] = 20;		// we get here when compiling this statement.
+			dt.i.a = 30;		....>> we don't get here when compiling this statement.
+			dt.b[1] = 20;		....>> we get here when compiling this statement.
 			return 0;
 		}
 						symbol.c 640:  hello.c 16 :dt[16]
@@ -530,7 +536,7 @@ void InitSymbolTable(void)
 	int size;
 
 	Level = 0;
-	//	Hashtable	data-structure
+	/*	Hashtable	data-structure */
 	GlobalTags.buckets = GlobalIDs.buckets = NULL;
 	GlobalTags.outer = GlobalIDs.outer = NULL;
 	GlobalTags.level = GlobalIDs.level = 0;
@@ -540,7 +546,7 @@ void InitSymbolTable(void)
 	memset(Constants.buckets, 0, size);
 	Constants.outer = NULL;
 	Constants.level = 0;
-	//	Linked-list data-structure
+	/*	Linked-list data-structure */
 	Functions = Globals = Strings = FloatConstants = NULL;
 	FunctionTail = &Functions;
 	GlobalTail = &Globals;

@@ -3,7 +3,7 @@
 
 #include "input.h"
 
-// SK:  Symbol Kind ?
+/* SK:  Symbol Kind ? */
 enum 
 { 
 	SK_Tag,    SK_TypedefName, SK_EnumConstant, SK_Constant, SK_Variable, SK_Temp,
@@ -48,12 +48,12 @@ typedef struct symbol
 	struct valueDef and struct valueUse
 		are used for DU list .
 	Here definition is assignment to a variable just like
-		t1 = b + c;	//   defition of t1,  use of b and c.
+		t1 = b + c;	...>>   defition of t1,  use of b and c.
 					t1 is a temporary variable.
 	Buf in UCC, we never track a named variable 's definition
 		a  = b + c;	-----
  */
-//  dst = src1  op 	src2,  the definition of a symbol
+/*  dst = src1  op 	src2,  the definition of a symbol */
 typedef struct valueDef
 {
 	Symbol dst;
@@ -63,7 +63,7 @@ typedef struct valueDef
 	BBlock ownBB;
 	struct valueDef *link;
 } *ValueDef;
-// the use of a definition
+/* the use of a definition */
 typedef struct valueUse
 {
 	ValueDef def;

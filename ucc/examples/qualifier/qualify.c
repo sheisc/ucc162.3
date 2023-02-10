@@ -21,7 +21,7 @@ int main(){
 #if 0
 #include <stdio.h>
 /**
-//
+
 int IsIncompleteRecord(Type ty){
 	ty = Unqual(ty);
 	return ( IsRecordType(ty) && !((RecordType) ty)->complete);

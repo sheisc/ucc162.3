@@ -103,7 +103,7 @@ void DefineTemp(Symbol t, int op, Symbol src1, Symbol src2)
 	ALLOC(def);
 	def->dst = t;
 	def->op = op;
-	def->src1 = src1;	//	If op is MOV/CALL,  src1 is an  (IRInst) .see PeepHole(BBlock bb) for MOV	
+	def->src1 = src1;	/*	If op is MOV/CALL,  src1 is an  (IRInst) .see PeepHole(BBlock bb) for MOV	*/
 	def->src2 = src2;
 	def->ownBB = CurrentBB;
 	
@@ -508,9 +508,11 @@ Symbol Deref(Type ty, Symbol addr)
 			t1 = &var;	---------  t1 is a temporary holding var's address.
 			*t1 is var.
 		 */
-		//#if 1	// added, we never get here? We already delete redundant &var in Offset()?
-		//assert(0);
-		//#endif
+		/*
+		#if 1	...>> added, we never get here? We already delete redundant &var in Offset()?
+		assert(0);
+		#endif
+		*/
 		return AsVar(addr)->def->src1;
 	}
 	tmp = CreateTemp(ty);
@@ -609,7 +611,7 @@ Symbol TryAddValue(Type ty, int op, Symbol src1, Symbol src2)
 			int val;
 		};
 		int a;
-		int * ptr = &a;	// a  is addressed.
+		int * ptr = &a;	...>> a  is addressed.
 		Data dt;
 		dt.val = 3;		------		SK_Offset is addressed.
 	 */
@@ -636,7 +638,7 @@ Symbol TryAddValue(Type ty, int op, Symbol src1, Symbol src2)
 				}else{
 					d = a + b;	----------(2)
 				}
-				//	(1) and (2) are in different basic block
+				...>>	(1) and (2) are in different basic block
 	 */
 	if (def && def->ownBB == CurrentBB && def->dst != NULL)
 		return def->dst;

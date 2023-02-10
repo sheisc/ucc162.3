@@ -2,7 +2,7 @@
 #error "You must define TOKEN macro before include this file"
 #endif
 
-//keywords
+/* keywords */
 TOKEN(TK_AUTO,      "auto")
 TOKEN(TK_EXTERN,    "extern")
 TOKEN(TK_REGISTER,  "register")
@@ -37,10 +37,10 @@ TOKEN(TK_SWITCH,    "switch")
 TOKEN(TK_WHILE,     "while")
 TOKEN(TK_SIZEOF,    "sizeof")
 
-//identifier
+/* identifier */
 TOKEN(TK_ID,        "ID")
 
-//constant
+/* constant */
 TOKEN(TK_INTCONST,     "int")
 TOKEN(TK_UINTCONST,    "unsigned int")
 TOKEN(TK_LONGCONST,    "long")
@@ -53,7 +53,7 @@ TOKEN(TK_LDOUBLECONST, "long double")
 TOKEN(TK_STRING,       "STR")
 TOKEN(TK_WIDESTRING,   "WSTR")
 
-//operators
+/* operators */
 TOKEN(TK_COMMA,         ",")
 TOKEN(TK_QUESTION,      "?")
 TOKEN(TK_COLON,         ":")
@@ -97,7 +97,7 @@ TOKEN(TK_RPAREN,        ")")
 TOKEN(TK_LBRACKET,      "[")
 TOKEN(TK_RBRACKET,      "]")
 
-//punctuators
+/* punctuators */
 TOKEN(TK_LBRACE,        "{")
 TOKEN(TK_RBRACE,        "}")
 TOKEN(TK_SEMICOLON,     ";")

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-//float fabsf(float);
+/* float fabsf(float); */
 REAL_T add(REAL_T a , REAL_T b){
 	return a+b;
 }

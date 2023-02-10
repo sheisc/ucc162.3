@@ -17,7 +17,7 @@ typedef struct vector
 	int len;
 	int size;
 } *Vector;
-//  the length of the vector
+/*  the length of the vector */
 #define LEN(v)   (v->len)
 
 #define INSERT_ITEM(v, item)   \

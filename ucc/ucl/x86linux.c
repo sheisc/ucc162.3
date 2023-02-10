@@ -73,13 +73,13 @@ static char* GetAccessName(Symbol p)
 	switch (p->kind)
 	{
 	case SK_Constant:
-		// movl $4, -4(%ebp)
+		/* movl $4, -4(%ebp) */
 		p->aname = FormatName("$%s", p->name);
 		break;
 
 	case SK_String:
 	case SK_Label:
-		// .str0:	.string	"%d \012"		
+		/* .str0:	.string	"%d \012"		*/
 		p->aname = FormatName(".%s", p->name);
 		break;
 
@@ -116,7 +116,7 @@ static char* GetAccessName(Symbol p)
 					dt.arr[5] = 100;		
 				}
 			 */
-			// movl 20(%ebp), %eax			
+			/* movl 20(%ebp), %eax			*/
 			p->aname = FormatName("%d(%%ebp)", AsVar(p)->offset);
 		}
 		break;
@@ -244,9 +244,11 @@ void PutASMCode(int code, Symbol opds[])
 			PutString("\n\t");
 			break;
 
-		case '%':	
-			// 	Linux:
-			// TEMPLATE(X86_MOVI4,    "movl %1, %0")
+		case '%':
+			/*	
+			 	Linux:
+			 TEMPLATE(X86_MOVI4,    "movl %1, %0")
+			*/
 			fmt++;
 			if (*fmt == '%')
 			{
@@ -283,8 +285,10 @@ void BeginProgram(void)
 	FloatNum = TempNum = 0;
 	for (i = EAX; i <= EDI; ++i)
 	{
-		// Initialize register symbols to
-		// make sure that no register contains data from variables.
+		/*
+		 Initialize register symbols to
+		 make sure that no register contains data from variables.
+		*/
 		if (X86Regs[i] != NULL)
 		{
 			X86Regs[i]->link = NULL;
@@ -338,12 +342,12 @@ void DefineString(String str, int size)
 		/**
 			char str[3] = "abc";
 		 */
-		// PRINT_DEBUG_INFO(("%s",str->chs));
+		/* PRINT_DEBUG_INFO(("%s",str->chs)); */
 		PutString(".ascii\t\"");
 	}
 	while (i < size)
 	{
-		// if it is not printable.	ASCII value  <= 0x20 ?
+		/* if it is not printable.	ASCII value  <= 0x20 ? */
 		if (! isprint(str->chs[i]))
 		{
 			/**
@@ -357,14 +361,14 @@ void DefineString(String str, int size)
 			if (str->chs[i] == '"')
 			{
 				
-				//  \"
+				/*  \" */
 				PutString("\\\"");
 			}
 			else if (str->chs[i] == '\\')
 			{
 				/**
 						When "make test",  Ugly Bug.
-						//	\\
+						....>>	\\
 						PutString("\\\\");
  				 */
 				PutString("\\\\");
@@ -382,7 +386,7 @@ void DefineString(String str, int size)
 void DefineFloatConstant(Symbol p)
 {
 	int align = p->ty->align;
-	//	.flt1		.flt2
+	/*	.flt1		.flt2 */
 	p->aname = FormatName(".flt%d", FloatNum++);
 	
 	Align(p);
@@ -396,8 +400,8 @@ void DefineGlobal(Symbol p)
 	Align(p);
 	if (p->sclass != TK_STATIC)
 	{
-		// ".globl\t%s\n\n"
-		// "PUBLIC %s\n\n"
+		/* ".globl\t%s\n\n" */
+		/* "PUBLIC %s\n\n" */
 		Export(p);
 	}
 	Print("%s:\t", GetAccessName(p));
@@ -469,7 +473,7 @@ void DefineValue(Type ty, union value val)
 		break;
 
 	case I4: case U4:
-		// a:	.long	3
+		/* a:	.long	3 */
 		Print(".long\t%d\n", val.i[0]);
 		break;
 

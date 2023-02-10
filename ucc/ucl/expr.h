@@ -22,9 +22,9 @@ e.g. 	*   +
  */
 struct tokenOp
 {
-	// token used as binary operator
+	/* token used as binary operator */
 	int bop  : 16;
-	// token used as unary operator
+	/* token used as unary operator */
 	int uop  : 16;
 };
 /**
@@ -52,11 +52,17 @@ struct astExpression
 	struct astExpression *kids[2];
 	union value val;
 };
-// test whether it is a binary operator
+/* 
+ test whether it is a binary operator 
+ */
 #define IsBinaryOP(tok) (tok >= TK_OR && tok <= TK_MOD)
-// token used as binary operator
+/* 
+ token used as binary operator 
+ */
 #define	BINARY_OP       TokenOps[CurrentToken - TK_ASSIGN].bop
-// token used as unary operator
+/*
+ token used as unary operator
+ */
 #define UNARY_OP        TokenOps[CurrentToken - TK_ASSIGN].uop
 
 int CanAssign(Type ty, AstExpression expr);

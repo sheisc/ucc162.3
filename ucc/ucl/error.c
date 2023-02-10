@@ -15,7 +15,7 @@ void Do_Error(Coord coord, const char *format, ...)
 	fprintf(stderr, "\n");
 	va_end(ap);
 }
-//If error is too severe to continue, just exit().
+/* If error is too severe to continue, just exit(). */
 void Do_Fatal(const char *format, ...)
 {
 	va_list ap;

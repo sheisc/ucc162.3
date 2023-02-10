@@ -17,15 +17,15 @@ static int HasSideEffect(AstExpression expr)
 	if (expr == NULL)
 		return 0;
 
-	// accessing a volatile object
+	/* accessing a volatile object */
 	if (expr->op == OP_ID && expr->ty->qual & VOLATILE)
 		return 1;
 
-	// function call, a function may not have side effect but ucc doesn't check this
+	/* function call, a function may not have side effect but ucc doesn't check this */
 	if (expr->op == OP_CALL)
 		return 1;
 
-	// modifying an object
+	/* modifying an object */
 	if (expr->op >= OP_ASSIGN && expr->op <= OP_MOD_ASSIGN ||
 	    expr->op == OP_PREINC  || expr->op == OP_PREDEC ||
 	    expr->op == OP_POSTINC || expr->op == OP_POSTDEC)
@@ -53,7 +53,7 @@ static void TranslateExpressionStatement(AstStatement stmt)
  /**
            labeled-statement:
                   identifier :  statement
-              //
+              
 		int main(){
 			int a = 3;
 		Again:
@@ -64,7 +64,7 @@ static void TranslateExpressionStatement(AstStatement stmt)
 			
 			return 0;
 		}   
-		//
+		
 		BB0:
 			t1 = a + -1;
 			a = t1;
@@ -77,11 +77,13 @@ static void TranslateLabelStatement(AstStatement stmt)
 {
 	AstLabelStatement labelStmt = AsLabel(stmt);
 
-	// ignore unreferenced label
+	/* ignore unreferenced label */
 	if (labelStmt->label->ref > 0)
 	{
-		/// if the label is not associated with a basic block,
-		/// create a new basic block to associate with it
+		/*
+		 if the label is not associated with a basic block,
+		 create a new basic block to associate with it
+		*/
 		if (labelStmt->label->respBB == NULL)
 		{
 			labelStmt->label->respBB = CreateBBlock();
@@ -97,9 +99,10 @@ static void TranslateLabelStatement(AstStatement stmt)
 static void TranslateCaseStatement(AstStatement stmt)
 {
 	AstCaseStatement caseStmt = AsCase(stmt);
-
-	/// see TranslateSwitchStatement, which already creates a basic block
-	/// to associate with each case statement in a switch
+	/*
+	 see TranslateSwitchStatement, which already creates a basic block
+	 to associate with each case statement in a switch
+	*/
 	StartBBlock(caseStmt->respBB);
 	TranslateStatement(caseStmt->stmt);
 }
@@ -110,9 +113,10 @@ static void TranslateCaseStatement(AstStatement stmt)
 static void TranslateDefaultStatement(AstStatement stmt)
 {
 	AstDefaultStatement defStmt = AsDef(stmt);
-	
-	/// see TranslateSwitchStatement, which already creates a basic block
-	/// to associate with the default statement in a switch
+	/*
+	 see TranslateSwitchStatement, which already creates a basic block
+	 to associate with the default statement in a switch
+	*/
 	StartBBlock(defStmt->respBB);
 	TranslateStatement(defStmt->stmt);
 }
@@ -296,9 +300,10 @@ static void TranslateForStatement(AstStatement stmt)
 static void TranslateGotoStatement(AstStatement stmt)
 {
 	AstGotoStatement gotoStmt = AsGoto(stmt);
-
-	/// if there is no basic block associated with the label, 
-	/// create a basic block to associate with it
+	/*
+	 if there is no basic block associated with the label, 
+	 create a basic block to associate with it
+	*/
 	if (gotoStmt->label->respBB == NULL)
 	{
 		gotoStmt->label->respBB = CreateBBlock();
@@ -641,7 +646,7 @@ static void TranslateSwitchStatement(AstStatement stmt)
 			 
 		function main
 			a = 5;
-		// TranslateSwitchBuckets(...)		
+		...>> TranslateSwitchBuckets(...)		
 			if (a < 110) goto BB0;			-----------  first switch-bucket
 			if (a > 110) goto BB1;
 			goto BB3;
@@ -654,7 +659,7 @@ static void TranslateSwitchStatement(AstStatement stmt)
 			if (a < 120) goto BB5;
 			if (a > 120) goto BB5;
 			goto BB4;
-		//  TranslateStatement(...)	
+		...>>  TranslateStatement(...)	
 		BB2:								-----------	
 			a = 8;
 			goto BB5;
@@ -695,7 +700,7 @@ static int	HasPaddingSpace(VariableSymbol v){
 		initedSize += initd->expr->ty->size;
 		initd = initd->next;
 	}
-	//PRINT_DEBUG_INFO(("initedSize = %d, size = %d", initedSize,v->ty->size));
+	/* PRINT_DEBUG_INFO(("initedSize = %d, size = %d", initedSize,v->ty->size)); */
 	return initedSize != v->ty->size;
 }
 
@@ -766,7 +771,7 @@ static void TranslateStatement(AstStatement stmt)
 {
 	(* StmtTrans[stmt->kind - NK_ExpressionStatement])(stmt);
 }
-//  AST --->IR
+/*  AST --->IR */
 static void TranslateFunction(AstFunction func)
 {
 	BBlock bb;
@@ -789,27 +794,29 @@ static void TranslateFunction(AstFunction func)
 		explicitely here.
 	 */
 	TranslateStatement(func->stmt);
-	// 
+
 	StartBBlock(FSYM->exitBB);
-	// do some optimizations for every basic block, only at the IR level, not ASM level.
+	/* do some optimizations for every basic block, only at the IR level, not ASM level. */
 	#if 1
 	Optimize(FSYM);
 	#endif
 	bb = FSYM->entryBB;
-	// function f
-	//BB0:
-	//BB1:
-	// function main
-	// BB2:
-	// BB3:
+	/*
+	 function f
+	BB0:
+	BB1:
+	 function main
+	 BB2:
+	 BB3:
+	*/
 	while (bb != NULL)
 	{
-		// to show the basic blocks more accurately	
+		/* to show the basic blocks more accurately	*/
 		bb->sym = CreateLabel();
 		bb = bb->next;
 	}
 }
-//  AST  --> IR
+/*  AST  --> IR */
 void Translate(AstTranslationUnit transUnit)
 {
 	AstNode p = transUnit->extDecls;
@@ -826,7 +833,7 @@ void Translate(AstTranslationUnit transUnit)
 	{
 			
 		Symbol f = Functions;
-		//	Using a undefined static function is considered as a warning in Clang /GCC
+		/*	Using a undefined static function is considered as a warning in Clang /GCC */
 		while (f != NULL){
 			if (f->sclass == TK_STATIC && ! f->defined && f->ref > 0){
 				Warning(f->pcoord, "static function \'%s\'  used but never defined", f->name);

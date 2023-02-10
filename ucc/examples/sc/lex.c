@@ -26,7 +26,7 @@ static char * tokenNames[] = {
 };
 Token curToken;
 
-////////////////////////////////////////////////////////////////////////
+
 static TokenKind GetKeywordKind(char * id){
 	int i = 0; 
 	for(i = 0; i < sizeof(keywords)/sizeof(keywords[0]); i++){
@@ -42,7 +42,7 @@ static int IsWhiteSpace(char ch){
 static char defaultNextChar(void){
 	return EOF_CH;
 }
-//
+
 static TokenKind GetTokenKindOfChar(char ch){
 	int i = 0;
 	for(i = 0; i < sizeof(tokenNames)/sizeof(tokenNames[0]); i++){
@@ -55,19 +55,19 @@ static TokenKind GetTokenKindOfChar(char ch){
 const char * GetTokenName(TokenKind tk){
 	return tokenNames[tk];
 }
-//
+
 Token GetToken(void){
 	Token token;
 	int len = 0;
 	memset(&token,0,sizeof(token));
-	// skip white space
+	/* skip white space */
 	while(IsWhiteSpace(curChar)){
 		curChar = NextChar();
 	}
 TryAgain:
 	if(curChar == EOF_CH){
 		token.kind = TK_EOF;
-	}else if(isalpha(curChar)){//id or keyword
+	}else if(isalpha(curChar)){/* id or keyword */
 		len = 0;
 		do{				
 			token.value.name[len] = curChar;
@@ -75,7 +75,7 @@ TryAgain:
 			len++;
 		}while(isalnum(curChar) && len < MAX_ID_LEN);
 		token.kind = GetKeywordKind(token.value.name);
-	}else if(isdigit(curChar)){//number
+	}else if(isdigit(curChar)){/* number */
 		int numVal = 0;
 		token.kind = TK_NUM;
 		do{
@@ -85,7 +85,7 @@ TryAgain:
 		token.value.numVal = numVal;
 	}else{
 		token.kind = GetTokenKindOfChar(curChar);
-		if(token.kind != TK_NA){// '+','-','*','/',...
+		if(token.kind != TK_NA){/*  '+','-','*','/',... */
 			token.value.name[0] = curChar;
 			curChar = NextChar();
 		}else{

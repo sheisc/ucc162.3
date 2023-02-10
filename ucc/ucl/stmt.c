@@ -308,7 +308,7 @@ AstStatement ParseCompoundStatement(void)
 	tail = &compStmt->decls;
 	while (CurrentTokenIn(FIRST_Declaration))
 	{
-		// for example, 	"f(20,30);",  f is an id;  but f(20,30) is a statement, not declaration.
+		/* for example, 	"f(20,30);",  f is an id;  but f(20,30) is a statement, not declaration. */
 		if (CurrentToken == TK_ID && ! IsTypeName(CurrentToken))
 			break;
 		*tail = (AstNode)ParseDeclaration();

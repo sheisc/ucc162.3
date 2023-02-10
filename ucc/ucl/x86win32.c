@@ -233,12 +233,16 @@ void DefineString(String str, int size)
 		if (! isprint(str->chs[i]))
 		{
 			Print("0%xH", (unsigned char)str->chs[i]);
-			// see examples/wchar/longstr.c
-			// longstr.asm(10) : error A2039:line too long
+			/*
+			 see examples/wchar/longstr.c
+			 longstr.asm(10) : error A2039:line too long
+			*/
 			i++;
 			if(str->chs[i-1] == '\n'){
 				Print("\n\tBYTE\t");
-				// we don't print ',' at the end of line
+				/*
+				 we don't print ',' at the end of line
+				*/
 				continue;
 			}			
 		}

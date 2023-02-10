@@ -1,9 +1,9 @@
 #ifndef __TYPE_H_
 #define __TYPE_H_
 /**
-	// type category
-	// CHAR / UCHAR ... from the view of C language
-	// while I1/U1 ..  from the view of machine
+	... type category
+	... CHAR / UCHAR ... from the view of C language
+	... while I1/U1 ..  from the view of machine
 	(1)
 		Because ENUM could be seen as a INT, so it is put before FLOAT.
 	(2)
@@ -14,11 +14,13 @@ enum
 	CHAR, UCHAR, SHORT, USHORT, INT, UINT, LONG, ULONG, LONGLONG, ULONGLONG, ENUM,
 	FLOAT, DOUBLE, LONGDOUBLE, POINTER, VOID, UNION, STRUCT, ARRAY, FUNCTION
 };
-// type qualifier
+/* type qualifier */
 enum { CONST = 0x1, VOLATILE = 0x2 };
-// I1 : signed int8	1byte=8bit;  U1: unsigned int8
-// V: no type              B: memory block, 
-// see TypeCode()
+/*
+ I1 : signed int8	1byte=8bit;  U1: unsigned int8
+ V: no type              B: memory block, 
+ see TypeCode()
+*/
 enum {I1, U1, I2, U2, I4, U4, F4, F8, V, B};
 /**
 	categ:	category	CHAR,UCHAR,SHORT, ...
@@ -47,15 +49,15 @@ typedef struct type
 
 typedef struct arrayType{
 	TYPE_COMMON
-	int len;		// count of array elements
+	int len;		/* count of array elements */
 } * ArrayType;
 
 /**
 	the field member of a struct or union
 	offset:	offset to the beginning of struct/union
 	id:		filed name
-	bits:	bits of a bit filed; // int align:16;
-			for non-bit files, bits is 0. //int size;
+	bits:	bits of a bit filed; ...>> int align:16;
+			for non-bit files, bits is 0.  ...>> int size;
 	pos:	see EndRecord() funcion: fld->pos = LITTLE_ENDIAN ? bits : intBits - bits;			
 	ty:		field type
 	next:	pointer to next field
@@ -85,9 +87,9 @@ typedef struct recordType
 	Field *tail; 
 	int hasConstFld : 16;
 	int hasFlexArray : 16;
-	//for test whether it is incomplete type.
+	/* for test whether it is incomplete type. */
 	/**
-		struct A;	//	It is considered an incomplete type here. So sizeof(struct A) is illegal.
+		struct A;	....	It is considered an incomplete type here. So sizeof(struct A) is illegal.
 		void f(int a[]){
 			printf("%d \n",sizeof(a));
 			printf("sizeof(struct A) = %d  \n",sizeof(struct A));------- incomplete type
@@ -97,7 +99,7 @@ typedef struct recordType
 		};
 		see IsIncompleteType(ty)
 	 */
-	int complete;			//	
+	int complete;			
 
 } *RecordType;
 
@@ -128,12 +130,13 @@ typedef struct parameter
 	 	}
 	 old-style definiition:
 	 	
-	 	// see K&R A.8.6.3 	
-	 	// In the old-style declarator, the identifier list must be absent unless
-	 	// the declarator is used in the head of a function defition.
-	 	// No information about the types of the parameters is supplied by the declaration
-	 	// T D1(id-list);
-	 	int max(a,b,c)	// This is a special old-style function declaration, because it appears in definition.
+	 	see K&R A.8.6.3 	
+	 	In the old-style declarator, the identifier list must be absent unless
+	 	the declarator is used in the head of a function defition.
+	 	No information about the types of the parameters is supplied by the declaration
+	 	T D1(id-list);
+	 	
+	 	int max(a,b,c)	... This is a special old-style function declaration, because it appears in definition.
 	 	int a,b,c;
 	 	{
 	 		
@@ -141,7 +144,7 @@ typedef struct parameter
 	 new-style function declaration:
 	 	int max(int a, int b, int c);
 	 old-style function declation:
-	 	int max();	// none of parameters type are specified.
+	 	int max();	... none of parameters type are specified.
 	 (2)
 	 	no proto:  we only know function returns int. It could be used as max(2,3), max(2,3,4)  in fact.
 	 	has proto:	max(2,3,4) is right, max(2,3) wrong.
@@ -166,16 +169,16 @@ typedef struct functionType
 
 #define IsIntegType(ty)    (ty->categ <= ENUM)
 #define IsUnsigned(ty)	   (ty->categ & 0x1)
-// Here, real-type means floating number.
+/* Here, real-type means floating number. */
 #define IsRealType(ty)	   (ty->categ >= FLOAT && ty->categ <= LONGDOUBLE)
 #define IsArithType(ty)    (ty->categ <= LONGDOUBLE)
-// Scalar type is different from 'vector type' such as  struct
+/* Scalar type is different from 'vector type' such as  struct */
 #define IsScalarType(ty)   (ty->categ <= POINTER)
 #define IsPtrType(ty)      (ty->categ == POINTER)
 #define IsRecordType(ty)   (ty->categ == STRUCT || ty->categ == UNION)
 #define IsFunctionType(ty) (ty->categ == FUNCTION)
 
-// allow pointers to object of zero size
+/* allow pointers to object of zero size */
 #define IsObjectPtr(ty)     (ty->categ == POINTER &&  ty->bty->categ != FUNCTION)
 
 #define IsIncompletePtr(ty) (ty->categ == POINTER && ty->bty->size == 0)

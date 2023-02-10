@@ -11,7 +11,7 @@ const char * CurFileName;
  * Expect current token to be tok. If so, get next token; otherwise,
  * report error
  */
- // 	similar function as match() in dragon book
+/* 	similar function as match() in dragon book */
 void Do_Expect(int tok)
 {
 	if (CurrentToken == tok)
@@ -20,7 +20,7 @@ void Do_Expect(int tok)
 		return;
 	}
 	fprintf(stderr,"(%s %d):",CurFileName,CurFileLineNo);
-	// a common case, missing ';' on last line
+	/* a common case, missing ';' on last line */
 	if (tok == TK_SEMICOLON && TokenCoord.line - PrevCoord.line == 1)
 	{
 		Do_Error(&PrevCoord, "Expect ;");

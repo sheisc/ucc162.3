@@ -49,7 +49,7 @@ int main(){
 
 	ConvertMB2WC(cstr);
 
-	// hard code  "你好"	\x4f60\x597d
+	/* hard code  "你好"	\x4f60\x597d */
 	wprintf(L"你好 \x4f60\x597d\n");
 	printf("not print at all,why ?\n");
 	return 0;

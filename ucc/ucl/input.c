@@ -55,14 +55,14 @@ void ReadSourceFile(char *filename)
 	 */
 	fseek(Input.file, 0, SEEK_END);
 	Input.size = ftell(Input.file);
-	// allocate enough heap memory.
+	/* allocate enough heap memory. */
 	Input.base = malloc(Input.size + 1);
 	if (Input.base == NULL)
 	{
 		Fatal("The file %s is too big", filename);
 		fclose(Input.file);
 	}
-	// set current position to the beginning of the file.
+	/* set current position to the beginning of the file. */
 	fseek(Input.file, 0, SEEK_SET);
 	Input.size = fread(Input.base, 1, Input.size, Input.file);
 	fclose(Input.file);
@@ -107,7 +107,7 @@ void ReadSourceFile(char *filename)
 	{
 		Fatal("Can't open file %s.\n", filename);
 	}
-	//fstat() gets file status, returns information about a file.
+	/* fstat() gets file status, returns information about a file. */
 	if (fstat(fno, &st) == -1)
 	{
 		Fatal("Can't stat file %s.\n", filename);
@@ -125,7 +125,7 @@ void ReadSourceFile(char *filename)
 #endif
 
 	Input.filename = filename;
-	// fabricate an EOF
+	/* fabricate an EOF */
 	Input.base[Input.size] = END_OF_FILE;
 	Input.cursor = Input.lineHead = Input.base;
 	Input.line = 1;

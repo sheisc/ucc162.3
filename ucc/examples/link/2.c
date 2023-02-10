@@ -1,5 +1,5 @@
 #include <math.h>
-//int abc = 200;
+/* int abc = 200; */
 int abc;
 int abc = 300;
 

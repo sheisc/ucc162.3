@@ -3,13 +3,13 @@
 #include "expr.h"
 
 
-// binary operator
+/* binary operator */
 #define EXECUTE_BOP(op)                                                                      \
     if (tcode == I4) val.i[0] = expr1->val.i[0] op expr2->val.i[0];                          \
     else if (tcode == U4) val.i[0] = (unsigned)expr1->val.i[0] op (unsigned)expr2->val.i[0]; \
     else if (tcode == F4) val.f = expr1->val.f op expr2->val.f;                              \
     else if (tcode == F8) val.d = expr1->val.d op expr2->val.d;
-// relational operator
+/* relational operator */
 #define EXECUTE_ROP(op)                                                                      \
     if (tcode == I4) val.i[0] = expr1->val.i[0] op expr2->val.i[0];                          \
     else if (tcode == U4) val.i[0] = (unsigned)expr1->val.i[0] op (unsigned)expr2->val.i[0]; \
@@ -19,14 +19,16 @@
 /**
  * Cast constant expression. e.g. (float)3
  */
-// (float)3	----------->  3.0f		we do the calculation at compile time.
-//@ty	T(FLOAT)
-//@expr	3
+/*
+ (float)3	----------->  3.0f		we do the calculation at compile time.
+ @ty	T(FLOAT)
+ @expr	3
+*/
 AstExpression FoldCast(Type ty, AstExpression expr)
 {
-	// source type-code
+	/* source type-code */
 	int scode = TypeCode(expr->ty);
-	// destination type-code
+	/* destination type-code */
 	int dcode = TypeCode(ty);
 	
 	switch (scode)
@@ -123,7 +125,7 @@ AstExpression FoldCast(Type ty, AstExpression expr)
 	default:
 		assert(0);
 	}
-	//PRINT_DEBUG_INFO(("%s",TypeToString(ty)));
+	/* PRINT_DEBUG_INFO(("%s",TypeToString(ty))); */
 	expr->ty = ty;
 	return expr;
 }
@@ -148,7 +150,7 @@ AstExpression Constant(struct coord coord, Type ty, union value val)
  */
 AstExpression FoldConstant(AstExpression expr)
 {
-	// type code, see TypeCode().
+	/* type code, see TypeCode(). */
 	int tcode;
 	union value val;
 	AstExpression expr1, expr2;
@@ -165,7 +167,7 @@ AstExpression FoldConstant(AstExpression expr)
 	 */
 	if (expr->op >= OP_POS && expr->op <= OP_NOT && expr->kids[0]->op != OP_CONST)
 		return expr;
-	//  300 ?  a : b   ----->    a 
+	/*  300 ?  a : b   ----->    a  */
 	if (expr->op == OP_QUESTION)
 	{
 		if (expr->kids[0]->op == OP_CONST && IsIntegType(expr->kids[0]->ty))
@@ -183,11 +185,11 @@ AstExpression FoldConstant(AstExpression expr)
 	expr2 = expr->kids[1];
 	switch (expr->op)
 	{
-	case OP_OR:		// "||"
+	case OP_OR:		/* "||" */
 		EXECUTE_ROP(||);
 		break;
 
-	case OP_AND:	// "&&"
+	case OP_AND:	/* "&&"  */
 		EXECUTE_ROP(&&);
 		break;
 
@@ -258,14 +260,14 @@ AstExpression FoldConstant(AstExpression expr)
 		EXECUTE_BOP(/);
 		break;
 
-	case OP_MOD:	// %
+	case OP_MOD:	/* % */
 		if (tcode == U4)
 			val.i[0] = (unsigned)expr1->val.i[0] % expr2->val.i[0];
 		else
 			val.i[0] = expr1->val.i[0] % expr2->val.i[0];
 		break;
 
-	case OP_NEG:	// -12, -12.3
+	case OP_NEG:	/* -12, -12.3 */
 		if (tcode == I4 || tcode == U4){
 			val.i[0] = -expr1->val.i[0];
 		}else if (tcode == F4){
@@ -276,11 +278,11 @@ AstExpression FoldConstant(AstExpression expr)
 		}
 		break;
 
-	case OP_COMP:	// ~0xABCD
+	case OP_COMP:	/* ~0xABCD  */
 		val.i[0] = ~expr1->val.i[0];
 		break;
 
-	case OP_NOT:	// !
+	case OP_NOT:	/* !  */
 		if (tcode == I4 || tcode == U4)
 			val.i[0] = ! expr1->val.i[0];
 		else if (tcode == F4)

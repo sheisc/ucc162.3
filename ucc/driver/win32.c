@@ -79,7 +79,7 @@ void SetupToolChain(void)
 #if 1	
 	LDProg[8] = "libcmt.lib";
 #endif
-#if 0		// commented
+#if 0		
 	return;
 #endif
 ok:	

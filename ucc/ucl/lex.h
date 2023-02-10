@@ -14,7 +14,7 @@ enum token
 #undef  TOKEN
 
 };
-// Token Value
+/* Token Value */
 union value
 {
 	int i[2];

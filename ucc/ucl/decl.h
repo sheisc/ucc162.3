@@ -7,8 +7,10 @@
 		with identifier		
 */
 enum { DEC_ABSTRACT = 0x01, DEC_CONCRETE = 0x02};
-// The possble type constructor, used in struct typeDerivList.
-// TypeDerivList->ctor:	 POINTER_TO, ARRAY_OF, FUNCTION_RETURN
+/*
+ The possble type constructor, used in struct typeDerivList.
+ TypeDerivList->ctor:	 POINTER_TO, ARRAY_OF, FUNCTION_RETURN
+*/
 enum { POINTER_TO, ARRAY_OF, FUNCTION_RETURN };
 /**
 	@dec	used for syntax structure
@@ -35,7 +37,7 @@ enum { POINTER_TO, ARRAY_OF, FUNCTION_RETURN };
 		
 		typedef int a;
 		int f(int a){
-			// 'a' is a parameter instead of typedef name here.
+			... 'a' is a parameter instead of typedef name here.
 		}
  */
 typedef struct tdname
@@ -43,7 +45,7 @@ typedef struct tdname
 	char *id;
 	int level;
 	int overload;
-	// see void PostCheckTypedef(void)
+	/* see void PostCheckTypedef(void) */
 	int overloadLevel;
 } *TDName;
 /**
@@ -83,16 +85,18 @@ typedef struct tdname
 		(2)  use "array of 5", we have "array of 5" "ponter to int",
 			that is , "array of 5 pointer to int"
 */
-// Each declarator (Function/Array/Pointer declarator) owns an attribue defined 
-// below as struct typeDerivList object.
+/*
+ Each declarator (Function/Array/Pointer declarator) owns an attribue defined 
+ below as struct typeDerivList object.
+*/
 typedef struct typeDerivList
 {
-	int ctor;		// type constructor		pointer/function/array
+	int ctor;		/* type constructor		pointer/function/array */
 	union
 	{
-		int len;	// array size
-		int qual;	// pointer qualifier
-		Signature sig;	// function signature
+		int len;	/* array size */
+		int qual;	/* pointer qualifier */
+		Signature sig;	/* function signature */
 	};
 	struct typeDerivList *next;
 } *TypeDerivList;
@@ -147,12 +151,12 @@ typedef struct astDeclarator
 typedef struct astInitializer
 {
 	AST_NODE_COMMON
-	//  left brace  {			1/0		has or not
+	/*  left brace  {			1/0		has or not */
 	int lbrace;
 	union
 	{
-		AstNode initials;		// when lbrace is 1,	initializer-list
-		AstExpression expr;		// when lbrace is 0, assignment-expression
+		AstNode initials;		/* when lbrace is 1,	initializer-list */
+		AstExpression expr;		/* when lbrace is 0, assignment-expression */
 	};
 	/**
 		When we do syntax parsing, we don't know the offset of each initialized
@@ -171,9 +175,9 @@ typedef struct astInitializer
 typedef struct astInitDeclarator
 {
 	AST_NODE_COMMON
-	// declarator
+	/* declarator */
 	AstDeclarator dec;
-	// initializer
+	/* initializer */
 	AstInitializer init;
 } *AstInitDeclarator;
 /**
@@ -230,13 +234,15 @@ typedef struct astArrayDeclarator
 	AST_DECLARATOR_COMMON
 	AstExpression expr;
 } *AstArrayDeclarator;
-// pointer:
-// 			*	type-qualifier-list(opt) pointer
-// type-qualifier-list:
-//			type-qualifier
-//			type-qualifier-list	type-qualifier
-//	type-qualifier:
-//			const	|	volatile
+/*
+ pointer:
+ 			*	type-qualifier-list(opt) pointer
+ type-qualifier-list:
+			type-qualifier
+			type-qualifier-list	type-qualifier
+	type-qualifier:
+			const	|	volatile
+*/
 typedef struct astPointerDeclarator
 {
 	AST_DECLARATOR_COMMON
@@ -288,40 +294,50 @@ typedef struct astStructSpecifier
 {
 	AST_NODE_COMMON
 	char *id;
-	// struct-declaration-list,
-	// see function ParseStructOrUnionSpecifier()
+	/*
+	 struct-declaration-list,
+	 see function ParseStructOrUnionSpecifier()
+	*/
 	AstNode stDecls;
 	int hasLbrace;
 } *AstStructSpecifier;
-//enumerator:		id
-//					id = constant-expression
+/*
+enumerator:		id
+id = constant-expression
+*/
 typedef struct astEnumerator
 {
 	AST_NODE_COMMON
 	char *id;
 	AstExpression expr;	
 } *AstEnumerator;
-// enum-specifier:		enum	id {enumerator-list}
-//						enum	id
-// enumerator-list:		enumerator +
+/*
+ enum-specifier:		enum	id {enumerator-list}
+						enum	id
+ enumerator-list:		enumerator +
+*/
 typedef struct astEnumSpecifier
 {
 	AST_NODE_COMMON
 	char *id;
 	AstNode enumers;
 } *AstEnumSpecifier;
-// typedef int INT32	, 	INT32 is a TypedefName,
-//	@id  	"INT32" 
+/*
+ typedef int INT32	, 	INT32 is a TypedefName,
+	@id  	"INT32" 
+*/
 typedef struct astTypedefName
 {
 	AST_NODE_COMMON
 	char *id;
 	Symbol sym;
 } *AstTypedefName;
-// even token is treated an abstract tree node ?
-// see function ParseDeclarationSpecifiers(),
-// storage classes: auto,static, extern,register, ..  are treated as astToken object.
-//					typedef is a special case, syntactically considered a  storage class. 
+/*
+ even token is treated an abstract tree node ?
+ see function ParseDeclarationSpecifiers(),
+ storage classes: auto,static, extern,register, ..  are treated as astToken object.
+					typedef is a special case, syntactically considered a  storage class. 
+*/
 typedef struct astToken
 {
 	AST_NODE_COMMON
@@ -333,14 +349,14 @@ typedef struct astToken
 		type-specifier 		....			(int, void, ...)
 		type-qualifier		...			(const volatile)
 */
-// (static | int | const| ...) +
+/* (static | int | const| ...) + */
 struct astSpecifiers
 {
 	AST_NODE_COMMON
 	AstNode stgClasses;
 	AstNode tyQuals;
 	AstNode tySpecs;
-	// After semantics check ,we know the storage-class
+	/* After semantics check ,we know the storage-class */
 	int sclass;
 	Type ty;
 };
@@ -356,19 +372,21 @@ struct astTypeName
 	AstSpecifiers specs;
 	AstDeclarator dec;
 };
-// declaration:	declaration-specifiers 	init-declarator-list
-// init-declarator-list:		declarator
-//							declarator = initializer
-// declaration-specifiers:		(static|int|const...)+
-// type-qualifier:		const	volatile
-// storage-class-specifier:		static | auto | register | extern | typedef
-// type-specifier:		int, void , char, struct-or-union-specifier, typedef-name
+/*
+ declaration:	declaration-specifiers 	init-declarator-list
+ init-declarator-list:		declarator
+							declarator = initializer
+ declaration-specifiers:		(static|int|const...)+
+ type-qualifier:		const	volatile
+ storage-class-specifier:		static | auto | register | extern | typedef
+ type-specifier:		int, void , char, struct-or-union-specifier, typedef-name
+*/
 struct astDeclaration
 {
 	AST_NODE_COMMON
-	// declaration-specifiers:	(staic | int | const | ...) +
+	/* declaration-specifiers:	(staic | int | const | ...) + */
 	AstSpecifiers specs;
-	// init-declarator-list:		id, id=300,
+	/* init-declarator-list:		id, id=300, */
 	AstNode initDecs;
 };
 /**
@@ -388,13 +406,13 @@ struct astDeclaration
 typedef struct astFunction
 {
 	AST_NODE_COMMON
-	// declaration-specifiers(opt)
+	/* declaration-specifiers(opt) */
 	AstSpecifiers specs;
 	AstDeclarator dec;
 	AstFunctionDeclarator fdec;
-	//  declaration-list(opt)
+	/*  declaration-list(opt) */
 	AstNode decls;
-	// compound-statement
+	/* compound-statement */
 	AstStatement stmt;
 	FunctionSymbol fsym;
 	Label labels;

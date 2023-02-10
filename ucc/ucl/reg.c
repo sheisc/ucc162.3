@@ -60,17 +60,17 @@ static int SelectSpillReg(int endr)
 
 		p = X86Regs[i]->link;
 		ref = 0;
-		// calculate the total references of current register
+		/* calculate the total references of current register */
 		while (p)
 		{
-			// the content of the register needs to be written back
+			/* the content of the register needs to be written back */
 			if (p->needwb && p->ref > 0)
 			{
 				ref += p->ref;
 			}
 			p = p->link;
 		}
-		// find the least referenced register to spill
+		/* find the least referenced register to spill */
 		if (ref < mref)
 		{
 			mref = ref;
@@ -89,31 +89,31 @@ static Symbol GetRegInternal(int width)
 
 	switch (width)
 	{
-	case 1:		//  al, cl ,dl
+	case 1:		/*  al, cl ,dl */
 		endr = EDX;
 		regs = X86ByteRegs;
 		break;
 
-	case 2:		// AX, CX, DX, BX, SP, BP, SI, DI
+	case 2:		/* AX, CX, DX, BX, SP, BP, SI, DI */
 		endr = EDI;
 		regs = X86WordRegs;
 		break;
 
-	case 4:		// EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI
+	case 4:		/* EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI */
 		endr = EDI;
 		regs = X86Regs;
 		break;
 	}
-	// try to find an unused register, that is , empty
+	/* try to find an unused register, that is , empty */
 	i = FindEmptyReg(endr);
-	// If there is no empty register
+	/* If there is no empty register */
 	if (i == NO_REG)
 	{
-		// spill the content of the selected register to memory
+		/* spill the content of the selected register to memory */
 		i = SelectSpillReg(endr);
 		SpillReg(X86Regs[i]);
 	}
-	//  If AL is used, EAX is used.  Vice versa.
+	/*  If AL is used, EAX is used.  Vice versa. */
 	UsedRegs |= 1 << i;
 
 	return regs[i];
@@ -143,11 +143,11 @@ void SpillReg(Symbol reg)
 	p = reg->link;
 	while (p)
 	{
-		// After writing back, variable is not in register anymore.
+		/* After writing back, variable is not in register anymore. */
 		p->reg = NULL;
 		if (p->needwb && p->ref > 0)
 		{
-			// After it is synchronized, set needwb to 0.
+			/* After it is synchronized, set needwb to 0. */
 			p->needwb = 0;		
 			/**
 				we are sure that p is a SK_Temp,

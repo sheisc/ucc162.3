@@ -18,7 +18,7 @@
 */
 char *CPPProg[] = 
 { 
-	"/usr/bin/gcc", "-m32", "-U__GNUC__", "-D_POSIX_SOURCE", "-D__STRICT_ANSI__",
+	"/usr/bin/gcc", "-m32", "-std=c89", "-U__GNUC__", "-D_POSIX_SOURCE", "-D__STRICT_ANSI__",
 	"-Dunix", "-Di386", "-Dlinux", "-D__unix__", "-D__i386__", "-D__linux__", 
 	"-D__signed__=signed", "-D_UCC", "-I" UCCDIR "include", "$1", "-E", "$2", "-o", "$3", 0 
 };

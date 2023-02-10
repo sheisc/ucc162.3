@@ -42,7 +42,7 @@ double PI;
 int main(){
 	int i,method;
 
-	// system("clear");
+	/* system("clear"); */
 	PI=atan(1)*4;
 	printf("Please input the size of x:\n");
 	scanf("%d",&size_x);

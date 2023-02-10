@@ -45,7 +45,7 @@ Symbol Simplify(Type ty, int opcode, Symbol src1, Symbol src2)
 	switch (opcode)
 	{
 	case ADD:
-		// a + 0 = a
+		/* a + 0 = a */
 		if (src2->val.i[0] == 0)
 			return src1;
 		/**
@@ -54,8 +54,8 @@ Symbol Simplify(Type ty, int opcode, Symbol src1, Symbol src2)
 				c1:	constant1
 				c2:	constant2
 		 */
-		// a + c1 + c2 = a + (c1 + c2)
-		// a - c1 + c2 = a + (-c1 + c2)
+		/* a + c1 + c2 = a + (c1 + c2) */
+		/* a - c1 + c2 = a + (-c1 + c2) */
 		p1 = src1; c1 = 0;
 		if (src1->kind == SK_Temp)
 		{
@@ -76,11 +76,11 @@ Symbol Simplify(Type ty, int opcode, Symbol src1, Symbol src2)
 		break;
 
 	case SUB:
-		// a - 0 = a
+		/* a - 0 = a */
 		if (src2->kind == SK_Constant && src2->val.i[0] == 0)
 			return src1;
 
-		// put source operand into v + c format (v maybe NULL, c maybe 0)
+		/* put source operand into v + c format (v maybe NULL, c maybe 0) */
 		p1 = src1; c1 = 0;
 		if (src1->kind == SK_Temp)
 		{
@@ -116,18 +116,18 @@ Symbol Simplify(Type ty, int opcode, Symbol src1, Symbol src2)
 
 		if (p1 == p2)
 		{
-			// (a + c1) - (a + c2) = c1 - c2
+			/* (a + c1) - (a + c2) = c1 - c2 */
 			return IntConstant(c1 - c2);
 		}
 		else if (p1 == NULL)
 		{
-			// c1 - (a + c2) = (c1 - c2) - a
+			/* c1 - (a + c2) = (c1 - c2) - a */
 			src1 = IntConstant(c1 - c2);
 			src2 = p2;
 		}
 		else if (p2 == NULL)
 		{
-			// (a + c1) - c2 = a + (c1 - c2)
+			/* (a + c1) - c2 = a + (c1 - c2) */
 			src1 = p1;
 			opcode = ADD;
 			src2 = IntConstant(c1 - c2);
@@ -136,11 +136,11 @@ Symbol Simplify(Type ty, int opcode, Symbol src1, Symbol src2)
 
 	case MUL:
 	case DIV:
-		// a * 1 = a; a / 1 = a;
+		/* a * 1 = a; a / 1 = a; */
 		if (src2->val.i[0] == 1)
 			return src1;
 
-		// a * 2 power of n = a >> n
+		/* a * 2 power of n = a >> n */
 		c1 = Power2(src2->val.i[0]);
 		if (c1 != 0)
 		{
@@ -150,11 +150,11 @@ Symbol Simplify(Type ty, int opcode, Symbol src1, Symbol src2)
 		break;
 
 	case MOD:
-		// a % 1 = 0
+		/* a % 1 = 0 */
 		if (src2->val.i[0] == 1)
 			return IntConstant(0);
 
-		// a % 2 power of n = a & (2 power of n - 1)
+		/* a % 2 power of n = a & (2 power of n - 1) */
 		c1 = Power2(src2->val.i[0]);
 		if (c1 != 0)
 		{
@@ -165,13 +165,13 @@ Symbol Simplify(Type ty, int opcode, Symbol src1, Symbol src2)
 
 	case LSH:
 	case RSH:
-		// a >> 0 = a << 0 = a
+		/* a >> 0 = a << 0 = a */
 		if (src2->val.i[0] == 0)
 			return src1;
 		break;
 
 	case BOR:
-		// a | 0 = a; a | -1 = -1
+		/* a | 0 = a; a | -1 = -1 */
 		if (src2->val.i[0] == 0)
 			return src1;
 		if (src2->val.i[0] == -1)
@@ -179,13 +179,13 @@ Symbol Simplify(Type ty, int opcode, Symbol src1, Symbol src2)
 		break;
 
 	case BXOR:
-		// a ^ 0 = a
+		/* a ^ 0 = a */
 		if (src2->val.i[0] == 0)
 			return src1;
 		break;
 
 	case BAND:
-		// a & 0 = 0, a & -1 = a
+		/* a & 0 = 0, a & -1 = a */
 		if (src2->val.i[0] == 0)
 			return IntConstant(0);
 		if (src2->val.i[0] == -1)
@@ -200,11 +200,11 @@ add_value:
 	return TryAddValue(ty, opcode, src1, src2);
 }
 
-//	append lb->def list to la->def list
+/*	append lb->def list to la->def list */
 static void AppendVarDefList(VariableSymbol la,VariableSymbol lb){
 	ValueDef *defTail = &(la->def);
 	ValueDef def = la->def	;	;
-	// find the end of list @la
+	/* find the end of list @la */
 	while(def){	
 		defTail = &(def->link);		
 		def = def->link;
@@ -213,7 +213,7 @@ static void AppendVarDefList(VariableSymbol la,VariableSymbol lb){
 }
 
 
-// return 1 when all temp definitions are defined by MOV
+/* return 1 when all temp definitions are defined by MOV */
 static int IsMovDef(ValueDef def ){
 	if(!def){
 		return 0;
@@ -243,16 +243,16 @@ static void PeepHole(BBlock bb)
 			/**
 				t1:f();			--- inst
 				num = t1;		--- ninst
-				/////////After Optimization////////
+				... After Optimization
 				num:f();
 			*/
 			inst->opds[0]->ref -= 2;
 			inst->opds[0] = ninst->opds[0];
-			// delete ninst
+			/* delete ninst */
 			inst->next = ninst->next;
 			ninst->next->prev = inst;
 			bb->ninst--;
-			// if 'a' is a temp, it is another definition of 'a'.
+			/* if 'a' is a temp, it is another definition of 'a'. */
 			if (ninst->opds[0]->kind == SK_Temp)
 				DefineTemp(ninst->opds[0], inst->opcode, (Symbol)inst, NULL);
 		}
@@ -264,7 +264,7 @@ static void PeepHole(BBlock bb)
 				t0 = 60;
 				...
 				b = t0;			----			inst
-				////////////////After Optimization////////////////
+				... After Optimization ...
 					b = 50;
 					....
 					b = 60;
@@ -276,23 +276,23 @@ static void PeepHole(BBlock bb)
 			if( def && (def->op == MOV ||def->op == CALL)){
 				while (def != NULL)
 				{
-					// see void DefineTemp(Symbol t, int op, Symbol src1, Symbol src2).		
+					/* see void DefineTemp(Symbol t, int op, Symbol src1, Symbol src2). */
 					p = (IRInst)def->src1;
 					p->opds[0]->ref--;
 					inst->opds[0]->ref++;
 					p->opds[0] = inst->opds[0];
-					#if 0		// commented, don't touch the opcode, it maybe MOV or CALL
+					#if 0		
 					p->opcode = inst->opcode;
 					#endif
 					def = def->link;					
 				}
 				inst->opds[0]->ref--;
 				inst->opds[1]->ref--;
-				// see examples/conditional_expr/conditional.c	
+				/* see examples/conditional_expr/conditional.c	 */
 				if(inst->opds[0]->kind == SK_Temp){
 					AppendVarDefList(AsVar(inst->opds[0]),AsVar(inst->opds[1]));
 				}
-				// though we delete the current inst, its definition is still in the def_link_list.
+				/* though we delete the current inst, its definition is still in the def_link_list. */
 				inst->prev->next = inst->next;
 				inst->next->prev = inst->prev;
 				bb->ninst--;
@@ -343,7 +343,7 @@ find_unused_temp:
 		opds = inst->opds;
 		if (inst->opcode == CALL)
 		{
-			// see	examples/function/returnStruct.c
+			/* see	examples/function/returnStruct.c */
 			if (opds[0] && opds[0]->kind == SK_Temp && opds[0]->ref == 1 && !IsRecordType(opds[0]->ty))	{
 				opds[0]->ref = 0;
 				opds[0] = NULL;
@@ -412,14 +412,14 @@ find_unused_temp:
 void Optimize(FunctionSymbol fsym)
 {
 	BBlock bb;
-	// iterater every basic block, do peep hole optimization
+	/* iterater every basic block, do peep hole optimization */
 	bb = fsym->entryBB;
 	while (bb != NULL)
 	{
 		PeepHole(bb);
 		bb = bb->next;
 	}
-	// iterate every basic block, eliminate dead code
+	/* iterate every basic block, eliminate dead code */
 	bb = fsym->entryBB;
 	while (bb != NULL)
 	{

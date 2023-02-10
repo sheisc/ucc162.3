@@ -15,7 +15,7 @@ a = 3.0;
 
 
 int main(){
-	//b = 3.0;		// ---------------	error	
+	/* b = 3.0;		 ---------------	error	*/
 	int c = 30;
 	printf("%d \n",sizeof(a));
 	return 0;

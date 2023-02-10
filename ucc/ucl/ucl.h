@@ -24,7 +24,7 @@
 	 typedef struct{
 		 int b;
 		 struct{
-			 //int d;
+			 ... int d;
 		 };
 		 int c;
 	 }Data;

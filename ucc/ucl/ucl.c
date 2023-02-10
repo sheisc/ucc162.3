@@ -2,35 +2,35 @@
 #include "ast.h"
 #include "target.h"
 
-// flag to control if dump abstract syntax tree
+/* flag to control if dump abstract syntax tree */
 static int DumpAST;
-// flag to control if dump intermediate code
+/* flag to control if dump intermediate code */
 static int DumpIR;
-// file to hold abstract synatx tree
+/* file to hold abstract synatx tree */
 FILE *ASTFile;
-// file to hold intermediate code
+/* file to hold intermediate code */
 FILE *IRFile;
-// file to hold assembly code
+/* file to hold assembly code */
 FILE *ASMFile;
-// assembly file's extension name
+/* assembly file's extension name */
 char *ExtName = ".s";
 
 char * ASMFileName = NULL;
 
-// please see alloc.h, defaultly, ALLOC() allocates memory from CurrentHeap
+/* please see alloc.h, defaultly, ALLOC() allocates memory from CurrentHeap */
 /**
 	CurrentHeap switch between ProgramHeap / FileHeap.
  */
 Heap CurrentHeap;
-// hold memory whose lifetime is the whole program
+/* hold memory whose lifetime is the whole program */
 HEAP(ProgramHeap);
-// hold memory whose lifetime is the whole file
+/* hold memory whose lifetime is the whole file */
 HEAP(FileHeap);
-// all the strings and identifiers are hold in StringHeap, the lifetime is the whole program 
+/* all the strings and identifiers are hold in StringHeap, the lifetime is the whole program */
 HEAP(StringHeap);
-// number of warnings in a file
+/* number of warnings in a file */
 int WarningCount;
-// number of errors in a file 
+/* number of errors in a file  */
 int ErrorCount;
 Vector ExtraWhiteSpace;
 Vector ExtraKeywords;
@@ -54,13 +54,13 @@ static void Compile(char *file)
 
 	Initialize();
 
-	// parse preprocessed C file, generate an abstract syntax tree
+	/* parse preprocessed C file, generate an abstract syntax tree */
 	transUnit = ParseTranslationUnit(file);
 
 	if (ErrorCount != 0)
 		goto exit;	
 
-	// perform semantic check on abstract synatx tree
+	/* perform semantic check on abstract synatx tree */
 	CheckTranslationUnit(transUnit);
 
 	if (ErrorCount != 0)
@@ -68,29 +68,33 @@ static void Compile(char *file)
 
 	if (DumpAST)
 	{
-		// Dump syntax tree which is put into a file named xxx.ast
+		/* Dump syntax tree which is put into a file named xxx.ast */
 		DumpTranslationUnit(transUnit);
 	}
 
-	// translate the abstract synatx tree into intermediate code
+	/* translate the abstract synatx tree into intermediate code */
 	Translate(transUnit);
 
 	if (DumpIR)
 	{
-		// Dump intermediate code which is put into a file named xxx.uil
+		/* Dump intermediate code which is put into a file named xxx.uil */
 		DAssemTranslationUnit(transUnit);
 	}
 
-	// emit assembly code from intermediate code.
-	// The kernel function is EmitIRInst(inst).
-	// for example, see function EmitAssign(IRInst inst) 
+	/*
+	 emit assembly code from intermediate code.
+	 The kernel function is EmitIRInst(inst).
+	 for example, see function EmitAssign(IRInst inst) 
+	*/
 	EmitTranslationUnit(transUnit);
 
 exit:
 	Finalize();
 }
-// consider some strings as white space:
-// CCProg[1] = "-ignore __declspec(deprecated),__declspec(noreturn),__inline,__fastcall";
+/*
+ consider some strings as white space:
+ CCProg[1] = "-ignore __declspec(deprecated),__declspec(noreturn),__inline,__fastcall";
+*/
 static void AddWhiteSpace(char *str)
 {
 	char *p, *q;
@@ -109,8 +113,10 @@ static void AddWhiteSpace(char *str)
 	}
 	INSERT_ITEM(ExtraWhiteSpace, p);	
 }
-// see win32.c in UCC project
-// 	CCProg[2] = "-keyword __int64";
+/*
+ see win32.c in UCC project
+ 	CCProg[2] = "-keyword __int64";
+*/
 static void AddKeyword(char *str)
 {
 	char *p, *q;
@@ -128,16 +134,20 @@ static void AddKeyword(char *str)
 	}
 	INSERT_ITEM(ExtraKeywords, p);	
 }
-//Most of the cmd line parameters have been parsed by compiler driver UCC already.
-// only the following options are parsed by compiler ucl.
+/*
+Most of the cmd line parameters have been parsed by compiler driver UCC already.
+ only the following options are parsed by compiler ucl.
+*/
 static int ParseCommandLine(int argc, char *argv[])
 {
 	int i;
 
 	for (i = 0; i < argc; ++i)
 	{
-		//PRINT_DEBUG_INFO(("%s",argv[i]));
-		// see linux.c in UCC project,  "ucl", "-ext:.s", "$1", "$2", 0 
+		/*
+		PRINT_DEBUG_INFO(("%s",argv[i]));
+		 see linux.c in UCC project,  "ucl", "-ext:.s", "$1", "$2", 0 
+		*/
 		if (strncmp(argv[i], "-ext:", 5) == 0)
 		{
 			ExtName = argv[i] + 5;
@@ -146,29 +156,36 @@ static int ParseCommandLine(int argc, char *argv[])
 			i++;
 			ASMFileName = argv[i];
 		}
-
-		// see win32.c in UCC project
-		// CCProg[1] = "-ignore __declspec(deprecated),__declspec(noreturn),__inline,__fastcall";
+		/*
+		 see win32.c in UCC project
+		 CCProg[1] = "-ignore __declspec(deprecated),__declspec(noreturn),__inline,__fastcall";
+		*/
 		else if (strcmp(argv[i], "-ignore") == 0)
 		{
 			i++;			
 			AddWhiteSpace(argv[i]);
 		}
-		// see win32.c in UCC project
-		// 	CCProg[2] = "-keyword __int64";
+		/*
+		 see win32.c in UCC project
+		 	CCProg[2] = "-keyword __int64";
+		*/
 		else if (strcmp(argv[i], "-keyword") == 0)
 		{
 			i++;
 			AddKeyword(argv[i]);
 		}
-		// see ucc.c in UCC project
-		// "  --dump-ast   Dump syntax tree which is put into a file named xxx.ast\n",
+		/*
+		 see ucc.c in UCC project
+		 "  --dump-ast   Dump syntax tree which is put into a file named xxx.ast\n",
+		*/
 		else if (strcmp(argv[i], "--dump-ast") == 0)
 		{
 			DumpAST = 1;
 		}
-		// see ucc.c in UCC project
-		// "  --dump-IR    Dump intermediate code which is put into a file named xxx.uil\n",
+		/*
+		 see ucc.c in UCC project
+		 "  --dump-IR    Dump intermediate code which is put into a file named xxx.uil\n",
+		*/
 		else if (strcmp(argv[i], "--dump-IR") == 0)
 		{
 			DumpIR = 1;
