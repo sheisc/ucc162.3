@@ -1,7 +1,7 @@
 C_SRC       = lex.c expr.c error.c decl.c stmt.c main.c
 H_SRC			= lex.h expr.h error.h decl.h stmt.h tokens.txt
 #OBJS        = $(C_SRC:.c=.o)
-CC          = ucc
+CC          = gcc
 
 
 all:  $(C_SRC) $(H_SRC)
