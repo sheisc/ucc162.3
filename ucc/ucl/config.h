@@ -20,8 +20,8 @@
 #define	WCHAR		USHORT
 #define	UCC_WC_T	unsigned short
 #else
-#define WCHAR		INT
-#define	UCC_WC_T	int
+#define WCHAR		LONG
+#define	UCC_WC_T	long
 #endif
 
 

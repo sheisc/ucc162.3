@@ -61,6 +61,7 @@ extern char *LDProg[];
 #define	DEF_OBJ_EXT	".o"
 #define	DEF_EXE_EXT	EMPTY_EXT
 #define	DEF_OPTION_OUT		"a.out"
+#include <unistd.h>
 #endif
 
 
